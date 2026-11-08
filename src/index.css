@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-arabic: "IBM Plex Sans Arabic", "Inter", sans-serif;
+  --font-receipt: "Aref Ruqaa", "IBM Plex Sans Arabic", serif;
+}
+
+html[lang="ar"] body {
+  font-family: var(--font-arabic);
+}
+
+body {
+  background-color: var(--color-gray-50);
+  color: var(--color-slate-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Keep focus visible for keyboard users; flat, no glow. */
+:focus-visible {
+  outline: 2px solid var(--color-slate-900);
+  outline-offset: 2px;
+}
