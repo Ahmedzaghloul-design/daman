@@ -1,5 +1,5 @@
 // Writes the logo SVG files from logo/mark.js (the single source of truth).
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { COLORS, iconSVG, LAYERS, markSVG } from "../logo/mark.js";
@@ -52,4 +52,12 @@ ${cell("browser tab", `<span style="display:inline-flex;gap:6px;align-items:cent
 </div></main></body></html>
 `;
 writeFileSync(join(out, "..", "brand-sheet.html"), sheet);
+
+// Favicons for both frontends.
+for (const app of ["website", "app"]) {
+  const dir = join(out, "..", "..", "..", app, "public");
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, "favicon.svg"), iconSVG() + "\n");
+  console.log(`wrote ${app}/public/favicon.svg`);
+}
 console.log("wrote brand-sheet.html");

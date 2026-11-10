@@ -1,5 +1,35 @@
 @import "tailwindcss";
+@import "@daman/brand/tokens.css";
 
+html { scroll-behavior: smooth; }
 body {
-  background-color: var(--color-gray-50);
+  background-color: var(--color-cream);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+html[lang="ar"] body { font-family: var(--font-arabic); }
+/* IBM Plex Mono has no Arabic letters: fall back to Plex Sans Arabic, not a system font. */
+html[lang="ar"] { --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, monospace; }
+
+:focus-visible { outline: 2px solid var(--color-nile); outline-offset: 3px; border-radius: 4px; }
+
+/* Scroll reveal: elements rise in once, slowly. Disabled by reduced motion in tokens.css. */
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity 600ms var(--ease-daman), transform 600ms var(--ease-daman); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* Line-art landmarks draw themselves in (every shape uses pathLength="1"). */
+.draw path, .draw line, .draw polyline, .draw circle, .draw rect, .draw ellipse {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 2400ms var(--ease-daman);
+}
+.draw.in path, .draw.in line, .draw.in polyline, .draw.in circle, .draw.in rect, .draw.in ellipse { stroke-dashoffset: 0; }
+
+@keyframes route-flow { to { stroke-dashoffset: -24; } }
+@keyframes seal-press { 0% { transform: scale(1.35) rotate(-14deg); opacity: 0; } 60% { transform: scale(0.96) rotate(0); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+.seal-press { animation: seal-press 520ms var(--ease-daman) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+  .draw path, .draw line, .draw polyline, .draw circle, .draw rect, .draw ellipse { stroke-dashoffset: 0; }
 }

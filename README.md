@@ -50,7 +50,10 @@ balance fails.
 
 | Path | Purpose |
 | --- | --- |
-| `website/` | Marketing website (being built in Phase 2) |
+| `website/` | Marketing website: home, story, how-we-calculate (built in Phase 2) |
+| `website/src/i18n/en.js`, `ar.js` | All website copy; every regulatory fact is tagged with its spec fact number |
+| `website/src/data/images.js` | The website's photos; swap in real photos here |
+| `website/src/data/recorded-audits.json` | Real Gemini responses replayed by the live demo |
 | `app/` | The program: upload, human review, ledger, anomalies, settings |
 | `app/src/pages/Dashboard.jsx` | Workspace state machine and screens |
 | `app/src/components/LedgerTable.jsx` | Monospace compliance ledger and CSV export |

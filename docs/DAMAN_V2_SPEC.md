@@ -5,7 +5,7 @@ phase is built against it. If something is not written here, it is not built
 without asking first. If a fact is not in the "Verified facts" section with a
 source, it does not go on the website.
 
-Status: **Approved 2026-11-10.** Phases 0 and 1 complete.
+Status: **Approved 2026-11-10.** Phases 0, 1 and 2 complete (Phase 2 awaiting review). Updated with the team's CBAM documents.
 
 ---
 
@@ -34,6 +34,10 @@ internet and shows its sources.
 | Palette | **Nile & desert gold**: Nile teal `#0E5E6F`, desert gold `#C8963E`, on cream (replaces the earlier navy palette) |
 | Languages | English and Arabic with right-to-left layout, in both products (kept from v1) |
 | Gemini model | `gemini-3.6-flash` (free tier, tested); `gemini-4-argon` only if billing is enabled |
+| Program layout | **A: Report table** (inspired by Kuehne+Nagel's CBAM report, adapted for the exporting factory): period list, product table with CN code, tonnes, installation, % actual data bar, tCO2e, actions |
+| Landmarks | **3D globe + line art**: interactive 3D globe with landmarks and gold trade routes in the website hero; subtle gold line-art skylines elsewhere; very faint line art only in the program |
+| Landmark set | Egypt (Pyramids of Giza, Cairo Tower, Citadel of Qaitbay, Suez Canal), EU (Brandenburg Gate, Eiffel Tower, Colosseum, Rotterdam cranes), UK (Elizabeth Tower), wider world as "future" markers. No Atomium (image rights are enforced); no EU flag stars |
+| Expansion story | Egypt first; then the rest of MENA, exporters selling to the UK under the UK CBAM (from 2027), and Africa & Asia. Shown as plans, not as existing customers |
 
 ## 3. Rules for the builder (to prevent hallucination)
 
@@ -76,6 +80,24 @@ Checked 2026-11-10. Re-check before launch.
 | F8 | CBAM certificate sales start 1 February 2027 | https://net0.com/blog/the-eu-carbon-border-adjustment-mechanism-cbam |
 | F9 | **Proposed, not law:** extension to about 180 downstream steel and aluminium products from 1 January 2028 (COM/2025/989, 17 Dec 2025); Parliament's mandate proposes about 453–457 products; in trilogue as of Oct 2026 | EPRS briefing (F1); https://www.mayerbrown.com/en/insights/publications/2026/10/eus-cbam-downstream-extension-and-anti-circumvention-amendments-the-road-to-trilogue |
 | F10 | The CBAM obligation (declaring and buying certificates) sits with the EU importer / authorised CBAM declarant; non-EU producers supply installation emissions data | Regulation (EU) 2023/956 — verify wording against EUR-Lex in Phase 3 |
+| F11 | Importers need a CBAM account number or application reference number for imports above 50 t per calendar year and for all electricity and hydrogen imports; applications are due before importing and at the latest by 31 March 2026 | D1, DG TAXUD *CBAM Compliance Essentials … as from 1 January 2026* (see `docs/sources/CBAM_REFERENCE_NOTES.md`) |
+| F12 | The first annual CBAM declaration and certificate surrender is due 30 September 2027, for goods imported in 2026; then 30 September each year | https://icapcarbonaction.com/en/news/eu-cbam-enters-compliance-phase-and-outlines-path-ahead ; https://klimaat.be/cbam-en/what-is-cbam-2/what-is-the-carbon-border-adjustment-mechanism-cbam/definitive-phase |
+| F13 | The CBAM Registry's O3CI module lets operators of installations outside the EU upload their installation and emissions data once and share it with EU declarants, instead of sending it to each one | https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/cbam-registry_en ; D3 |
+| F14 | Per good, the EU records direct and indirect embedded emissions per installation: direct = quantity × specific direct emissions; indirect = quantity × (electricity MWh/t × emission factor tCO2/MWh); electricity source is auto-produced, power purchase agreement or grid | D2, CBAM Declarant Portal user manual v1.81 §1.9 |
+| F15 | EU declarants remain responsible for the final accuracy of their reports, whatever the source of the data | D3 |
+| F16 | The UK CBAM applies from 1 January 2027 to aluminium, cement, fertiliser, hydrogen, and iron and steel (UK statutory instruments 2026/809, 2026/830, 2026/995) | https://www.paulhastings.com/thought-leadership/uk-cbam-classification-thresholds-and-divergence-from-the-eu ; https://thecommonwealth.org/publications/uk-carbon-border-adjustment-mechanism |
+
+Historical, never stated as current: transitional-period quarterly reports and
+"request delayed submission" (D4).
+
+### Where the team's documents fit in the phases
+
+| Phase | Uses |
+| --- | --- |
+| 2. Website | F11–F13 and F16 in the timeline, FAQ and story; F14 in the "How we calculate" explorer (direct vs indirect) |
+| 3. Data tools | F14 formulas in the calculator; F11 threshold in the sector checker |
+| 4. Program | D2 data model: installations, operators, products (CN codes), direct/indirect emissions, actual vs default share, electricity source; an **O3CI-ready export** (F13) |
+| 5. Chatbot | D1–D3 summaries in the knowledge base, with D4 marked historical |
 
 Still to fetch in Phase 3 (from official files only): Egypt default values per
 CN code, the current certificate price, and the CBAM free-allocation factor by
@@ -238,7 +260,7 @@ Root scripts: `npm run dev:website`, `npm run dev:app`, `npm run dev:api`,
 | **1. Brand** | Design direction (unslop's five lines); **3 logo concepts** as SVG shown side by side; color, type and motion tokens in `packages/brand` | User picks a logo; tokens committed |
 | **2. Website** | All pages in §5.1 except the data-backed tools; AI images; animated pipeline; live demo with recorded outputs; methodology explorer; FAQ; EN/AR; unslop pass | Every page works on desktop and phone in both languages; every claim traces to §4; user reviews |
 | **3. Data tools** | Fetch the official data (Egypt default values, CN code lists, certificate price, free-allocation factors); write and test the calculator formula; build the sector checker and calculator | Each number shows a source and date; hand-checked against 3 worked examples; user reviews |
-| **4. Program redesign** | New brand; Overview screen with charts; ledger search, filters and detail drawer; anomaly chart; unslop pass; no logic regressions | All v1 flows still pass; the new screens are tested in the browser |
+| **4. Program redesign** | New brand; **report-table main screen** (period, CN code, product, tonnes, installation, % actual data, direct/indirect tCO2e); installations and products registries following D2; receipt workbench and ledger kept; O3CI-ready export; unslop pass; no logic regressions | All v1 flows still pass; the new screens are tested in the browser |
 | **5. Chatbot** | `/api/chat` with knowledge base, Google Search grounding and citations; rate limits; widget on the website and in the app | Answers 10 scripted test questions correctly, searches the web for unknowns with sources, refuses off-topic requests safely |
 | **6. Quality & launch prep** | Accessibility, SEO, mobile, Playwright tests, security review, full fact-check of copy against §4; README update | All checks pass; pushed to GitHub; deployment options presented (not deployed without approval) |
 

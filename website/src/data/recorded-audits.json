@@ -1,0 +1,126 @@
+[
+  {
+    "rawText": "مصنع الفراعنة للأسمنت - ١٥٠٠٠ لتر سولار - التاريخ ١٥ مارس ٢٠٢٦",
+    "productionTonnes": 1200,
+    "response": {
+      "receipt": {
+        "factory_name": "Pharaohs Cement Factory",
+        "energy_type": "Diesel",
+        "volume": 15000,
+        "unit": "L",
+        "date": "2026-03-15",
+        "confidence_score": 0.95,
+        "requires_human_review": true
+      },
+      "reviewReasons": [
+        "anomaly"
+      ],
+      "massBalance": {
+        "anomaly": true,
+        "deterministic": {
+          "evaluated": true,
+          "energyType": "Diesel",
+          "intensity": 12.5,
+          "intensityUnit": "L/t",
+          "expectedMin": 1,
+          "expectedMax": 6,
+          "productionTonnes": 1200,
+          "outOfRange": true,
+          "deviationPct": 108.33333333333333
+        },
+        "llm": {
+          "anomaly_detected": true,
+          "severity": "HIGH",
+          "reasoning": "The reported diesel consumption intensity of 12.5 L/t exceeds the expected benchmark maximum of 6.0 L/t by 108.3%, indicating a significant energy balance anomaly. This high intensity implies that either the fuel receipt volume was over-reported or the declared production output was under-reported. Auditors should check for potential data entry errors, shared fuel tanks serving non-process transport, or heavy fuel usage during an unrecorded maintenance restart."
+        }
+      },
+      "model": "gemini-3.6-flash",
+      "confidenceThreshold": 0.85
+    },
+    "recordedAt": "2026-11-10T11:55:35.581Z"
+  },
+  {
+    "rawText": "شركة الدلتا للصلب - فاتورة كهرباء - ١٤٢٠٠٠ كيلو وات ساعة - التاريخ ٣ أبريل ٢٠٢٦",
+    "productionTonnes": 1200,
+    "response": {
+      "receipt": {
+        "factory_name": "Delta Steel Company",
+        "energy_type": "Electricity",
+        "volume": 142000,
+        "unit": "kWh",
+        "date": "2026-04-03",
+        "confidence_score": 0.95,
+        "requires_human_review": true
+      },
+      "reviewReasons": [
+        "anomaly"
+      ],
+      "massBalance": {
+        "anomaly": true,
+        "deterministic": {
+          "evaluated": true,
+          "energyType": "Electricity",
+          "intensity": 118.33333333333333,
+          "intensityUnit": "kWh/t",
+          "expectedMin": 90,
+          "expectedMax": 130,
+          "productionTonnes": 1200,
+          "outOfRange": false,
+          "deviationPct": 0
+        },
+        "llm": {
+          "anomaly_detected": true,
+          "severity": "LOW",
+          "reasoning": "The reported electricity intensity of 118.33 kWh/t falls within the expected benchmark range of 90 to 130 kWh/t for the declared output of 1,200 tonnes, showing physical plausibility. However, the utility receipt lists 'Delta Steel Company' whereas the declared installation sector is cement. The reviewer should check for misallocated invoices across corporate entities, shared meters between adjacent plants, or incorrect facility naming in the metadata."
+        }
+      },
+      "model": "gemini-3.6-flash",
+      "confidenceThreshold": 0.85
+    },
+    "recordedAt": "2026-11-10T11:55:59.605Z"
+  },
+  {
+    "rawText": "مصنع الفراعنة للأسمنت - ١٢؟٠٠ لتر سولار - التاريخ ؟ مارس ٢٠٢٦ - المستلم م. حسن",
+    "productionTonnes": 1200,
+    "response": {
+      "receipt": {
+        "factory_name": "Pharaohs Cement Factory",
+        "energy_type": "Diesel",
+        "volume": 1200,
+        "unit": "L",
+        "date": "",
+        "confidence_score": 0.4,
+        "requires_human_review": true
+      },
+      "reviewReasons": [
+        "invalidDate",
+        "lowConfidence",
+        "modelFlag",
+        "illegibleDigits",
+        "anomaly"
+      ],
+      "massBalance": {
+        "anomaly": true,
+        "deterministic": {
+          "evaluated": true,
+          "energyType": "Diesel",
+          "intensity": 1,
+          "intensityUnit": "L/t",
+          "expectedMin": 1,
+          "expectedMax": 6,
+          "productionTonnes": 1200,
+          "outOfRange": false,
+          "deviationPct": 0
+        },
+        "llm": {
+          "anomaly_detected": true,
+          "severity": "MEDIUM",
+          "reasoning": "Although the calculated diesel intensity of 1.0 L/t sits on the lower bound of the expected benchmark (1 to 6 L/t), the underlying receipt has a low OCR confidence score of 0.4 and a missing transaction date. Additionally, the exact 1:1 numeric match between diesel volume (1,200 L) and production output (1,200 tonnes) strongly suggests a potential transcription error or placeholder value. Auditors should inspect the physical delivery docket to confirm actual fuel quantities, check for misread OCR digits, and verify if diesel usage is strictly limited to mobile plant equipment."
+        }
+      },
+      "model": "gemini-3.6-flash",
+      "confidenceThreshold": 0.85
+    },
+    "recordedAt": "2026-11-10T11:56:43.750Z"
+  }
+]
