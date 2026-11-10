@@ -1,0 +1,13 @@
+{
+  "name": "@daman/core",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Deterministic Daman logic shared by the API and both frontends: normalisation, emission factors, mass balance.",
+  "type": "module",
+  "exports": {
+    "./*.js": "./*.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

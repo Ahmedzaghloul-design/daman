@@ -5,9 +5,10 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    // The marketing website runs on 5173; the program (app/) runs on 5174.
     port: 5173,
-    // The browser never talks to Gemini directly. Every /api call is proxied
-    // to the Express server (server/index.js), which holds the API key.
+    strictPort: true,
+    // The chatbot (Phase 5) calls the shared API, which holds the Gemini key.
     proxy: { "/api": "http://localhost:8787" },
   },
 });

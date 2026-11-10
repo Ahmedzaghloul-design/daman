@@ -5,8 +5,8 @@
 // src/services/geminiApi.js -> POST /api/audit -> server/index.js -> here.
 // ---------------------------------------------------------------------------
 import { GoogleGenAI, Type } from "@google/genai";
-import { normalizeDigits, normalizeEnergyType, normalizeUnit } from "../../shared/normalize.js";
-import { checkMassBalance, DEFAULT_BENCHMARKS } from "../../shared/massBalance.js";
+import { normalizeDigits, normalizeEnergyType, normalizeUnit } from "@daman/core/normalize.js";
+import { checkMassBalance, DEFAULT_BENCHMARKS } from "@daman/core/massBalance.js";
 
 export const MODEL = process.env.GEMINI_MODEL || "gemini-3.6-flash";
 export const MOCK = String(process.env.GEMINI_MOCK).toLowerCase() === "true";

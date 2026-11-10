@@ -11,45 +11,55 @@ Requires Node.js 22.9 or newer (`node -v`).
 ```bash
 npm install
 cp .env.example .env      # then paste your GEMINI_API_KEY
-npm run dev               # web on :5173, API on :8787
+npm run dev               # starts all three parts
 ```
 
-Open http://localhost:5173. No API key yet? Set `GEMINI_MOCK=true` in `.env`.
+| Part | Address | Start it alone |
+| --- | --- | --- |
+| Website (marketing) | http://localhost:5173 | `npm run dev:website` |
+| Program (workspace) | http://localhost:5174 | `npm run dev:app` |
+| API (holds the Gemini key) | http://localhost:8787 | `npm run dev:api` |
+
+The website and the program both need the API running for anything that uses
+Gemini. No API key yet? Set `GEMINI_MOCK=true` in `.env`.
 
 Get an API key at https://aistudio.google.com/apikey. A Gemini app
 subscription does not include API access.
 
+Run the tests with `npm test`.
+
 ## How data flows
 
 ```
-photo ──► src/services/ocrApi.js          (MOCK CNN-BiLSTM-CTC: File -> raw Arabic string)
-      ──► src/services/geminiApi.js       (browser: POST /api/audit)
-      ──► server/index.js                 (validates input, holds the API key)
-      ──► server/services/geminiApi.js    (ai.models.generateContent + strict responseSchema)
-      ──► shared/massBalance.js           (deterministic energy-per-tonne check)
-      ──► Dashboard HITL review           (reviewer edits / approves / rejects)
-      ──► ledger                          (only approved rows; CSV export)
+photo ──► app/src/services/ocrApi.js       (MOCK CNN-BiLSTM-CTC: File -> raw Arabic string)
+      ──► app/src/services/geminiApi.js    (browser: POST /api/audit)
+      ──► api/app.js                       (validates input, holds the API key)
+      ──► api/services/geminiApi.js        (ai.models.generateContent + strict responseSchema)
+      ──► packages/core/massBalance.js     (deterministic energy-per-tonne check)
+      ──► Dashboard HITL review            (reviewer edits / approves / rejects)
+      ──► ledger                           (only approved rows; CSV export)
 ```
 
 Design rule: **the LLM structures and explains, code calculates, a human
 approves.** Anomaly numbers and tCO2e are computed in plain JavaScript so a
 verifier can reproduce them. The server forces `requires_human_review` when
-confidence is below 0.85, a field is missing, or mass balance fails.
+confidence is below 0.85, a field is missing, a digit is illegible, or mass
+balance fails.
 
 ## Project layout
 
 | Path | Purpose |
 | --- | --- |
-| `src/App.jsx` | Routing and providers (language, workspace state) |
-| `src/pages/LandingPage.jsx` | Marketing site |
-| `src/pages/Dashboard.jsx` | Workspace: state machine, upload, ledger, anomalies, settings |
-| `src/components/LedgerTable.jsx` | Monospace compliance ledger and CSV export |
-| `src/components/ReviewPanel.jsx` | HITL review form and sign-off |
-| `src/services/ocrApi.js` | OCR mock (swap for the real model service) |
-| `src/services/geminiApi.js` | Browser client for `/api/audit` |
-| `server/services/geminiApi.js` | Real `@google/genai` integration |
-| `shared/` | Normalisation, emission factors, mass balance (used by both sides) |
-| `src/i18n/strings.js` | All English and Arabic copy |
+| `website/` | Marketing website (being built in Phase 2) |
+| `app/` | The program: upload, human review, ledger, anomalies, settings |
+| `app/src/pages/Dashboard.jsx` | Workspace state machine and screens |
+| `app/src/components/LedgerTable.jsx` | Monospace compliance ledger and CSV export |
+| `app/src/components/ReviewPanel.jsx` | HITL review form and sign-off |
+| `app/src/services/ocrApi.js` | OCR mock (swap for the real model service) |
+| `app/src/i18n/strings.js` | All English and Arabic copy for the program |
+| `api/` | Express server; `api/services/geminiApi.js` is the `@google/genai` integration |
+| `packages/core/` | Normalisation, emission factors, mass balance (shared by everything) |
+| `docs/DAMAN_V2_SPEC.md` | The v2 build specification, phases and verified facts |
 
 ## Roadmap to a real product
 

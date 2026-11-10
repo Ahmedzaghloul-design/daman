@@ -1,0 +1,54 @@
+// Runs the real /api/audit route in mock mode (no Gemini calls, no API key).
+import { test, before, after } from "node:test";
+import assert from "node:assert/strict";
+
+process.env.GEMINI_MOCK = "true";
+const { app } = await import("../app.js");
+const { validateReceipt } = await import("../services/geminiApi.js");
+
+let server;
+let base;
+before(async () => {
+  server = app.listen(0);
+  await new Promise((resolve) => server.once("listening", resolve));
+  base = `http://127.0.0.1:${server.address().port}`;
+});
+after(() => server.close());
+
+const audit = (body) =>
+  fetch(`${base}/api/audit`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+test("health reports mock mode", async () => {
+  const r = await fetch(`${base}/api/health`).then((res) => res.json());
+  assert.equal(r.ok, true);
+  assert.equal(r.mock, true);
+});
+
+test("rejects missing and oversized text", async () => {
+  assert.equal((await audit({})).status, 400);
+  assert.equal((await audit({ rawText: "x".repeat(5001) })).status, 413);
+});
+
+test("diesel sample: parsed, anomaly flagged", async () => {
+  const r = await (await audit({ rawText: "مصنع الفراعنة للأسمنت - ١٥٠٠٠ لتر سولار - التاريخ ١٥ مارس ٢٠٢٦", productionTonnes: 1200 })).json();
+  assert.equal(r.receipt.volume, 15000);
+  assert.equal(r.receipt.unit, "L");
+  assert.equal(r.receipt.date, "2026-03-15");
+  assert.equal(r.massBalance.anomaly, true);
+  assert.ok(r.reviewReasons.includes("anomaly"));
+});
+
+test("illegible digit forces review", async () => {
+  const r = await (await audit({ rawText: "مصنع الفراعنة للأسمنت - ١٢؟٠٠ لتر سولار - التاريخ ؟ مارس ٢٠٢٦", productionTonnes: 1200 })).json();
+  assert.ok(r.reviewReasons.includes("illegibleDigits"));
+  assert.equal(r.receipt.requires_human_review, true);
+});
+
+test("validator forces review on low confidence even if the model says no", () => {
+  const { receipt, reasons } = validateReceipt({
+    factory_name: "X", energy_type: "Diesel", volume: 10, unit: "L", date: "2026-01-01",
+    confidence_score: 0.5, requires_human_review: false,
+  });
+  assert.equal(receipt.requires_human_review, true);
+  assert.ok(reasons.includes("lowConfidence"));
+});

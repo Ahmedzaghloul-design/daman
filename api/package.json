@@ -1,0 +1,17 @@
+{
+  "name": "@daman/api",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Daman API: holds the Gemini key and serves /api/audit (and /api/chat in Phase 5).",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --env-file-if-exists=../.env index.js",
+    "start": "node --env-file-if-exists=../.env index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@daman/core": "*",
+    "@google/genai": "^1.20.0",
+    "express": "^5.1.0"
+  }
+}

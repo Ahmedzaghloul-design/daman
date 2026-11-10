@@ -3,7 +3,7 @@ import { fmt, Num } from "./ui.jsx";
 
 /**
  * Red banner shown when the scanned energy input does not match declared
- * production. Numbers come from the deterministic check (shared/massBalance.js);
+ * production. Numbers come from the deterministic check (@daman/core/massBalance.js);
  * the reasoning text comes from Gemini.
  */
 export default function AnomalyBanner({ deterministic, llm, llmStale }) {

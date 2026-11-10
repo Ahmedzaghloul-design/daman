@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { DEFAULT_BENCHMARKS } from "../../shared/massBalance.js";
-import { computeCO2e } from "../../shared/emissionFactors.js";
+import { DEFAULT_BENCHMARKS } from "@daman/core/massBalance.js";
+import { computeCO2e } from "@daman/core/emissionFactors.js";
 import { getApiHealth } from "../services/geminiApi.js";
 
 // Prototype persistence: the ledger lives in this browser's localStorage.
