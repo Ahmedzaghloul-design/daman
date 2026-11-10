@@ -123,17 +123,22 @@ function Team() {
   const [members, setMembers] = useState([]);
   const [invites, setInvites] = useState([]);
   const [log, setLog] = useState([]);
+  const [numbers, setNumbers] = useState([]);
+  const [phone, setPhone] = useState("");
+  const [label, setLabel] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("reviewer");
   const [error, setError] = useState(null);
 
   const load = useCallback(async () => {
     const ws = workspace.id;
-    const [m, i, l] = await Promise.all([
+    const [m, i, l, w] = await Promise.all([
       supabase.from("members").select("user_id, email, role").eq("workspace_id", ws).order("created_at"),
       supabase.from("invitations").select("id, email, role, accepted_at").eq("workspace_id", ws).order("created_at"),
       supabase.from("access_log").select("id, email, action, target, created_at").eq("workspace_id", ws).order("created_at", { ascending: false }).limit(50),
+      supabase.from("whatsapp_senders").select("phone, label").eq("workspace_id", ws).order("created_at"),
     ]);
+    setNumbers(must(w));
     setMembers(must(m));
     setInvites(must(i));
     setLog(must(l));
@@ -161,6 +166,16 @@ function Team() {
   const remove = act(async (userId) => must(await supabase.from("members").delete().eq("workspace_id", workspace.id).eq("user_id", userId)));
   const cancel = act(async (id) => must(await supabase.from("invitations").delete().eq("id", id)));
   const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  // International format, e.g. +201001234567 (Egypt: +20, then the number without its first 0).
+  const e164 = phone.replace(/[\s()-]/g, "");
+  const validPhone = /^\+[1-9]\d{7,14}$/.test(e164);
+  const addNumber = act(async (e) => {
+    e.preventDefault();
+    must(await supabase.from("whatsapp_senders").insert({ workspace_id: workspace.id, phone: e164, label: label.trim(), created_by: session.user.id }));
+    setPhone("");
+    setLabel("");
+  });
+  const removeNumber = act(async (p) => must(await supabase.from("whatsapp_senders").delete().eq("workspace_id", workspace.id).eq("phone", p)));
 
   return (
     <div className="space-y-5">
@@ -209,6 +224,29 @@ function Team() {
           </ul>
         )}
         {error && <p role="alert" className="mt-3 text-sm text-anomaly">{error}</p>}
+      </Panel>
+      <Panel title={t("account.whatsapp")}>
+        <p className="text-sm leading-relaxed text-text-2">{t("account.whatsappBody")}</p>
+        {numbers.length > 0 && (
+          <ul className="mt-3 divide-y divide-line">
+            {numbers.map((n) => (
+              <li key={n.phone} className="flex flex-wrap items-center gap-3 py-2 text-sm">
+                <Num className="flex-1">{n.phone}</Num>
+                <span className="text-xs text-muted">{n.label}</span>
+                <Button variant="secondary" onClick={() => removeNumber(n.phone)}>{t("account.remove")}</Button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <form className="mt-4 grid grid-cols-1 gap-2 border-t border-line pt-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end" onSubmit={addNumber}>
+          <Field label={t("account.phone")} hint={t("account.phoneHint")}>
+            <input type="tel" dir="ltr" inputMode="tel" placeholder="+201001234567" className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </Field>
+          <Field label={t("account.phoneLabel")}>
+            <input className={inputClass} maxLength={80} value={label} onChange={(e) => setLabel(e.target.value)} />
+          </Field>
+          <Button type="submit" disabled={!validPhone}>{t("account.add")}</Button>
+        </form>
       </Panel>
       <Panel title={t("account.log")}>
         {log.length ? (

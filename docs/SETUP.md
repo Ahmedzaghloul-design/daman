@@ -55,4 +55,4 @@ Then add the app address to Supabase (step 1.1).
 
 ## 4. WhatsApp receipts (Twilio sandbox)
 
-See section 4 in `docs/WHATSAPP.md` (created with the WhatsApp feature).
+See `docs/WHATSAPP.md`.

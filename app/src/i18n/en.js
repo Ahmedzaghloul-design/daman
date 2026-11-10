@@ -365,6 +365,12 @@ export const en = {
     actions: { view_verification: "opened the verifier view", view_entry: "opened entry {target}" },
     cloudError: "Cloud sync failed",
     loading: "Loading workspace…",
+    whatsapp: "WhatsApp numbers",
+    whatsappBody: "Phones allowed to send receipt photos to Daman on WhatsApp. Their receipts appear in Receipts, waiting for a reviewer.",
+    phone: "Phone number",
+    phoneHint: "International format: +20 then the number without its first 0.",
+    phoneLabel: "Name or place (optional)",
+    add: "Add",
   },
   verify: {
     title: "Verifier view",

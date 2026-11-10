@@ -1,5 +1,7 @@
 // Express routes. index.js starts the server; tests import this file directly.
 import express from "express";
+import { waitUntil } from "@vercel/functions";
+import { handleIncoming, twiml, validSignature } from "./services/whatsapp.js";
 import { auditReceipt, auditReceiptImage, IMAGE_TYPES, MODEL, MOCK, PAID_TIER, toUserError } from "./services/geminiApi.js";
 
 export const app = express();
@@ -112,6 +114,24 @@ app.post("/api/audit-image", async (req, res) => {
 
 /** Real photos only reach Gemini on the paid tier (or in mock mode, which calls no model). */
 export const realDataBlocked = ({ mock, paid, testData }) => !mock && !paid && testData !== true;
+
+// POST /api/whatsapp — Twilio webhook for incoming WhatsApp messages.
+// Every request must carry a valid X-Twilio-Signature for the exact webhook URL.
+app.post("/api/whatsapp", express.urlencoded({ extended: false, limit: "32kb" }), async (req, res) => {
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  const url = process.env.WHATSAPP_WEBHOOK_URL;
+  if (!token || !url) return res.status(503).type("text/plain").send("WhatsApp intake is not configured.");
+  const params = req.body ?? {};
+  if (!validSignature(url, params, token, req.get("X-Twilio-Signature"))) return res.status(403).type("text/plain").send("Invalid signature.");
+  try {
+    const { reply, work } = await handleIncoming(params);
+    res.type("text/xml").send(twiml(reply));
+    if (work) waitUntil(work()); // keeps the function alive on Vercel after replying
+  } catch (err) {
+    console.error("[whatsapp] failed:", String(err?.message ?? err).slice(0, 300));
+    res.type("text/xml").send(twiml("Daman could not process this message. Try again later."));
+  }
+});
 
 // Only accept numeric min/max per known energy type from the client.
 function sanitizeBenchmarks(input) {

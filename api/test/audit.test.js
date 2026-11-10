@@ -87,3 +87,39 @@ test("rate limit answers 429 after the limit", () => {
   mw({ ip: "5.6.7.8" }, { ...res, code: 200 }, () => passed++);
   assert.equal(passed, 3);
 });
+
+const { twilioSignature, validSignature, phoneFrom, twiml, resultMessage } = await import("../services/whatsapp.js");
+
+test("Twilio signature matches Twilio's published example", () => {
+  // twilio.com/docs/usage/security worked example (AuthToken 12345).
+  const url = "https://example.com/myapp.php?foo=1&bar=2";
+  const params = { Digits: "1234", To: "+18005551212", From: "+14158675310", Caller: "+14158675310", CallSid: "CA1234567890ABCDE" };
+  assert.equal(twilioSignature(url, params, "12345"), "L/OH5YylLD5NRKLltdqwSvS0BnU=");
+  assert.equal(validSignature(url, params, "12345", "L/OH5YylLD5NRKLltdqwSvS0BnU="), true);
+  assert.equal(validSignature(url, { ...params, Digits: "9999" }, "12345", "L/OH5YylLD5NRKLltdqwSvS0BnU="), false);
+  assert.equal(validSignature(url, params, "12345", undefined), false);
+});
+
+test("WhatsApp helpers: phone parsing, safe XML, result text", () => {
+  assert.equal(phoneFrom("whatsapp:+201001234567"), "+201001234567");
+  assert.equal(phoneFrom("whatsapp:+0123"), null);
+  assert.equal(twiml("a<b & 'c'"), '<?xml version="1.0" encoding="UTF-8"?><Response><Message>a&lt;b &amp; &apos;c&apos;</Message></Response>');
+  const msg = resultMessage({ receipt: { energy_type: "Diesel", volume: 8500, unit: "L", date: "2026-04-20" }, reviewReasons: ["illegibleDigits"], massBalance: { anomaly: true } });
+  assert.match(msg, /Diesel 8,500 L, date 2026-04-20/);
+  assert.match(msg, /unreadable/);
+  assert.match(msg, /unusual/);
+});
+
+test("WhatsApp webhook rejects unsigned requests", async () => {
+  process.env.TWILIO_AUTH_TOKEN = "test-token";
+  process.env.WHATSAPP_WEBHOOK_URL = `${base}/api/whatsapp`;
+  const body = new URLSearchParams({ From: "whatsapp:+201001234567", NumMedia: "0" });
+  const bad = await fetch(`${base}/api/whatsapp`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Twilio-Signature": "nope" }, body });
+  assert.equal(bad.status, 403);
+  const sig = twilioSignature(`${base}/api/whatsapp`, Object.fromEntries(body), "test-token");
+  const ok = await fetch(`${base}/api/whatsapp`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Twilio-Signature": sig }, body });
+  assert.equal(ok.status, 200);
+  assert.match(await ok.text(), /not registered/); // no Supabase configured in tests -> unknown sender
+  delete process.env.TWILIO_AUTH_TOKEN;
+  delete process.env.WHATSAPP_WEBHOOK_URL;
+});
