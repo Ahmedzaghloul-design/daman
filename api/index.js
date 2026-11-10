@@ -5,10 +5,13 @@ import { MODEL, MOCK } from "./services/geminiApi.js";
 // hosting platforms that only set PORT still work in production.
 const PORT = Number(process.env.API_PORT || process.env.PORT) || 8787;
 
-app.listen(PORT, () => {
+// On Vercel the platform runs the exported app; locally we start a server.
+if (!process.env.VERCEL) app.listen(PORT, () => {
   console.log(`Daman API listening on http://localhost:${PORT}`);
   console.log(MOCK ? "Gemini: MOCK mode" : `Gemini model: ${MODEL}`);
   if (!MOCK && !process.env.GEMINI_API_KEY) {
     console.warn("Warning: GEMINI_API_KEY is not set. /api/audit will return 503 until it is.");
   }
 });
+
+export default app;

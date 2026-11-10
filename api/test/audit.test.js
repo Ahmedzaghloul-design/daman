@@ -3,7 +3,7 @@ import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 
 process.env.GEMINI_MOCK = "true";
-const { app, realDataBlocked } = await import("../app.js");
+const { app, realDataBlocked, rateLimit } = await import("../app.js");
 const { validateReceipt } = await import("../services/geminiApi.js");
 
 let server;
@@ -75,4 +75,15 @@ test("real photos are blocked on the unpaid tier unless marked as test data", ()
   assert.equal(realDataBlocked({ mock: false, paid: false }), true);
   assert.equal(realDataBlocked({ mock: false, paid: false, testData: true }), false);
   assert.equal(realDataBlocked({ mock: false, paid: true, testData: false }), false);
+});
+
+test("rate limit answers 429 after the limit", () => {
+  const mw = rateLimit({ windowMs: 60_000, max: 2 });
+  const res = { code: 200, headers: {}, set(k, v) { this.headers[k] = v; }, status(c) { this.code = c; return this; }, json() { return this; } };
+  let passed = 0;
+  for (let i = 0; i < 3; i++) mw({ ip: "1.2.3.4" }, res, () => passed++);
+  assert.equal(passed, 2);
+  assert.equal(res.code, 429);
+  mw({ ip: "5.6.7.8" }, { ...res, code: 200 }, () => passed++);
+  assert.equal(passed, 3);
 });

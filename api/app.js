@@ -3,7 +3,34 @@ import express from "express";
 import { auditReceipt, auditReceiptImage, IMAGE_TYPES, MODEL, MOCK, PAID_TIER, toUserError } from "./services/geminiApi.js";
 
 export const app = express();
+export default app; // Vercel runs the exported Express app as a function
 const MAX_TEXT = 5000;
+
+// Behind Vercel's proxy the visitor's address is in X-Forwarded-For.
+app.set("trust proxy", 1);
+
+/**
+ * Small fixed-window rate limit per visitor address. It lives in memory, so on
+ * a serverless host each running instance counts separately: a brake against
+ * accidents and casual abuse, not a guarantee.
+ */
+export function rateLimit({ windowMs, max }) {
+  const hits = new Map();
+  return (req, res, next) => {
+    const now = Date.now();
+    const key = req.ip || "unknown";
+    const h = hits.get(key);
+    if (!h || now - h.start > windowMs) hits.set(key, { start: now, n: 1 });
+    else if (++h.n > max) {
+      res.set("Retry-After", String(Math.ceil((h.start + windowMs - now) / 1000)));
+      return res.status(429).json({ error: "Too many requests from this device. Wait a few minutes and try again." });
+    }
+    if (hits.size > 5000) for (const [k, v] of hits) if (now - v.start > windowMs) hits.delete(k);
+    next();
+  };
+}
+const auditLimit = rateLimit({ windowMs: 10 * 60_000, max: 30 });
+app.use(["/api/audit", "/api/audit-image"], auditLimit);
 
 // Photos need a larger body (the app shrinks them to about 1 MB first; the
 // cap stays under Vercel's 4.5 MB request limit).
