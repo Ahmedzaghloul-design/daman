@@ -3,7 +3,7 @@ import { checkMassBalance } from "@daman/core/massBalance.js";
 import { computeCO2e } from "@daman/core/emissionFactors.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
-import { usePipeline } from "../state/Pipeline.jsx";
+import { REAL_DATA_BLOCKED, usePipeline } from "../state/Pipeline.jsx";
 import { AnomalyBanner, ReceiptPreview, StatusStepper } from "../components/ReceiptParts.jsx";
 import ReviewPanel from "../components/ReviewPanel.jsx";
 import { Button, Field, inputClass, Mark, PageHeader } from "../components/ui.jsx";
@@ -11,7 +11,7 @@ import { Button, Field, inputClass, Mark, PageHeader } from "../components/ui.js
 export default function Receipts() {
   const { t } = useLanguage();
   const { settings, updateSettings, addEntry } = useAppState();
-  const { state: p, dispatch, notice, setNotice, processFile, runSample, reset } = usePipeline();
+  const { state: p, health, dispatch, notice, setNotice, processFile, runSample, reset } = usePipeline();
   const busy = p.phase === "ocr" || p.phase === "auditing";
 
   // Live re-check while the reviewer edits (same rules as the server).
@@ -65,9 +65,9 @@ export default function Receipts() {
             {notice.text}
           </p>
         )}
-        {p.phase === "error" && <p role="alert" className="rounded-card border border-anomaly/40 bg-anomaly-soft px-4 py-3 text-sm text-anomaly">{t("receipts.states.error")}: {p.error}</p>}
+        {p.phase === "error" && <p role="alert" className="rounded-card border border-anomaly/40 bg-anomaly-soft px-4 py-3 text-sm text-anomaly">{t("receipts.states.error")}: {p.error === REAL_DATA_BLOCKED ? t("receipts.blocked") : p.error}</p>}
 
-        {(p.phase === "idle" || p.phase === "error") && <UploadZone onFile={processFile} onSample={runSample} settings={settings} updateSettings={updateSettings} />}
+        {(p.phase === "idle" || p.phase === "error") && <UploadZone onFile={processFile} onSample={runSample} settings={settings} updateSettings={updateSettings} paid={Boolean(health?.realDataAllowed)} />}
 
         {busy && (
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -108,9 +108,11 @@ export default function Receipts() {
   );
 }
 
-function UploadZone({ onFile, onSample, settings, updateSettings }) {
+function UploadZone({ onFile: send, onSample, settings, updateSettings, paid }) {
   const { t } = useLanguage();
   const [drag, setDrag] = useState(false);
+  const [testData, setTestData] = useState(false);
+  const onFile = (f) => send(f, { testData });
   const ref = useRef(null);
   const camRef = useRef(null); // opens the phone's rear camera directly
   const ok = Number(settings.productionTonnes) > 0;
@@ -120,6 +122,17 @@ function UploadZone({ onFile, onSample, settings, updateSettings }) {
         <Field label={t("receipts.production")}>
           <input type="number" min="1" dir="ltr" className={`${inputClass} tabular-nums ${ok ? "" : "border-anomaly"}`} value={settings.productionTonnes} onChange={(e) => updateSettings({ productionTonnes: e.target.value })} />
         </Field>
+        {paid ? (
+          <p className="mt-4 rounded-control bg-verified-soft px-3 py-2 text-xs leading-relaxed text-verified">{t("receipts.paidOn")}</p>
+        ) : (
+          <div className="mt-4 rounded-control border border-review/30 bg-review-soft p-3">
+            <p className="text-xs leading-relaxed text-review">{t("receipts.privacy")}</p>
+            <label className="mt-3 flex items-start gap-2 text-sm text-text">
+              <input type="checkbox" className="mt-0.5 size-4 accent-[var(--color-nile)]" checked={testData} onChange={(e) => setTestData(e.target.checked)} />
+              {t("receipts.testData")}
+            </label>
+          </div>
+        )}
       </section>
       <div
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}

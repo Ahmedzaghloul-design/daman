@@ -1,13 +1,15 @@
 import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import { PipelineContext } from "./contexts.js";
 import { extractArabicText } from "../services/ocrApi.js";
-import { auditReceipt } from "../services/geminiApi.js";
+import { auditReceipt, auditReceiptImage, getApiHealth } from "../services/geminiApi.js";
 import { useAppState } from "./AppState.jsx";
 
 // Receipt state machine, kept above the routes so navigating away does not
 // lose a receipt that is being checked:
 //   idle -> ocr -> auditing -> review -> idle (approve / reject); any -> error
 export const PHASES = ["idle", "ocr", "auditing", "review"];
+// Error key the page translates (Gemini unpaid tier + real data).
+export const REAL_DATA_BLOCKED = "real_data_blocked";
 
 const initial = {
   phase: "idle",
@@ -51,6 +53,11 @@ export function PipelineProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initial);
   const [notice, setNotice] = useState(null);
   const runId = useRef(0);
+  // realDataAllowed: the server confirmed Gemini billing (paid tier) is on.
+  const [health, setHealth] = useState(null);
+  useEffect(() => {
+    getApiHealth().then(setHealth);
+  }, []);
 
   useEffect(() => {
     const url = state.previewUrl;
@@ -59,7 +66,7 @@ export function PipelineProvider({ children }) {
     };
   }, [state.previewUrl]);
 
-  async function processFile(file) {
+  async function processFile(file, { testData = false } = {}) {
     const id = ++runId.current;
     setNotice(null);
     const isImage = file.type?.startsWith("image/") && file.size > 0;
@@ -74,27 +81,35 @@ export function PipelineProvider({ children }) {
       installationId: inst,
       productId: prods.length === 1 ? prods[0].id : "",
     });
+    const ctx = { productionTonnes: Number(settings.productionTonnes), sector: "cement", benchmarks: settings.benchmarks };
     try {
+      // Real photo: Gemini reads the image, then the same checks run on the server.
+      if (isImage || file.type === "application/pdf") {
+        if (!health?.realDataAllowed && !testData) throw new Error(REAL_DATA_BLOCKED);
+        const audit = await auditReceiptImage(file, { ...ctx, testData });
+        if (id !== runId.current) return;
+        dispatch({ type: "OCR_DONE", rawText: audit.rawText });
+        dispatch({ type: "AUDIT_DONE", audit });
+        return;
+      }
+      // Built-in sample: mock OCR text -> raw Arabic text.
       // HANDOFF 1: image -> OCR (mock CNN-BiLSTM-CTC) -> raw Arabic text.
       const rawText = await extractArabicText(file);
       if (id !== runId.current) return;
       dispatch({ type: "OCR_DONE", rawText });
       // HANDOFF 2: raw text -> API -> Gemini structuring + checks.
-      const audit = await auditReceipt(rawText, {
-        productionTonnes: Number(settings.productionTonnes),
-        sector: "cement",
-        benchmarks: settings.benchmarks,
-      });
+      const audit = await auditReceipt(rawText, ctx);
       if (id !== runId.current) return;
       // HANDOFF 3: structured record -> human review. Nothing reaches the ledger yet.
       dispatch({ type: "AUDIT_DONE", audit });
     } catch (err) {
       if (id !== runId.current) return;
-      dispatch({ type: "FAIL", error: err.message });
+      dispatch({ type: "FAIL", error: err.message === REAL_DATA_BLOCKED || err.code === "real_data_blocked" ? REAL_DATA_BLOCKED : err.message });
     }
   }
 
   const value = {
+    health,
     state,
     dispatch,
     notice,

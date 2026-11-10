@@ -142,7 +142,7 @@ export const en = {
     title: "Receipts",
     subtitle: "Photograph a receipt. Daman reads it, checks it, and holds it for your approval before it reaches the ledger.",
     drop: "Drop a receipt photo here",
-    hint: "JPG, PNG, WEBP or PDF up to 10 MB",
+    hint: "JPG, PNG, WEBP, HEIC or PDF. Photos are shrunk automatically; other files up to 3 MB",
     select: "Select file",
     camera: "Take photo",
     sample: "Use a sample receipt",
@@ -152,6 +152,10 @@ export const en = {
     slow: "Checking can take up to a minute when the audit service is busy.",
     committed: "Entry {id} added to the ledger.",
     rejected: "Receipt rejected. Nothing was added to the ledger.",
+    testData: "This photo is test data, not a confidential factory receipt",
+    privacy: "Gemini free tier: Google may use what is sent to improve its products, and people may read it. Only send test photos until the owner turns on Gemini billing.",
+    paidOn: "Gemini billing is on: receipts are not used to improve Google's products.",
+    blocked: "Real receipts are blocked until Gemini billing is on. Tick the test-data box to send a test photo.",
   },
 
   review: {

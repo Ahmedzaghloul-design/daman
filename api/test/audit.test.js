@@ -3,7 +3,7 @@ import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 
 process.env.GEMINI_MOCK = "true";
-const { app } = await import("../app.js");
+const { app, realDataBlocked } = await import("../app.js");
 const { validateReceipt } = await import("../services/geminiApi.js");
 
 let server;
@@ -51,4 +51,28 @@ test("validator forces review on low confidence even if the model says no", () =
   });
   assert.equal(receipt.requires_human_review, true);
   assert.ok(reasons.includes("lowConfidence"));
+});
+
+const auditImage = (body) =>
+  fetch(`${base}/api/audit-image`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+test("photo route: validates input", async () => {
+  assert.equal((await auditImage({})).status, 400);
+  assert.equal((await auditImage({ image: "AAAA", mimeType: "text/html" })).status, 415);
+  assert.equal((await auditImage({ image: "A".repeat(4.2 * 1024 * 1024), mimeType: "image/jpeg" })).status, 413);
+});
+
+test("photo route (mock): same checks as text, transcription returned", async () => {
+  const r = await (await auditImage({ image: "AAAA", mimeType: "image/jpeg", productionTonnes: 1200 })).json();
+  assert.equal(r.source, "vision");
+  assert.match(r.rawText, /لتر/);
+  assert.equal(r.receipt.volume, 15000);
+  assert.ok(r.reviewReasons.includes("anomaly"));
+});
+
+test("real photos are blocked on the unpaid tier unless marked as test data", () => {
+  assert.equal(realDataBlocked({ mock: false, paid: false, testData: false }), true);
+  assert.equal(realDataBlocked({ mock: false, paid: false }), true);
+  assert.equal(realDataBlocked({ mock: false, paid: false, testData: true }), false);
+  assert.equal(realDataBlocked({ mock: false, paid: true, testData: false }), false);
 });

@@ -45,6 +45,18 @@ internet and shows its sources.
 | Receipt allocation | The reviewer assigns each receipt to an installation and product at approval |
 | Process emissions | Manual per-product field from production records; products without it (or cement without traced clinker precursors) are marked **Incomplete** and claim no actual-data share |
 | Demo data | One fictional Egyptian cement installation, every item tagged "Demo", removable in Settings |
+| Chatbot in the app | May read the factory's own report summary (products, totals, statuses, open anomalies) to answer questions about their numbers; never receipt photos; this summary is sent to Google Gemini |
+| Chatbot web search | Daman's verified notes first; then Google Search grounding preferring EU and Egyptian government sources, other sites allowed; every web answer shows source links and a "check the source" note |
+| Chatbot leads (website) | May offer to take name + email for a demo, only after asking and explaining why; sent only on the visitor's consent; stored on the API server for now |
+| Chat history | Saved in the user's own browser only; nothing stored on the server (except consented leads) |
+| Hosting | Vercel free plan: website, app and API as three https projects; the user pastes GEMINI_API_KEY into Vercel settings themselves; ask once more before the first deploy |
+| Accounts | New Supabase project "daman" (separate from "epilexus"); sign-in by email link (no passwords) |
+| Roles | Owner (everything + invites), reviewer (approve receipts, edit report), uploader (send receipts only), verifier (read-only + comments, every view logged) |
+| Verifier access | Factory invites the verifier by email; verifier signs in; read-only plus comments; access log |
+| Gemini privacy | Free tier only for demo data. Google's terms: unpaid-tier content may be used to improve products and read by human reviewers (ai.google.dev/gemini-api/terms, checked 2026-11-10). Real uploads are blocked until the owner confirms Gemini billing is on |
+| Receipt photos | Gemini reads the photo directly (vision); the same validator and review rules apply as for typed text |
+| WhatsApp | Twilio WhatsApp sandbox for testing (only phones that joined); user creates the free Twilio account |
+| Pilot | No factory yet: outreach pack (one-page pitch, EN/AR consent + data-request letter, data checklist) |
 | Expansion story | Egypt first; then the rest of MENA, exporters selling to the UK under the UK CBAM (from 2027), and Africa & Asia. Shown as plans, not as existing customers |
 
 ## 3. Rules for the builder (to prevent hallucination)
