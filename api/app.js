@@ -12,6 +12,18 @@ const MAX_TEXT = 5000;
 
 // Behind Vercel's proxy the visitor's address is in X-Forwarded-For.
 app.set("trust proxy", 1);
+app.disable("x-powered-by"); // don't advertise the server software
+
+// The API only returns JSON or TwiML: forbid everything a browser could render.
+app.use((_req, res, next) => {
+  res.set({
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+    "Cache-Control": "no-store",
+  });
+  next();
+});
 
 /**
  * Small fixed-window rate limit per visitor address. It lives in memory, so on

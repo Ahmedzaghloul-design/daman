@@ -162,3 +162,10 @@ test("lead: consent and email required", () => {
   assert.equal(l.email, "mona@factory.eg");
   assert.equal(l.name, "Mona");
 });
+
+test("security headers on every API answer", async () => {
+  const r = await fetch(`${base}/api/health`);
+  assert.equal(r.headers.get("x-powered-by"), null);
+  assert.equal(r.headers.get("x-content-type-options"), "nosniff");
+  assert.match(r.headers.get("content-security-policy"), /default-src 'none'/);
+});
