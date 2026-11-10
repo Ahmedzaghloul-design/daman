@@ -30,16 +30,15 @@ what the product really does today.
 | Home › Trust | "links back to the photo it came from" | "keeps the text read from its receipt, the source file name and the approver" | Photos are not stored |
 | Home › App preview | 21,708 tCO2e, −49.9%, 8 receipts, clinker 0.7004 | 21,667, −50.0%, 7, 0.6990 | Now matches the app's demo data |
 
-## Needs your decision (claims without a source, or not built yet)
+## Softened (team decision, 2026-11-11, English and Arabic)
 
-1. "Fuel, electricity and delivery records on Egyptian plant floors are
-   **largely handwritten** in Arabic" — no source. Keep, soften ("often"), or
-   back it with your own factory interviews.
-2. "Established carbon-accounting platforms … are **not built to read cursive
-   Arabic handwriting**" — a claim about competitors, no source.
-3. Story: the paper record "is also **invisible to every compliance system in
-   Europe**" — strong wording, no source.
-4. Pricing › Assured: "**Evidence pack per reporting period**" and "**On-site
-   onboarding**" — not built yet (pricing is marked indicative).
-5. App preview: "It **installs to the home screen on iPhone and Android**" —
-   built for it, not yet tested on a real phone.
+| Where | Was | Now |
+|---|---|---|
+| Home › Problem | "Records are handwritten" / "largely handwritten in Arabic" | "Records are often handwritten" / "often handwritten in Arabic" |
+| Home › Problem | "Foreign tools can't read them … not built to read cursive Arabic handwriting" | "Typical tools expect digital data … not photos of handwritten Arabic receipts" |
+| Story › chapter 1 | "an Egyptian … plant … you'll find"; "the most accurate record"; "invisible to every compliance system in Europe" | "many Egyptian … plants … you'll often find"; "often the most detailed record"; "on paper, it rarely reaches the systems EU buyers use for compliance" |
+| Pricing › Assured | "Evidence pack per reporting period", "On-site onboarding for plant staff" | both marked "(planned)" |
+| Home › App preview | "It installs to the home screen on iPhone and Android." | "It is built to install to the home screen on iPhone and Android." |
+
+To make the stronger wording true again later: interview factories (handwritten
+records), build the evidence pack, and test installing on real phones.

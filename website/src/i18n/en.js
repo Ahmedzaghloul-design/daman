@@ -85,8 +85,8 @@ export const en = {
     title: "The data exists. It's on paper, in Arabic.",
     items: [
       { title: "Defaults cost margin", body: "Without verified data, your buyer declares conservative default values with a mark-up, and that cost comes back to you in price negotiations." },
-      { title: "Records are handwritten", body: "Fuel, electricity and delivery records on Egyptian plant floors are largely handwritten in Arabic, so they can't be audited as they are." },
-      { title: "Foreign tools can't read them", body: "Established carbon-accounting platforms expect structured digital inputs. They are not built to read cursive Arabic handwriting." },
+      { title: "Records are often handwritten", body: "Fuel, electricity and delivery records on Egyptian plant floors are often handwritten in Arabic, and paper can't be audited as it is." },
+      { title: "Typical tools expect digital data", body: "Carbon-accounting tools usually expect structured digital inputs, not photos of handwritten Arabic receipts." },
     ],
   },
 
@@ -171,7 +171,7 @@ export const en = {
     note: "Indicative pricing, confirmed after a site assessment.",
     tiers: [
       { name: "Standard", price: "$1,000", desc: "For a single installation starting CBAM data collection.", features: ["Receipt and manifest reading", "Arabic-to-English structured ledger", "Mass-balance checks", "Human review queue", "CSV export"] },
-      { name: "Assured", price: "$1,500", desc: "For installations preparing for third-party verification.", features: ["Everything in Standard", "Evidence pack per reporting period", "Registry-ready installation data", "Multiple reviewer roles and sign-off log", "On-site onboarding for plant staff"] },
+      { name: "Assured", price: "$1,500", desc: "For installations preparing for third-party verification.", features: ["Everything in Standard", "Evidence pack per reporting period (planned)", "Registry-ready installation data", "Multiple reviewer roles and sign-off log", "On-site onboarding for plant staff (planned)"] },
     ],
   },
 
@@ -214,7 +214,7 @@ export const en = {
     title: "ضمان means guarantee.",
     lead: "We named the company after the one thing a factory owner needs from compliance data: the certainty that the number is right.",
     chapters: [
-      { title: "It started with a receipt book", body: "Walk into the weighbridge office of an Egyptian cement or steel plant and you'll find carbon-copy receipt books: diesel deliveries, gas readings, electricity, all written by hand in Arabic. That paper is the most accurate record of a plant's energy use. It is also invisible to every compliance system in Europe." },
+      { title: "It started with a receipt book", body: "Walk into the weighbridge office of many Egyptian cement or steel plants and you'll often find carbon-copy receipt books: diesel deliveries, gas readings, electricity, all written by hand in Arabic. That paper is often the most detailed record of a plant's energy use. But on paper, it rarely reaches the systems EU buyers use for compliance." },
       { title: "Then the rules changed", body: "Since 1 January 2026, EU importers of CBAM goods carry a real carbon cost. If they can't get verified data from the producer, they use default values with a mark-up that rises to 30% by 2028 for most sectors. For an Egyptian exporter, that's margin lost on paper they already have." },
       { title: "So we built the bridge", body: "Daman reads the paper, structures it, checks it against what the plant actually produced, and puts a person in charge of every approval. The result is data an EU buyer can rely on, traceable back to the original receipt." },
     ],
@@ -334,7 +334,7 @@ export const en = {
   appPreview: {
     kicker: "Inside the app",
     title: "One screen for every product you export",
-    body: "Factory teams photograph receipts on their phones; managers see emissions per product, how much is backed by real data, and what their EU buyers would pay. It installs to the home screen on iPhone and Android.",
+    body: "Factory teams photograph receipts on their phones; managers see emissions per product, how much is backed by real data, and what their EU buyers would pay. It is built to install to the home screen on iPhone and Android.",
     cta: "Open the app",
     demo: "Demo data",
     kpi1: "Embedded emissions",
