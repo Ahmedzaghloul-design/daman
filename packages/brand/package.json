@@ -1,0 +1,14 @@
+{
+  "name": "@daman/brand",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Daman logo (source + SVG files), design tokens and brand direction, shared by website/ and app/.",
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./logo/*": "./logo/*"
+  },
+  "scripts": {
+    "build": "node scripts/build-logo.mjs"
+  }
+}

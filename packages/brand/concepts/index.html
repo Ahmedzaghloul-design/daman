@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daman — Logo Concepts, Round 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" />
+<style>
+  :root {
+    --cream: #f6f0e4; --card: #fcf8f0; --sand: #ede3d1; --line: rgba(30,26,20,.10);
+    --text: #1e1a14; --text-2: #5a5045; --muted: #6b6152;
+    --nile: #0e5e6f; --nile-deep: #073640; --on-nile: #f2eee6; --on-nile-2: #a9bfc3;
+    --gold: #c8963e; --gold-700: #875f1c; --paper: #e6d7b8;
+    --verified: #146c37; --review: #9a4a0a; --anomaly: #b91c1c;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--text); font: 15px/1.5 Inter, system-ui, sans-serif; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 48px 24px 96px; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .ar { font-family: "IBM Plex Sans Arabic", sans-serif; }
+  .kicker { font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+  h1 { font-size: 36px; font-weight: 500; letter-spacing: -0.02em; margin: 8px 0; }
+  h2 { font-size: 22px; font-weight: 600; margin: 2px 0 0; letter-spacing: -0.01em; }
+  .lead { color: var(--text-2); max-width: 46rem; margin: 0; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 40px; }
+  .concept { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+    transition: transform 300ms var(--ease), box-shadow 300ms var(--ease); }
+  .concept:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(7,54,64,.10); }
+  .concept header { padding: 20px 20px 0; display: flex; justify-content: space-between; gap: 16px; }
+  .concept header p { color: var(--text-2); margin: 6px 0 0; font-size: 14px; }
+  .num { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--gold-700); }
+  .viewer { position: relative; margin: 16px 20px 0; height: 300px; border-radius: 12px; overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 30%, #fffaf0 0%, var(--sand) 100%); cursor: grab; touch-action: none; }
+  .viewer:active { cursor: grabbing; }
+  .viewer canvas { width: 100%; height: 100%; display: block; }
+  .viewer .hint { position: absolute; left: 12px; bottom: 10px; font-size: 11px; color: var(--muted); font-family: "IBM Plex Mono", monospace; pointer-events: none; }
+  .viewer .fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; }
+  .viewer.no-webgl .fallback { display: flex; }
+  .meaning { list-style: none; padding: 0; margin: 16px 20px 0; display: grid; gap: 8px; }
+  .meaning li { display: grid; grid-template-columns: 12px 1fr; gap: 10px; font-size: 14px; color: var(--text-2); }
+  .meaning li::before { content: ""; width: 8px; height: 8px; margin-top: 7px; border-radius: 2px; background: var(--c, var(--gold)); }
+  .meaning b { color: var(--text); font-weight: 600; }
+  .flats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 20px 0; }
+  .flat { height: 104px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .flat.light { background: var(--cream); border: 1px solid var(--line); }
+  .flat.dark { background: var(--nile-deep); }
+  .lockup { display: flex; align-items: center; gap: 10px; }
+  .lockup svg { width: 44px; height: 44px; flex: none; }
+  .word { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; line-height: 1; }
+  .word-ar { font-size: 18px; font-weight: 600; line-height: 1; padding-inline-start: 10px; border-inline-start: 1px solid currentColor; }
+  .sizes { display: flex; align-items: center; gap: 20px; padding: 16px 20px; margin-top: auto; border-top: 1px solid var(--line); margin-top: 16px; font-size: 11px; color: var(--muted); }
+  .sizes span { display: inline-flex; align-items: center; gap: 6px; }
+  .tab { background: var(--sand); border-radius: 6px 6px 0 0; padding: 5px 10px; color: var(--text-2); font-size: 12px; }
+  .honest { padding: 0 20px 20px; font-size: 13px; color: var(--text-2); }
+  .honest b { color: var(--text); }
+  section.palette { margin-top: 56px; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 16px; }
+  .sw { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); cursor: pointer; transition: transform 200ms var(--ease); }
+  .sw:hover { transform: translateY(-2px); }
+  .sw i { display: block; height: 64px; }
+  .sw div { padding: 8px 10px; font-size: 12px; }
+  .sw span { display: block; color: var(--muted); }
+  .rule { margin-top: 16px; font-size: 13px; color: var(--text-2); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .concept, .sw { transition: none; } .concept:hover { transform: none; } }
+</style>
+<script type="importmap">
+  { "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  } }
+</script>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker mono">PHASE 1 · BRAND · ROUND 2 · DECIDED: CONCEPT 04, THE STAMPED RECEIPT</p>
+  <h1>Four symbolic logo concepts</h1>
+  <p class="lead">Each concept carries a specific meaning from what Daman does. Every logo has two forms: a <b>3D version</b> for the website and presentations (drag it, hover over it, click it) and a <b>flat version</b> for browser tabs, invoices and documents.</p>
+
+  <div class="grid" id="grid"></div>
+
+  <section class="palette">
+    <p class="kicker mono">PALETTE · NILE &amp; DESERT GOLD</p>
+    <h2>Colors</h2>
+    <div class="swatches" id="swatches"></div>
+    <p class="rule"><b>Color rules.</b> Bright gold is for the logo and decorative highlights only; it is too light for small text on cream. Gold text uses dark gold <span class="mono">#875F1C</span>. Green, amber and red keep their meaning (verified, needs review, anomaly) and are never used as decoration. Every text color meets the 4.5:1 accessibility contrast standard. The EU flag stars are intentionally not used, so Daman never looks like an official EU body.</p>
+  </section>
+</div>
+
+<script type="module">
+import * as THREE from "three";
+import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+// ---------- Shape helpers (viewBox 0 0 96 96, y down) ----------
+const f = (n) => +n.toFixed(2);
+const rect = (x, y, w, h) => `M${f(x)} ${f(y)}h${f(w)}v${f(h)}h${f(-w)}Z`;
+const circle = (cx, cy, r) => `M${f(cx - r)} ${f(cy)}a${f(r)} ${f(r)} 0 1 0 ${f(2 * r)} 0a${f(r)} ${f(r)} 0 1 0 ${f(-2 * r)} 0Z`;
+function serrated(cx, cy, rOut, rIn, teeth) {
+  let d = "";
+  for (let i = 0; i < teeth * 2; i++) {
+    const a = (i / (teeth * 2)) * Math.PI * 2, r = i % 2 ? rIn : rOut;
+    d += (i ? "L" : "M") + f(cx + r * Math.cos(a)) + " " + f(cy + r * Math.sin(a));
+  }
+  return d + "Z";
+}
+function tornBottom(x, y, w, h, teeth, depth) { // a receipt with a torn (zig-zag) bottom edge
+  const step = w / teeth / 2;
+  let d = `M${x} ${y}H${x + w}V${y + h}`;
+  for (let i = 0; i < teeth; i++) d += `l${f(-step)} ${depth}l${f(-step)} ${-depth}`;
+  return d + "Z";
+}
+// The letter ض in square Kufic, built from non-overlapping blocks. Scaled around (48,48).
+function kufic(s = 1, cx = 48, cy = 48) {
+  const t = (x, y, w, h) => rect(cx + (x - 48) * s, cy + (y - 48) * s, w * s, h * s);
+  return {
+    dot: t(61.5, 21, 7, 7),
+    body: [t(51, 34, 28, 24), t(58, 41, 14, 10), t(44, 51, 7, 17), t(17, 68, 35, 7), t(17, 42, 7, 26)].join(""),
+  };
+}
+
+// ---------- The four concepts ----------
+// Each layer: path, flat color (light + dark backgrounds), 3D material, extrusion depth and z offset.
+const K1 = kufic(0.55, 48, 47), K2 = kufic(0.5, 48, 40);
+const CONCEPTS = [
+  {
+    id: "bridge", name: "The Bridge", num: "01",
+    idea: "Daman is the bridge between a handwritten Egyptian receipt and a European compliance ledger.",
+    meaning: [
+      ["Left pier", "a torn paper receipt with handwritten lines: where the data starts.", "#e6d7b8"],
+      ["Right pier", "clean ledger blocks: the verified digital record.", "#0e5e6f"],
+      ["Gold keystone", "Daman, the piece that holds the bridge together.", "#c8963e"],
+    ],
+    // A real arch bridge: road deck on top, arch underneath, posts between,
+    // springing from a paper-receipt pier (left) and a ledger-block pier (right).
+    layers: [
+      { d: rect(6, 26, 84, 7), light: "#0e5e6f", dark: "#f2eee6", mat: "nile", depth: 9 },
+      { d: "M14 74A34 34 0 0 1 82 74H74A26 26 0 0 0 22 74Z", light: "#0e5e6f", dark: "#f2eee6", mat: "nile", depth: 8 },
+      { d: rect(23, 33, 3, 19) + rect(33, 33, 3, 11) + rect(60, 33, 3, 11) + rect(70, 33, 3, 19), light: "#0e5e6f", dark: "#f2eee6", mat: "nile", depth: 6 },
+      { d: tornBottom(8, 74, 18, 16, 3, 3) + rect(11, 78, 12, 1.8) + rect(11, 82, 8, 1.8), light: "#c9b48a", dark: "#e6d7b8", mat: "paper", depth: 7 },
+      { d: [70, 75.8, 81.6].flatMap((x) => [74, 79.8, 85.6].map((y) => rect(x, y, 4.8, 4.8))).join(""), light: "#0e5e6f", dark: "#f2eee6", mat: "nile", depth: 8 },
+      { d: "M42.5 37H53.5L52 49H44Z", light: "#c8963e", dark: "#c8963e", mat: "gold", depth: 12 },
+    ],
+    honest: "<b>Strongest story</b>: it is literally the tagline, \"the analog-to-digital bridge\". At 16px the piers and posts blur, so the tab icon would show just the deck, arch and keystone.",
+  },
+  {
+    id: "seal", name: "The Guarantee Seal", num: "02",
+    idea: "An official seal with ض at its centre. ضمان means guarantee, and a seal is how a guarantee looks on paper.",
+    meaning: [
+      ["Serrated gold rim", "an embossed notary seal: official, checked, signed.", "#c8963e"],
+      ["Square Kufic ض", "the first letter of ضمان, in a calligraphy style born in the Arab world.", "#f2eee6"],
+      ["Nile disc", "the Egyptian origin of the data.", "#0e5e6f"],
+    ],
+    layers: [
+      { d: serrated(48, 48, 45, 42, 40) + circle(48, 48, 38.5), light: "#c8963e", dark: "#c8963e", mat: "gold", depth: 5 },
+      { d: circle(48, 48, 36), light: "#0e5e6f", dark: "#0e5e6f", mat: "nile", depth: 6 },
+      { d: circle(48, 48, 33) + circle(48, 48, 31.2), light: "#c8963e", dark: "#c8963e", mat: "gold", depth: 8 },
+      { d: K1.body + K1.dot, light: "#f6f0e4", dark: "#f6f0e4", mat: "cream", depth: 9 },
+    ],
+    honest: "<b>Most \"official\"</b>: the logo doubles as the seal stamped on every human-approved entry in the program. The rim teeth soften at 16px but the shape stays recognisable.",
+  },
+  {
+    id: "factory", name: "The Measured Factory", num: "03",
+    idea: "A factory whose smoke rises as gold blocks of data: emissions that are measured and accounted for.",
+    meaning: [
+      ["Saw-tooth factory", "the cement, steel and fertiliser plants Daman serves.", "#0e5e6f"],
+      ["Gold data blocks", "emissions turned into exact, countable numbers.", "#c8963e"],
+      ["Gold band on the chimney", "the measurement point.", "#c8963e"],
+    ],
+    layers: [
+      { d: rect(8, 80, 80, 6), light: "#073640", dark: "#a9bfc3", mat: "nileDeep", depth: 6 },
+      { d: "M12 80V52L26 42V52L40 42V52L54 42V80Z" + rect(17, 60, 6, 9) + rect(29, 60, 6, 9) + rect(41, 60, 6, 9), light: "#0e5e6f", dark: "#f2eee6", mat: "nile", depth: 9 },
+      { d: rect(54, 58, 26, 22) + rect(59, 64, 6, 8) + rect(69, 64, 6, 8), light: "#0e5e6f", dark: "#f2eee6", mat: "nile", depth: 9 },
+      { d: rect(63, 28, 9, 30), light: "#0e5e6f", dark: "#f2eee6", mat: "nile", depth: 9 },
+      { d: rect(63, 33, 9, 3) + rect(64, 19, 6, 6) + rect(71.5, 12, 5, 5) + rect(65, 6, 4, 4) + rect(73, 1.5, 3, 3), light: "#c8963e", dark: "#c8963e", mat: "gold", depth: 11 },
+    ],
+    honest: "<b>Most direct</b>: anyone sees \"industry + emissions + measurement\". It is the most literal of the four; factories are common in industrial logos, but the gold data-smoke makes it ours.",
+  },
+  {
+    id: "receipt", name: "The Stamped Receipt", num: "04",
+    idea: "A handwritten receipt from a carbon-copy book, carrying ض and stamped with a gold approval seal.",
+    meaning: [
+      ["Two stacked receipts", "the carbon-copy receipt books used on Egyptian plant floors.", "#e6d7b8"],
+      ["Kufic ض and ledger lines", "the record, written down.", "#0e5e6f"],
+      ["Gold seal with check", "a human reviewer approved it.", "#c8963e"],
+    ],
+    layers: [
+      { d: tornBottom(26, 14, 50, 68, 6, 4), light: "#0e5e6f", dark: "#a9bfc3", mat: "nile", depth: 4 },
+      { d: tornBottom(20, 9, 50, 68, 6, 4), light: "#e6d7b8", dark: "#e6d7b8", mat: "paper", depth: 6, z: 4 },
+      { d: K2.body + K2.dot + rect(28, 60, 24, 2.5) + rect(28, 66, 16, 2.5), light: "#0e5e6f", dark: "#0e5e6f", mat: "nile", depth: 4, z: 10 },
+      { d: circle(66, 70, 12) + "M59.5 70.2L62 67.7L64.6 70.3L70.6 64.3L73.1 66.8L64.6 75.3Z", light: "#c8963e", dark: "#c8963e", mat: "gold", depth: 6, z: 10 },
+    ],
+    honest: "<b>Most emotional</b>: it shows the exact object Daman transforms. It is the busiest design, so it needs the simplified seal-only icon for browser tabs.",
+  },
+];
+
+// ---------- Flat SVG ----------
+function flatSVG(c, theme, size) {
+  const paths = c.layers.map((l) => `<path d="${l.d}" fill="${l[theme]}" fill-rule="evenodd"/>`).join("");
+  return `<svg viewBox="0 0 96 96" width="${size}" height="${size}" role="img" aria-label="${c.name} logo">${paths}</svg>`;
+}
+
+// ---------- Cards ----------
+const grid = document.getElementById("grid");
+for (const c of CONCEPTS) {
+  const el = document.createElement("article");
+  el.className = "concept";
+  el.innerHTML = `
+    <header><div><span class="num">CONCEPT ${c.num}</span><h2>${c.name}</h2><p>${c.idea}</p></div></header>
+    <div class="viewer" id="v-${c.id}" aria-label="Interactive 3D ${c.name} logo. Drag to rotate, click to stamp.">
+      <canvas></canvas><div class="fallback">${flatSVG(c, "light", 180)}</div>
+      <span class="hint">drag to rotate · hover to tilt · click to stamp</span>
+    </div>
+    <ul class="meaning">${c.meaning.map(([a, b, col]) => `<li style="--c:${col}"><span><b>${a}:</b> ${b}</span></li>`).join("")}</ul>
+    <div class="flats">
+      <div class="flat light"><div class="lockup" style="color:var(--nile-deep)">${flatSVG(c, "light", 44)}<span class="word">Daman</span><span class="word-ar ar" style="color:var(--gold-700)">ضمان</span></div></div>
+      <div class="flat dark"><div class="lockup" style="color:var(--on-nile)">${flatSVG(c, "dark", 44)}<span class="word">Daman</span><span class="word-ar ar" style="color:var(--gold)">ضمان</span></div></div>
+    </div>
+    <div class="sizes"><span>${flatSVG(c, "light", 32)} 32px</span><span>${flatSVG(c, "light", 16)} 16px</span><span class="tab">${flatSVG(c, "light", 16)} Daman — browser tab</span></div>
+    <p class="honest">${c.honest}</p>`;
+  grid.appendChild(el);
+}
+
+// ---------- Swatches (click to copy) ----------
+const SW = [["Nile teal", "#0E5E6F", "brand"], ["Deep Nile", "#073640", "dark sections"], ["Desert gold", "#C8963E", "logo, highlights"], ["Dark gold", "#875F1C", "gold text"],
+  ["Cream", "#F6F0E4", "background"], ["Sand", "#EDE3D1", "raised"], ["Receipt paper", "#E6D7B8", "illustration"], ["Text", "#1E1A14", "body"],
+  ["Verified", "#146C37", "status only"], ["Needs review", "#9A4A0A", "status only"], ["Anomaly", "#B91C1C", "status only"]];
+const sw = document.getElementById("swatches");
+for (const [n, hex, use] of SW) {
+  const b = document.createElement("button");
+  b.className = "sw"; b.type = "button"; b.style.textAlign = "start"; b.style.font = "inherit"; b.style.padding = "0";
+  b.innerHTML = `<i style="background:${hex}"></i><div>${n}<span class="mono">${hex} · ${use}</span></div>`;
+  b.onclick = async () => { try { await navigator.clipboard.writeText(hex); b.querySelector("span").textContent = `${hex} · copied`; } catch {} };
+  sw.appendChild(b);
+}
+
+// ---------- 3D viewers ----------
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const loader = new SVGLoader();
+const MATERIALS = () => ({
+  nile: new THREE.MeshPhysicalMaterial({ color: 0x0e5e6f, roughness: 0.32, metalness: 0.15, clearcoat: 0.6, clearcoatRoughness: 0.25 }),
+  nileDeep: new THREE.MeshPhysicalMaterial({ color: 0x073640, roughness: 0.4, metalness: 0.1, clearcoat: 0.4 }),
+  gold: new THREE.MeshStandardMaterial({ color: 0xf2c96e, roughness: 0.3, metalness: 0.95, envMapIntensity: 1.9 }),
+  paper: new THREE.MeshStandardMaterial({ color: 0xe6d7b8, roughness: 0.92, metalness: 0 }),
+  cream: new THREE.MeshPhysicalMaterial({ color: 0xf6f0e4, roughness: 0.5, metalness: 0, clearcoat: 0.3 }),
+});
+
+function buildViewer(concept) {
+  const host = document.getElementById(`v-${concept.id}`);
+  const canvas = host.querySelector("canvas");
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); }
+  catch { host.classList.add("no-webgl"); return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.35;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.add(new THREE.HemisphereLight(0xfff8ec, 0xd8c8a8, 0.6));
+  const camera = new THREE.PerspectiveCamera(28, 1, 1, 2000);
+  camera.position.set(0, 0, 250);
+  const key = new THREE.DirectionalLight(0xfff4e0, 1.4); key.position.set(80, 120, 160); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xbfe3ea, 0.6); rim.position.set(-120, -40, 60); scene.add(rim);
+
+  const mats = MATERIALS();
+  const logo = new THREE.Group();
+  for (const layer of concept.layers) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg"><path d="${layer.d}" fill="#000" fill-rule="evenodd"/></svg>`;
+    const shapes = loader.parse(svg).paths.flatMap((p) => SVGLoader.createShapes(p));
+    const geo = new THREE.ExtrudeGeometry(shapes, { depth: layer.depth, curveSegments: 32, bevelEnabled: true, bevelThickness: 0.7, bevelSize: 0.35, bevelSegments: 3 });
+    const mesh = new THREE.Mesh(geo, mats[layer.mat]);
+    mesh.position.z = layer.z ?? 0;
+    logo.add(mesh);
+  }
+  // SVG y points down; flip it and centre the logo on its own pivot.
+  logo.scale.set(1, -1, 1);
+  const box = new THREE.Box3().setFromObject(logo);
+  const centre = box.getCenter(new THREE.Vector3());
+  logo.position.sub(centre);
+  const pivot = new THREE.Group();
+  pivot.add(logo);
+  scene.add(pivot);
+
+  // Interaction state
+  const target = { x: 0, y: 0 }, spin = { y: 0, v: 0 };
+  let dragging = false, lastX = 0, hovering = false, stamp = 0, visible = true;
+  host.addEventListener("pointermove", (e) => {
+    const r = host.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
+    if (dragging) { spin.v = (e.clientX - lastX) * 0.012; spin.y += spin.v; lastX = e.clientX; }
+    target.y = nx * 0.7; target.x = ny * 0.5; hovering = true;
+  });
+  host.addEventListener("pointerleave", () => { hovering = false; dragging = false; target.x = 0; target.y = 0; });
+  host.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; host.setPointerCapture(e.pointerId); });
+  host.addEventListener("pointerup", (e) => { if (Math.abs(spin.v) < 0.01) stamp = 1; dragging = false; host.releasePointerCapture(e.pointerId); });
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(host);
+
+  function resize() {
+    const { clientWidth: w, clientHeight: h } = host;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(host);
+  resize();
+
+  const clock = new THREE.Clock();
+  (function loop() {
+    requestAnimationFrame(loop);
+    if (!visible) return;
+    const t = clock.getElapsedTime();
+    if (!dragging) { spin.v *= 0.94; spin.y += spin.v; spin.y *= 0.96; }      // ease back to the front
+    const idleY = reduceMotion || hovering ? 0 : Math.sin(t * 0.6) * 0.25;    // gentle idle sway
+    pivot.rotation.y += (target.y + spin.y + idleY - pivot.rotation.y) * 0.08;
+    pivot.rotation.x += (target.x - pivot.rotation.x) * 0.08;
+    stamp *= 0.9;                                                              // click: press toward the viewer like a stamp
+    pivot.position.z = Math.sin(stamp * Math.PI) * 18;
+    renderer.render(scene, camera);
+  })();
+}
+CONCEPTS.forEach(buildViewer);
+</script>
+</body>
+</html>

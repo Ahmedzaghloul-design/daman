@@ -1,0 +1,72 @@
+/*
+ * Daman design tokens (Tailwind v4 @theme). Import from a frontend's CSS:
+ *   @import "tailwindcss";
+ *   @import "@daman/brand/tokens.css";
+ * Every color/size/motion value used in website/ and app/ comes from here.
+ * Palette: Nile & desert gold (chosen 2026-11-10). See DIRECTION.md.
+ * All text pairs checked against WCAG 4.5:1 (see DIRECTION.md for the rules).
+ */
+@theme {
+  /* Type */
+  --font-sans: "Inter", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-receipt: "Aref Ruqaa", "IBM Plex Sans Arabic", serif;
+
+  /* Cream (warm neutrals) */
+  --color-cream: #f6f0e4;       /* page background */
+  --color-card: #fcf8f0;        /* cards, panels */
+  --color-sand: #ede3d1;        /* raised: active rows, inputs */
+  --color-paper: #e6d7b8;       /* receipt paper (illustration only) */
+  --color-line: rgb(30 26 20 / 0.10); /* hairlines */
+  --color-text: #1e1a14;        /* primary text      15.3:1 on cream */
+  --color-text-2: #5a5045;      /* secondary text     6.9:1 */
+  --color-muted: #6b6152;       /* meta and captions  5.4:1 */
+
+  /* Nile (brand) */
+  --color-nile: #0e5e6f;        /* brand, primary actions; white text 7.4:1 */
+  --color-nile-700: #0b4d5b;    /* hover on nile */
+  --color-nile-deep: #073640;   /* dark sections, program sidebar */
+  --color-nile-raised: #0c4450; /* raised surface on dark */
+  --color-on-nile: #f2eee6;     /* text on deep nile  11.3:1 */
+  --color-on-nile-2: #a9bfc3;   /* secondary on deep   6.8:1 */
+
+  /* Desert gold (accent). Bright gold = logo and decoration only (2.35:1 on
+     cream, too light for text). Use gold-700 for gold text. */
+  --color-gold: #c8963e;
+  --color-gold-700: #875f1c;    /* gold text on cream 5.0:1 */
+
+  /* Semantic (meaning only, never decoration) */
+  --color-verified: #146c37;    /* 5.7:1 on cream */
+  --color-verified-soft: #e7f3ea;
+  --color-review: #9a4a0a;      /* 5.5:1 on cream */
+  --color-review-soft: #f8eedf;
+  --color-anomaly: #b91c1c;     /* 5.7:1 on cream */
+  --color-anomaly-soft: #f8e5e3;
+
+  /* Radius */
+  --radius-tag: 4px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-panel: 16px;
+
+  /* Depth (light surfaces) */
+  --shadow-small: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-float: 0 16px 40px rgb(7 54 64 / 0.10);
+
+  /* Motion: one curve for everything */
+  --ease-daman: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-press: 150ms;
+  --duration-menu: 200ms;
+  --duration-enter: 400ms;
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

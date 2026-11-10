@@ -5,7 +5,7 @@ phase is built against it. If something is not written here, it is not built
 without asking first. If a fact is not in the "Verified facts" section with a
 source, it does not go on the website.
 
-Status: **Approved 2026-11-10.** Phase 0 complete.
+Status: **Approved 2026-11-10.** Phases 0 and 1 complete.
 
 ---
 
@@ -28,9 +28,10 @@ internet and shows its sources.
 | Chatbot location | Both: website (sales questions) and program (workspace help) |
 | "All factories" claim | Accurate wording: Daman reads energy records from **any** factory; CBAM filing data only for CBAM sectors (wording in §5.4) |
 | Images | AI-generated now, built so real photos can replace them later by swapping files |
-| Design rules | "Serious but alive": institutional and trustworthy, with photos, subtle motion and rich visuals; no glow, no cartoonish effects |
+| Design rules | "Serious but alive": institutional and trustworthy, with photos, subtle motion, interactive 3D and rich visuals; no glow, no cartoonish effects |
 | Website tools | All four: CBAM cost calculator, live pipeline demo, "How we calculate" explorer, sector checker |
-| Logo | 3 concepts shown first; user picks one before anything else is built |
+| Logo | **Chosen: "The Stamped Receipt"** (round 2, concept 04), with an interactive 3D version for the website and a flat version for documents; see `packages/brand/DIRECTION.md` |
+| Palette | **Nile & desert gold**: Nile teal `#0E5E6F`, desert gold `#C8963E`, on cream (replaces the earlier navy palette) |
 | Languages | English and Arabic with right-to-left layout, in both products (kept from v1) |
 | Gemini model | `gemini-3.6-flash` (free tier, tested); `gemini-4-argon` only if billing is enabled |
 
