@@ -5,7 +5,7 @@ phase is built against it. If something is not written here, it is not built
 without asking first. If a fact is not in the "Verified facts" section with a
 source, it does not go on the website.
 
-Status: **Approved 2026-11-10.** Phases 0–3 complete (Phase 3 awaiting review). Updated with the team's CBAM documents and the official EU data files.
+Status: **Approved 2026-11-10.** Phases 0–4 complete (Phase 4 awaiting review). Updated with the team's CBAM documents and the official EU data files.
 
 ---
 
@@ -37,6 +37,9 @@ internet and shows its sources.
 | Program layout | **A: Report table** (inspired by Kuehne+Nagel's CBAM report, adapted for the exporting factory): period list, product table with CN code, tonnes, installation, % actual data bar, tCO2e, actions |
 | Landmarks | **3D globe + line art**: interactive 3D globe with landmarks and gold trade routes in the website hero; subtle gold line-art skylines elsewhere; very faint line art only in the program |
 | Landmark set | Egypt (Pyramids of Giza, Cairo Tower, Citadel of Qaitbay, Suez Canal), EU (Brandenburg Gate, Eiffel Tower, Colosseum, Rotterdam cranes), UK (Elizabeth Tower), wider world as "future" markers. No Atomium (image rights are enforced); no EU flag stars |
+| Receipt allocation | The reviewer assigns each receipt to an installation and product at approval |
+| Process emissions | Manual per-product field from production records; products without it (or cement without traced clinker precursors) are marked **Incomplete** and claim no actual-data share |
+| Demo data | One fictional Egyptian cement installation, every item tagged "Demo", removable in Settings |
 | Expansion story | Egypt first; then the rest of MENA, exporters selling to the UK under the UK CBAM (from 2027), and Africa & Asia. Shown as plans, not as existing customers |
 
 ## 3. Rules for the builder (to prevent hallucination)

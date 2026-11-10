@@ -1,206 +1,116 @@
 import { useState } from "react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
-import { Button, fmt, Num, Panel } from "./ui.jsx";
+import { useAppState } from "../state/AppState.jsx";
+import { Button, Field, fmt, inputClass, Num } from "./ui.jsx";
 
-const ENERGY_OPTIONS = ["Diesel", "Electricity", "Natural Gas", "Heavy Fuel Oil", "Coal", "Petcoke"];
-const UNIT_OPTIONS = ["L", "kWh", "m3", "t"];
+const ENERGY = ["Diesel", "Electricity", "Natural Gas", "Heavy Fuel Oil", "Coal", "Petcoke"];
+const UNITS = ["L", "kWh", "m3", "t"];
 
-/**
- * Right side of the split-screen review: the structured record Gemini
- * returned, editable by the reviewer, plus the sign-off controls.
- */
-export default function ReviewPanel({
-  receipt,
-  reasons,
-  anomaly,
-  co2e,
-  model,
-  threshold,
-  reviewerName,
-  onReviewerChange,
-  onEdit,
-  onApprove,
-  onReject,
-}) {
+/** The extracted record, editable, plus assignment and sign-off. */
+export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, threshold, installationId, productId, onAssign, onEdit, onApprove, onReject }) {
   const { t, energyLabel } = useLanguage();
+  const { installations, products, settings, updateSettings } = useAppState();
   const [attested, setAttested] = useState(false);
   const [justification, setJustification] = useState("");
-
-  const confidence = receipt.confidence_score ?? 0;
-  const lowConfidence = confidence < threshold;
-  const flagged = reasons.length > 0;
-  const volumeValid = Number(receipt.volume) > 0;
-  const justificationOk = !anomaly || justification.trim().length >= 10;
-  const canApprove = attested && reviewerName.trim() && volumeValid && justificationOk;
-
-  const fieldFlag = (field) => {
-    if (field === "volume" && !volumeValid) return true;
-    if (field === "date" && reasons.includes("invalidDate")) return true;
-    if (!String(receipt[field] ?? "").trim()) return true;
-    return false;
-  };
-
-  const input = (flag) =>
-    `mt-1 block w-full rounded-sm border bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-slate-900 ${flag ? "border-amber-600" : "border-slate-300"}`;
+  const conf = receipt.confidence_score ?? 0;
+  const low = conf < threshold;
+  const volumeOk = Number(receipt.volume) > 0;
+  const assigned = installationId && productId;
+  const justOk = !anomaly || justification.trim().length >= 10;
+  const canApprove = attested && settings.reviewerName.trim() && volumeOk && assigned && justOk;
+  const allReasons = assigned ? reasons : [...reasons, "unassigned"];
+  const flag = (f) => (f === "volume" ? !volumeOk : f === "date" ? reasons.includes("invalidDate") : !String(receipt[f] ?? "").trim());
+  const field = (f) => `${inputClass} ${flag(f) ? "border-review" : ""}`;
 
   return (
-    <Panel
-      title={t("review.extracted")}
-      actions={
-        <span className="font-mono text-xs text-slate-500">
-          {t("review.model")}: {model}
-        </span>
-      }
-    >
+    <section className="rounded-card border border-line bg-card">
+      <header className="flex items-center justify-between border-b border-line px-4 py-3">
+        <h2 className="text-sm font-semibold">{t("review.extracted")}</h2>
+        <Num className="text-xs text-muted">{t("review.model")}: {model}</Num>
+      </header>
       <div className="space-y-5 p-4">
-        {/* Confidence readout */}
         <div>
-          <div className="flex items-baseline justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">{t("review.confidence")}</p>
-            <p className="text-xs text-slate-500">
-              {t("review.threshold")} <Num>{fmt(threshold, 2)}</Num>
-            </p>
+          <div className="flex items-baseline justify-between text-xs">
+            <span className="font-medium text-text-2">{t("review.confidence")}</span>
+            <span className="text-muted">{t("review.threshold")} <Num>{fmt(threshold, 2)}</Num></span>
           </div>
-          <div className="mt-2 flex items-center gap-3">
-            <div className="h-2 flex-1 rounded-sm bg-gray-200" dir="ltr">
-              <div
-                className={`h-2 rounded-sm ${lowConfidence ? "bg-amber-600" : "bg-emerald-700"}`}
-                style={{ width: `${Math.round(confidence * 100)}%` }}
-              />
-            </div>
-            <Num className={`text-lg font-semibold ${lowConfidence ? "text-amber-600" : "text-emerald-700"}`}>
-              {fmt(confidence, 2)}
-            </Num>
+          <div className="mt-2 flex items-center gap-3" dir="ltr">
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-sand"><div className={`h-full rounded-full ${low ? "bg-review" : "bg-verified"}`} style={{ width: `${Math.round(conf * 100)}%` }} /></div>
+            <Num className={`font-semibold ${low ? "text-review" : "text-verified"}`}>{fmt(conf, 2)}</Num>
           </div>
         </div>
 
-        {/* Review flags */}
-        <div className={`rounded-sm border p-3 ${flagged ? "border-amber-600" : "border-emerald-700"}`}>
-          <p className={`text-sm font-semibold ${flagged ? "text-amber-600" : "text-emerald-700"}`}>
-            {flagged ? t("review.flagged") : t("review.clear")}
-          </p>
-          {flagged && (
-            <ul className="mt-1 space-y-0.5 text-sm text-slate-700">
-              {reasons.map((r) => (
-                <li key={r} className={r === "anomaly" ? "text-red-700" : ""}>
-                  — {t(`reason.${r}`)}
-                </li>
-              ))}
+        <div className={`rounded-control border p-3 ${allReasons.length ? "border-review/40 bg-review-soft" : "border-verified/30 bg-verified-soft"}`}>
+          <p className={`text-sm font-semibold ${allReasons.length ? "text-review" : "text-verified"}`}>{allReasons.length ? t("review.flagged") : t("review.clear")}</p>
+          {allReasons.length > 0 && (
+            <ul className="mt-1 space-y-0.5 text-sm text-text">
+              {allReasons.map((r) => <li key={r} className={r === "anomaly" ? "text-anomaly" : ""}>— {t(`review.reasons.${r}`)}</li>)}
             </ul>
           )}
         </div>
 
-        {/* Editable extracted fields */}
+        <div>
+          <p className="text-xs font-medium text-text-2">{t("review.assign")}</p>
+          <div className="mt-2 grid gap-3 sm:grid-cols-2">
+            <select aria-label={t("review.installation")} className={`${inputClass} ${!installationId ? "border-review" : ""}`} value={installationId} onChange={(e) => onAssign("installationId", e.target.value)}>
+              <option value="">{t("review.installation")}: {t("review.choose")}</option>
+              {installations.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
+            </select>
+            <select aria-label={t("review.product")} className={`${inputClass} ${!productId ? "border-review" : ""}`} value={productId} onChange={(e) => onAssign("productId", e.target.value)} disabled={!installationId}>
+              <option value="">{t("review.product")}: {t("review.choose")}</option>
+              {products.filter((p) => p.installationId === installationId).map((p) => <option key={p.id} value={p.id}>{p.cn.replace(/(\d{4})(\d{2})(\d{2})(\d*)/, "$1 $2 $3 $4").trim()}</option>)}
+            </select>
+          </div>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="text-sm font-medium text-slate-700 sm:col-span-2">
-            {t("field.factory_name")}
-            <input
-              className={input(fieldFlag("factory_name"))}
-              value={receipt.factory_name ?? ""}
-              onChange={(e) => onEdit("factory_name", e.target.value)}
-              dir="ltr"
-            />
-          </label>
-          <label className="text-sm font-medium text-slate-700">
-            {t("field.energy_type")}
-            <select
-              className={input(fieldFlag("energy_type"))}
-              value={receipt.energy_type ?? ""}
-              onChange={(e) => onEdit("energy_type", e.target.value)}
-            >
-              {!ENERGY_OPTIONS.includes(receipt.energy_type) && <option value={receipt.energy_type}>{receipt.energy_type || "—"}</option>}
-              {ENERGY_OPTIONS.map((o) => (
-                <option key={o} value={o}>
-                  {energyLabel(o)}
-                </option>
-              ))}
+          <Field label={t("review.fields.factory_name")} className="sm:col-span-2">
+            <input dir="ltr" className={field("factory_name")} value={receipt.factory_name ?? ""} onChange={(e) => onEdit("factory_name", e.target.value)} />
+          </Field>
+          <Field label={t("review.fields.energy_type")}>
+            <select className={field("energy_type")} value={receipt.energy_type ?? ""} onChange={(e) => onEdit("energy_type", e.target.value)}>
+              {!ENERGY.includes(receipt.energy_type) && <option value={receipt.energy_type}>{receipt.energy_type || "—"}</option>}
+              {ENERGY.map((o) => <option key={o} value={o}>{energyLabel(o)}</option>)}
             </select>
-          </label>
-          <label className="text-sm font-medium text-slate-700">
-            {t("field.date")}
-            <input
-              type="date"
-              className={`${input(fieldFlag("date"))} font-mono`}
-              value={/^\d{4}-\d{2}-\d{2}$/.test(receipt.date ?? "") ? receipt.date : ""}
-              onChange={(e) => onEdit("date", e.target.value)}
-              dir="ltr"
-            />
-          </label>
-          <label className="text-sm font-medium text-slate-700">
-            {t("field.volume")}
-            <input
-              type="number"
-              min="0"
-              step="any"
-              className={`${input(fieldFlag("volume"))} font-mono tabular-nums`}
-              value={receipt.volume ?? ""}
-              onChange={(e) => onEdit("volume", e.target.value === "" ? null : Number(e.target.value))}
-              dir="ltr"
-            />
-          </label>
-          <label className="text-sm font-medium text-slate-700">
-            {t("field.unit")}
-            <select
-              className={`${input(fieldFlag("unit"))} font-mono`}
-              value={receipt.unit ?? ""}
-              onChange={(e) => onEdit("unit", e.target.value)}
-            >
-              {!UNIT_OPTIONS.includes(receipt.unit) && <option value={receipt.unit}>{receipt.unit || "—"}</option>}
-              {UNIT_OPTIONS.map((o) => (
-                <option key={o} value={o}>
-                  {o}
-                </option>
-              ))}
+          </Field>
+          <Field label={t("review.fields.date")}>
+            <input type="date" dir="ltr" className={`${field("date")} font-mono`} value={/^\d{4}-\d{2}-\d{2}$/.test(receipt.date ?? "") ? receipt.date : ""} onChange={(e) => onEdit("date", e.target.value)} />
+          </Field>
+          <Field label={t("review.fields.volume")}>
+            <input type="number" min="0" step="any" dir="ltr" className={`${field("volume")} font-mono`} value={receipt.volume ?? ""} onChange={(e) => onEdit("volume", e.target.value === "" ? null : Number(e.target.value))} />
+          </Field>
+          <Field label={t("review.fields.unit")}>
+            <select className={`${field("unit")} font-mono`} value={receipt.unit ?? ""} onChange={(e) => onEdit("unit", e.target.value)}>
+              {!UNITS.includes(receipt.unit) && <option value={receipt.unit}>{receipt.unit || "—"}</option>}
+              {UNITS.map((o) => <option key={o}>{o}</option>)}
             </select>
-          </label>
+          </Field>
         </div>
 
-        {/* Calculated emissions */}
-        <div className="flex items-baseline justify-between border-t border-slate-300 pt-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">{t("review.co2e")}</p>
-          {co2e === null ? (
-            <p className="text-xs text-amber-600">{t("review.co2eNa")}</p>
-          ) : (
-            <Num className="text-xl font-semibold text-slate-900">{fmt(co2e, 3)} tCO2e</Num>
-          )}
+        <div className="flex items-baseline justify-between border-t border-line pt-4">
+          <span className="text-xs font-medium text-text-2">{t("review.co2e")}</span>
+          {co2e === null ? <span className="text-xs text-review">{t("review.co2eNa")}</span> : <Num className="text-xl font-semibold">{fmt(co2e, 3)} tCO2e</Num>}
         </div>
 
-        {/* Sign-off */}
-        <div className="space-y-3 border-t border-slate-300 pt-4">
-          <label className="block text-sm font-medium text-slate-700">
-            {t("review.reviewer")}
-            <input className={input(!reviewerName.trim())} value={reviewerName} onChange={(e) => onReviewerChange(e.target.value)} />
-          </label>
+        <div className="space-y-3 border-t border-line pt-4">
+          <Field label={t("review.reviewer")}>
+            <input className={`${inputClass} ${!settings.reviewerName.trim() ? "border-review" : ""}`} value={settings.reviewerName} onChange={(e) => updateSettings({ reviewerName: e.target.value })} />
+          </Field>
           {anomaly && (
-            <label className="block text-sm font-medium text-red-700">
-              {t("review.justification")}
-              <textarea
-                rows={3}
-                className={input(!justificationOk)}
-                value={justification}
-                onChange={(e) => setJustification(e.target.value)}
-              />
-            </label>
+            <Field label={t("review.justification")}>
+              <textarea rows={3} className={`${inputClass} h-auto py-2 ${!justOk ? "border-review" : ""}`} value={justification} onChange={(e) => setJustification(e.target.value)} />
+            </Field>
           )}
-          <label className="flex items-start gap-2 text-sm text-slate-700">
-            <input
-              type="checkbox"
-              className="mt-0.5 h-4 w-4 rounded-sm border-slate-300 accent-slate-900"
-              checked={attested}
-              onChange={(e) => setAttested(e.target.checked)}
-            />
+          <label className="flex items-start gap-2 text-sm text-text">
+            <input type="checkbox" className="mt-0.5 h-4 w-4 accent-nile" checked={attested} onChange={(e) => setAttested(e.target.checked)} />
             {t("review.attest")}
           </label>
-          <div className="flex flex-wrap gap-3 pt-1">
-            <Button variant="success" disabled={!canApprove} onClick={() => onApprove({ justification: justification.trim() })}>
-              {t("review.approve")}
-            </Button>
-            <Button variant="danger" onClick={onReject}>
-              {t("review.reject")}
-            </Button>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <Button variant="success" disabled={!canApprove} onClick={() => onApprove({ justification: justification.trim() })}>{t("review.approve")}</Button>
+            <Button variant="danger" onClick={onReject}>{t("review.reject")}</Button>
           </div>
         </div>
       </div>
-    </Panel>
+    </section>
   );
 }

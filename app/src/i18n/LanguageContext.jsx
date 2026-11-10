@@ -1,50 +1,52 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { energyLabels, strings } from "./strings.js";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { LanguageContext } from "./context.js";
+import { en } from "./en.js";
+import { ar } from "./ar.js";
 
-const LanguageContext = createContext(null);
-const STORAGE_KEY = "daman.lang";
+const STRINGS = { en, ar };
+const ENERGY_AR = { Diesel: "سولار", Electricity: "كهرباء", "Natural Gas": "غاز طبيعي", "Heavy Fuel Oil": "مازوت", Coal: "فحم", Petcoke: "بتروكوك" };
+const KEY = "daman.app.lang";
 
-function readStoredLang() {
+function readStored() {
   try {
-    return localStorage.getItem(STORAGE_KEY) === "ar" ? "ar" : "en";
+    return localStorage.getItem(KEY) === "ar" ? "ar" : "en";
   } catch {
     return "en";
   }
 }
 
+/** Looks up "a.b.c" in the dictionary; arrays/objects are returned as-is. */
+function lookup(dict, key) {
+  return key.split(".").reduce((o, k) => (o == null ? o : o[k]), dict);
+}
+
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState(readStoredLang);
+  const [lang, setLang] = useState(readStored);
 
   useEffect(() => {
-    // Switching dir on <html> flips every Tailwind logical utility
-    // (ms-/me-/ps-/pe-/start-/end-/text-start) automatically.
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
     try {
-      localStorage.setItem(STORAGE_KEY, lang);
+      localStorage.setItem(KEY, lang);
     } catch {
-      /* storage unavailable: language still works for this visit */
+      /* storage unavailable */
     }
   }, [lang]);
 
   const t = useCallback(
     (key, vars) => {
-      let value = strings[lang][key] ?? strings.en[key] ?? key;
-      if (typeof value === "string" && vars) {
-        value = value.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
-      }
-      return value;
+      let v = lookup(STRINGS[lang], key) ?? lookup(STRINGS.en, key) ?? key;
+      if (typeof v === "string" && vars) v = v.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
+      return v;
     },
     [lang],
   );
 
-  const energyLabel = useCallback((type) => energyLabels[lang]?.[type] ?? type, [lang]);
-
+  const energyLabel = useCallback((type) => (lang === "ar" ? ENERGY_AR[type] ?? type : type), [lang]);
   const value = useMemo(
     () => ({ lang, isRtl: lang === "ar", t, energyLabel, toggle: () => setLang((l) => (l === "en" ? "ar" : "en")) }),
     [lang, t, energyLabel],
   );
-
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 

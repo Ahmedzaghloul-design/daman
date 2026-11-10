@@ -54,12 +54,14 @@ balance fails.
 | `website/src/i18n/en.js`, `ar.js` | All website copy; every regulatory fact is tagged with its spec fact number |
 | `website/src/data/images.js` | The website's photos; swap in real photos here |
 | `website/src/data/recorded-audits.json` | Real Gemini responses replayed by the live demo |
-| `app/` | The program: upload, human review, ledger, anomalies, settings |
-| `app/src/pages/Dashboard.jsx` | Workspace state machine and screens |
-| `app/src/components/LedgerTable.jsx` | Monospace compliance ledger and CSV export |
-| `app/src/components/ReviewPanel.jsx` | HITL review form and sign-off |
+| `app/` | The program: overview, emissions report, receipts, ledger, anomalies, installations, products, settings |
+| `app/src/pages/Report.jsx` | Main screen: per-product report table (CN code, actual-data share, direct/indirect, tCO2e/t) |
+| `app/src/state/Pipeline.jsx` | Receipt state machine (OCR → Gemini → human review) |
+| `app/src/components/ReviewPanel.jsx` | Review form: assignment to installation/product and sign-off |
+| `app/src/lib/exports.js` | CSV and O3CI-fields JSON export |
 | `app/src/services/ocrApi.js` | OCR mock (swap for the real model service) |
-| `app/src/i18n/strings.js` | All English and Arabic copy for the program |
+| `app/src/i18n/en.js`, `ar.js` | All English and Arabic copy for the program |
+| `packages/core/report.js` | Per-product emissions (direct, indirect, specific, actual-data share, completeness) |
 | `api/` | Express server; `api/services/geminiApi.js` is the `@google/genai` integration |
 | `packages/core/` | Normalisation, emission factors, mass balance, CBAM cost formula (shared by everything) |
 | `packages/core/data/cbam-data.json` | Official EU default values (Egypt + other countries), benchmarks, prices, factors, with sources |

@@ -1,21 +1,40 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { LanguageProvider } from "./i18n/LanguageContext.jsx";
 import { AppStateProvider } from "./state/AppState.jsx";
-import LandingPage from "./pages/LandingPage.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
+import { PipelineProvider } from "./state/Pipeline.jsx";
+import Layout from "./components/Layout.jsx";
+import Overview from "./pages/Overview.jsx";
+import Report from "./pages/Report.jsx";
+import Receipts from "./pages/Receipts.jsx";
+import Ledger from "./pages/Ledger.jsx";
+import Anomalies from "./pages/Anomalies.jsx";
+import Installations from "./pages/Installations.jsx";
+import Products from "./pages/Products.jsx";
+import Settings from "./pages/Settings.jsx";
 
-// Layout wrapper: language (EN/AR + RTL) and workspace state wrap every route.
+// The program only: the marketing website lives in website/.
 export default function App() {
   return (
     <LanguageProvider>
       <AppStateProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
+        <PipelineProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<Layout />}>
+                <Route index element={<Navigate to="/overview" replace />} />
+                <Route path="overview" element={<Overview />} />
+                <Route path="report" element={<Report />} />
+                <Route path="receipts" element={<Receipts />} />
+                <Route path="ledger" element={<Ledger />} />
+                <Route path="anomalies" element={<Anomalies />} />
+                <Route path="installations" element={<Installations />} />
+                <Route path="products" element={<Products />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="*" element={<Navigate to="/overview" replace />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </PipelineProvider>
       </AppStateProvider>
     </LanguageProvider>
   );
