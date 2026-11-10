@@ -1,0 +1,14 @@
+{
+  "name": "@daman/chat",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The 'Ask Daman' chat panel, shared by the website (sales mode) and the app (workspace mode).",
+  "type": "module",
+  "exports": {
+    "./*.jsx": "./*.jsx",
+    "./*.js": "./*.js"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  }
+}

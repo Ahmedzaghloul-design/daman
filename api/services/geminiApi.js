@@ -36,7 +36,7 @@ function client() {
 }
 
 /** generateContent with one retry for Gemini server errors (5xx) only. */
-async function generate(request) {
+export async function generate(request) {
   try {
     return await client().models.generateContent(request);
   } catch (err) {

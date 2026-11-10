@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
-import { LanguageProvider } from "./i18n/LanguageContext.jsx";
+import { LanguageProvider, useLanguage } from "./i18n/LanguageContext.jsx";
+import ChatWidget from "@daman/chat/ChatWidget.jsx";
 import Home from "./pages/Home.jsx";
 import Story from "./pages/Story.jsx";
 import HowWeCalculate from "./pages/HowWeCalculate.jsx";
@@ -25,6 +26,12 @@ function ScrollManager() {
   return null;
 }
 
+// "Ask Daman" on every page (sales mode). History stays in this browser.
+function SiteChat() {
+  const { lang } = useLanguage();
+  return <ChatWidget mode="site" lang={lang} storageKey="daman.chat.site" />;
+}
+
 export default function App() {
   return (
     <LanguageProvider>
@@ -37,6 +44,7 @@ export default function App() {
           <Route path="/tools" element={<Suspense fallback={<div className="min-h-screen" />}><Tools /></Suspense>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <SiteChat />
       </BrowserRouter>
     </LanguageProvider>
   );

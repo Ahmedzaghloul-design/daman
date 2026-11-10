@@ -1,0 +1,249 @@
+{
+  "checked": "2026-11-10",
+  "built": "2026-11-10",
+  "items": [
+    {
+      "id": "F1",
+      "text": "CBAM covers 6 sectors: cement, iron and steel, aluminium, fertilisers, electricity, hydrogen",
+      "sources": [
+        "https://www.europarl.europa.eu/RegData/etudes/BRIE/2026/789314/EPRS_BRI(2026"
+      ],
+      "sourceNote": "European Parliament briefing EPRS_BRI(2026)789314 — )789314_EN.pdf"
+    },
+    {
+      "id": "F2",
+      "text": "The definitive period started 1 January 2026",
+      "sources": [
+        "https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/cbam-definitive-regime_en"
+      ],
+      "sourceNote": "EU Commission, CBAM definitive regime"
+    },
+    {
+      "id": "F3",
+      "text": "Default-value mark-up: +10% (2026), +20% (2027), +30% from 2028 for iron and steel, cement, aluminium and hydrogen",
+      "sources": [
+        "https://icapcarbonaction.com/en/news/eu-cbam-enters-compliance-phase-and-outlines-path-ahead",
+        "https://cbamguide.com/compliance/default-values/"
+      ],
+      "sourceNote": "Implementing Regulation (EU) 2025/2621, summarised by ICAP —  and"
+    },
+    {
+      "id": "F4",
+      "text": "Fertilisers: 1% mark-up for 2026 onwards; electricity: no mark-up",
+      "sources": [],
+      "sourceNote": "Same as F3 (Annex I of IR 2025/2621)"
+    },
+    {
+      "id": "F5",
+      "text": "Default values were corrected by IR (EU) 2026/1740 (published 31 July 2026); the official Excel is on the Commission's CBAM page",
+      "sources": [
+        "https://cbamguide.com/compliance/default-values/",
+        "https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/cbam-definitive-regime_en"
+      ],
+      "sourceNote": ""
+    },
+    {
+      "id": "F6",
+      "text": "Declaring with default values is legal and needs no verifier; verified actual data replaces the default",
+      "sources": [
+        "https://cbamguide.com/compliance/default-values/"
+      ],
+      "sourceNote": ""
+    },
+    {
+      "id": "F7",
+      "text": "De minimis: importers under 50 tonnes of CBAM goods per year are exempt (Regulation (EU) 2025/2083, October 2025)",
+      "sources": [
+        "https://www.insideenergyandenvironment.com/2026/02/eu-cbam-commission-proposes-expansion-to-complex-metal-products/",
+        "https://net0.com/blog/the-eu-carbon-border-adjustment-mechanism-cbam"
+      ],
+      "sourceNote": ""
+    },
+    {
+      "id": "F8",
+      "text": "CBAM certificate sales start 1 February 2027",
+      "sources": [
+        "https://net0.com/blog/the-eu-carbon-border-adjustment-mechanism-cbam"
+      ],
+      "sourceNote": ""
+    },
+    {
+      "id": "F9",
+      "text": "Proposed, not law: extension to about 180 downstream steel and aluminium products from 1 January 2028 (COM/2025/989, 17 Dec 2025); Parliament's mandate proposes about 453–457 products; in trilogue as of Oct 2026",
+      "sources": [
+        "https://www.mayerbrown.com/en/insights/publications/2026/10/eus-cbam-downstream-extension-and-anti-circumvention-amendments-the-road-to-trilogue"
+      ],
+      "sourceNote": "EPRS briefing (F1)"
+    },
+    {
+      "id": "F10",
+      "text": "The authorised CBAM declarant (EU side) submits the annual CBAM declaration and surrenders CBAM certificates (Reg. 2023/956 Art. 6(1), Art. 22(1)); operators of installations outside the EU can ask the Commission to register them and their installations in the CBAM registry (Art. 10(1)) and supply the installation emissions data",
+      "sources": [
+        "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02023R0956-20251020"
+      ],
+      "sourceNote": "Regulation (EU) 2023/956, consolidated 20 Oct 2025, checked 2026-11-10"
+    },
+    {
+      "id": "F11",
+      "text": "Importers need a CBAM account number or application reference number for imports above 50 t per calendar year and for all electricity and hydrogen imports; applications are due before importing and at the latest by 31 March 2026",
+      "sources": [],
+      "sourceNote": "D1, DG TAXUD *CBAM Compliance Essentials … as from 1 January 2026* (see `docs/sources/CBAM_REFERENCE_NOTES.md`)"
+    },
+    {
+      "id": "F12",
+      "text": "The first annual CBAM declaration and certificate surrender is due 30 September 2027, for goods imported in 2026; then 30 September each year",
+      "sources": [
+        "https://icapcarbonaction.com/en/news/eu-cbam-enters-compliance-phase-and-outlines-path-ahead",
+        "https://klimaat.be/cbam-en/what-is-cbam-2/what-is-the-carbon-border-adjustment-mechanism-cbam/definitive-phase"
+      ],
+      "sourceNote": ""
+    },
+    {
+      "id": "F13",
+      "text": "The CBAM Registry's O3CI module lets operators of installations outside the EU upload their installation and emissions data once and share it with EU declarants, instead of sending it to each one",
+      "sources": [
+        "https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/cbam-registry_en"
+      ],
+      "sourceNote": "; D3"
+    },
+    {
+      "id": "F14",
+      "text": "Per good, the EU records direct and indirect embedded emissions per installation: direct = quantity × specific direct emissions; indirect = quantity × (electricity MWh/t × emission factor tCO2/MWh); electricity source is auto-produced, power purchase agreement or grid",
+      "sources": [],
+      "sourceNote": "D2, CBAM Declarant Portal user manual v1.81 §1.9"
+    },
+    {
+      "id": "F15",
+      "text": "EU declarants remain responsible for the final accuracy of their reports, whatever the source of the data",
+      "sources": [],
+      "sourceNote": "D3"
+    },
+    {
+      "id": "F16",
+      "text": "The UK CBAM applies from 1 January 2027 to aluminium, cement, fertiliser, hydrogen, and iron and steel (UK statutory instruments 2026/809, 2026/830, 2026/995)",
+      "sources": [
+        "https://www.paulhastings.com/thought-leadership/uk-cbam-classification-thresholds-and-divergence-from-the-eu",
+        "https://thecommonwealth.org/publications/uk-carbon-border-adjustment-mechanism"
+      ],
+      "sourceNote": ""
+    },
+    {
+      "id": "F17",
+      "text": "Official CBAM certificate prices for 2026 imports: Q1 €75.36 (published 7 Apr 2026), Q2 €75.28 (6 Jul 2026), Q3 €82.32 (5 Oct 2026); Q4 due 4 Jan 2027; weekly prices from 2027",
+      "sources": [
+        "https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/price-cbam-certificates_en"
+      ],
+      "sourceNote": ""
+    },
+    {
+      "id": "F18",
+      "text": "CBAM factor (share of free allocation kept): 97.5% 2026, 95% 2027, 90% 2028, 77.5% 2029, 51.5% 2030, 39% 2031, 26.5% 2032, 14% 2033, none from 2034. (Proposal COM(2026) 616 would change this; not law.)",
+      "sources": [],
+      "sourceNote": "Directive 2003/87/EC, Art. 10a(1a), consolidated text on EUR-Lex"
+    },
+    {
+      "id": "F19",
+      "text": "Cross-sectoral correction factor 2026–2030 = 100%",
+      "sources": [
+        "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202601862"
+      ],
+      "sourceNote": "Commission Implementing Decision (EU) 2026/1862"
+    },
+    {
+      "id": "F20",
+      "text": "On default values: free allocation per tonne = CBAM factor × CSCF × benchmark (Column B, by production route); certificates = embedded emissions − free allocation",
+      "sources": [],
+      "sourceNote": "IR (EU) 2025/2620, Annex (Eq. 6); Reg. (EU) 2023/956, Art. 31"
+    },
+    {
+      "id": "F21",
+      "text": "If a country is not listed, or its field shows \"–\", the \"Other countries and territories\" default value applies",
+      "sources": [],
+      "sourceNote": "IR (EU) 2025/2621, Annex I"
+    },
+    {
+      "id": "F22",
+      "text": "Current default values: Excel v2 based on IR (EU) 2026/1740 (adopted 20 Jul 2026, file published 10 Aug 2026). The Excel is informative; the regulation is binding",
+      "sources": [],
+      "sourceNote": "`docs/sources/eu/default-values-2026-08-06.xlsx` (SHA-256 recorded in `packages/core/data/cbam-data.json`)"
+    },
+    {
+      "id": "F23",
+      "text": "Egypt has country-specific default values for 61 CBAM goods (all fertilisers and aluminium listed, most cement, hydrogen, 3 ferro-alloys); most steel products have none, so the \"Other countries\" values apply (e.g. CN 7207 11 14: 3.996 tCO2e/t)",
+      "sources": [],
+      "sourceNote": "Derived from F22 + F21"
+    },
+    {
+      "id": "F24",
+      "text": "Worked-example check: our formula reproduces published results to the cent (CN 7207 11 14, Türkiye: €99.70/t 2026, €160.19/t 2029, €189.38/t 2030; China slab 2028 €238.08/t)",
+      "sources": [],
+      "sourceNote": "`packages/core/test/cbamCost.test.js`; cbamguide.com (as of 26 Oct 2026)"
+    },
+    {
+      "id": "P1",
+      "text": "Daman (ضمان, 'guarantee') is built by students at The American University in Cairo. It turns handwritten Arabic fuel and energy receipts from Egyptian factories into verified emissions data for EU CBAM.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P2",
+      "text": "How Daman works: 1) a factory worker photographs a receipt in the Daman app or sends it on WhatsApp; 2) Gemini reads the Arabic text and structures it (factory, energy type, quantity, unit, date, confidence); unreadable digits are never guessed and force human review; 3) code calculates emissions (quantity × emission factor) and a mass-balance check (energy ÷ declared production compared with the plant's normal range); 4) a human reviewer approves before anything reaches the ledger. Rule: AI reads and explains, code calculates, a human approves.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P3",
+      "text": "The emission factors built into the current Daman version are illustrative and must be replaced with the factors agreed with the factory's verifier before real use.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P4",
+      "text": "Daman is not an accredited CBAM verifier and does not give legal or financial advice. The EU declarant stays responsible for the declaration (F15).",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P5",
+      "text": "Daman produces a per-product emissions report (direct and indirect) and an export prepared for the EU CBAM Registry's operator module O3CI (F13).",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P6",
+      "text": "Daman works with energy records from any factory (textiles, food, chemicals, glass, ceramics and more). For goods covered by CBAM it produces the data EU buyers need; for other goods it helps answer EU buyers' emissions questions and prepares for the proposed 2028 expansion (F9, proposed, not law). CBAM does not apply to all factories.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P7",
+      "text": "Indicative pricing (not final): Standard $1,000 and Assured $1,500 per installation per month. Pilots are discussed with the team; book a demo on the website.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P8",
+      "text": "Team roles in the Daman app: owner (everything, invites people), reviewer (approves receipts, edits products and settings), uploader (only sends receipts, cannot see the ledger or costs), verifier (reads everything and comments, cannot change anything; every visit is logged).",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P9",
+      "text": "Privacy: Daman stores the text read from receipts and approved figures in Supabase in Frankfurt (EU), not the photos. Real receipts are only read with Gemini's paid tier, because on Google's unpaid tier content may be used to improve Google's products. Only people the factory invites can see its workspace.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P10",
+      "text": "Daman's CBAM cost calculator uses the official EU default values, benchmarks and certificate prices: cost per tonne = (default value × (1 + mark-up) − CBAM factor × CSCF × benchmark) × certificate price (F18–F20). Results are estimates, not financial or legal advice.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    },
+    {
+      "id": "P11",
+      "text": "The transitional-period quarterly CBAM reports (2023–2025) and 'request delayed submission' are historical and no longer apply.",
+      "sources": [],
+      "sourceNote": "Daman product notes (docs/DAMAN_V2_SPEC.md)"
+    }
+  ]
+}

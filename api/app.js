@@ -2,6 +2,8 @@
 import express from "express";
 import { waitUntil } from "@vercel/functions";
 import { handleIncoming, twiml, validSignature } from "./services/whatsapp.js";
+import { answer, cleanRequest } from "./services/chat.js";
+import { cleanLead, saveLead } from "./services/leads.js";
 import { auditReceipt, auditReceiptImage, IMAGE_TYPES, MODEL, MOCK, PAID_TIER, toUserError } from "./services/geminiApi.js";
 
 export const app = express();
@@ -33,6 +35,8 @@ export function rateLimit({ windowMs, max }) {
 }
 const auditLimit = rateLimit({ windowMs: 10 * 60_000, max: 30 });
 app.use(["/api/audit", "/api/audit-image"], auditLimit);
+app.use("/api/chat", rateLimit({ windowMs: 10 * 60_000, max: 20 }));
+app.use("/api/lead", rateLimit({ windowMs: 60 * 60_000, max: 5 }));
 
 // Photos need a larger body (the app shrinks them to about 1 MB first; the
 // cap stays under Vercel's 4.5 MB request limit).
@@ -130,6 +134,34 @@ app.post("/api/whatsapp", express.urlencoded({ extended: false, limit: "32kb" })
   } catch (err) {
     console.error("[whatsapp] failed:", String(err?.message ?? err).slice(0, 300));
     res.type("text/xml").send(twiml("Daman could not process this message. Try again later."));
+  }
+});
+
+// POST /api/chat — "Ask Daman". Body: { messages: [{role, text}], lang, mode, context? }
+app.post("/api/chat", async (req, res) => {
+  let request;
+  try {
+    request = cleanRequest(req.body);
+  } catch (err) {
+    return res.status(err.status || 400).json({ error: err.message });
+  }
+  try {
+    res.json(await answer(request));
+  } catch (err) {
+    console.error("[chat] failed:", err?.status ?? "", String(err?.message ?? err).slice(0, 500));
+    const safe = toUserError(err);
+    res.status(safe.status || 502).json({ error: safe.message });
+  }
+});
+
+// POST /api/lead — a demo request, only with explicit consent.
+app.post("/api/lead", async (req, res) => {
+  try {
+    await saveLead(cleanLead(req.body));
+    res.json({ ok: true });
+  } catch (err) {
+    if (err.cause) console.error("[lead] failed:", String(err.cause?.message ?? err.cause).slice(0, 300));
+    res.status(err.status || 500).json({ error: err.message });
   }
 });
 

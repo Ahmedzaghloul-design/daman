@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "@daman/brand/tokens.css";
+/* The shared chat panel lives outside this folder: let Tailwind see its classes. */
+@source "../../packages/chat";
 
 html { scroll-behavior: smooth; }
 body {

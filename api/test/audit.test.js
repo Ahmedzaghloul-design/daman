@@ -123,3 +123,42 @@ test("WhatsApp webhook rejects unsigned requests", async () => {
   delete process.env.TWILIO_AUTH_TOKEN;
   delete process.env.WHATSAPP_WEBHOOK_URL;
 });
+
+const { cleanRequest, unsupportedNumbers, numbersIn } = await import("../services/chat.js");
+const { cleanLead } = await import("../services/leads.js");
+
+test("chat: request validation and limits", () => {
+  assert.throws(() => cleanRequest({}), /required/);
+  assert.throws(() => cleanRequest({ messages: [{ role: "assistant", text: "hi" }] }), /question/);
+  const r = cleanRequest({ messages: Array.from({ length: 20 }, (_, i) => ({ role: i % 2 ? "assistant" : "user", text: "x".repeat(3000) })).concat([{ role: "user", text: "q" }]), lang: "ar", mode: "site", context: { a: 1 } });
+  assert.equal(r.messages.length, 8);
+  assert.equal(r.messages[0].text.length, 1500);
+  assert.equal(r.lang, "ar");
+  assert.equal(r.context, ""); // context only in workspace mode
+  assert.throws(() => cleanRequest({ messages: [{ role: "user", text: "q" }], mode: "workspace", context: { big: "x".repeat(9000) } }), /too large/);
+});
+
+test("chat: numbers must come from the notes or conversation", () => {
+  assert.deepEqual(numbersIn("Q3 €82.32, mark-up 10%, 1,500 USD, ٢٠٢٦"), ["3", "82.32", "10", "1500", "2026"]);
+  const notes = "Q3 €82.32 (5 Oct 2026); +10% in 2026, +20% in 2027";
+  assert.deepEqual(unsupportedNumbers("The Q3 2026 price was €82.32 and the mark-up is 20% in 2027.", notes), []);
+  assert.deepEqual(unsupportedNumbers("The price will be €95.10 in 2027.", notes), ["95.10"]);
+  assert.deepEqual(unsupportedNumbers("Three steps: 1, 2, 3.", notes), []);
+});
+
+test("chat (mock): answers from notes with official sources; off-topic refused", async () => {
+  const post = (body) => fetch(`${base}/api/chat`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
+  const a = await post({ messages: [{ role: "user", text: "What is the default value mark-up for cement?" }], lang: "en" });
+  assert.equal(a.kind, "kb");
+  assert.ok(a.citations.some((c) => c.id === "F3" && c.sources.length));
+  const b = await post({ messages: [{ role: "user", text: "Tell me a joke about football" }], lang: "en" });
+  assert.equal(b.kind, "refusal");
+});
+
+test("lead: consent and email required", () => {
+  assert.throws(() => cleanLead({ name: "A", email: "a@b.co" }), /Consent/);
+  assert.throws(() => cleanLead({ name: "A", email: "nope", consent: true, consentText: "I agree to be contacted." }), /email/);
+  const l = cleanLead({ name: " Mona ", email: "MONA@Factory.EG", consent: true, consentText: "I agree to be contacted about a demo." });
+  assert.equal(l.email, "mona@factory.eg");
+  assert.equal(l.name, "Mona");
+});

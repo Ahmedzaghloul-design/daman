@@ -11,12 +11,13 @@
     "build:dots": "node scripts/build-land-dots.mjs"
   },
   "dependencies": {
+    "@daman/brand": "*",
+    "@daman/chat": "*",
     "@daman/core": "*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.18.5",
-    "three": "^0.170.0",
-    "@daman/brand": "*"
+    "three": "^0.170.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.0",

@@ -99,7 +99,7 @@ Checked 2026-11-10. Re-check before launch.
 | F7 | De minimis: importers under 50 tonnes of CBAM goods per year are exempt (Regulation (EU) 2025/2083, October 2025) | https://www.insideenergyandenvironment.com/2026/02/eu-cbam-commission-proposes-expansion-to-complex-metal-products/ ; https://net0.com/blog/the-eu-carbon-border-adjustment-mechanism-cbam |
 | F8 | CBAM certificate sales start 1 February 2027 | https://net0.com/blog/the-eu-carbon-border-adjustment-mechanism-cbam |
 | F9 | **Proposed, not law:** extension to about 180 downstream steel and aluminium products from 1 January 2028 (COM/2025/989, 17 Dec 2025); Parliament's mandate proposes about 453–457 products; in trilogue as of Oct 2026 | EPRS briefing (F1); https://www.mayerbrown.com/en/insights/publications/2026/10/eus-cbam-downstream-extension-and-anti-circumvention-amendments-the-road-to-trilogue |
-| F10 | The CBAM obligation (declaring and buying certificates) sits with the EU importer / authorised CBAM declarant; non-EU producers supply installation emissions data | Regulation (EU) 2023/956 — verify wording against EUR-Lex in Phase 3 |
+| F10 | The authorised CBAM declarant (EU side) submits the annual CBAM declaration and surrenders CBAM certificates (Reg. 2023/956 Art. 6(1), Art. 22(1)); operators of installations outside the EU can ask the Commission to register them and their installations in the CBAM registry (Art. 10(1)) and supply the installation emissions data | Regulation (EU) 2023/956, consolidated 20 Oct 2025, checked 2026-11-10 — https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02023R0956-20251020 |
 | F11 | Importers need a CBAM account number or application reference number for imports above 50 t per calendar year and for all electricity and hydrogen imports; applications are due before importing and at the latest by 31 March 2026 | D1, DG TAXUD *CBAM Compliance Essentials … as from 1 January 2026* (see `docs/sources/CBAM_REFERENCE_NOTES.md`) |
 | F12 | The first annual CBAM declaration and certificate surrender is due 30 September 2027, for goods imported in 2026; then 30 September each year | https://icapcarbonaction.com/en/news/eu-cbam-enters-compliance-phase-and-outlines-path-ahead ; https://klimaat.be/cbam-en/what-is-cbam-2/what-is-the-carbon-border-adjustment-mechanism-cbam/definitive-phase |
 | F13 | The CBAM Registry's O3CI module lets operators of installations outside the EU upload their installation and emissions data once and share it with EU declarants, instead of sending it to each one | https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/cbam-registry_en ; D3 |
@@ -263,6 +263,16 @@ contrast), works on phone width.
   friendly error when the quota is used up.
 - UI: floating "Ask Daman" button → panel with suggested questions, streaming
   answers, source chips.
+- **As built (Phase 5):** notes = `api/knowledge/kb.json`, generated from §4 by
+  `scripts/build_kb.mjs`; the server checks every number in a notes answer
+  against the notes, the conversation and the factory data, and falls back to
+  the web step otherwise. Web answers follow the Gemini API grounding terms
+  (checked 2026-11-10): shown unchanged with their links and Google's Search
+  Suggestions, no click tracking, history only on the user's device. Answers
+  are returned whole (not streamed). Factory data is shared only for demo data
+  or once Gemini billing is on; never for uploaders. Website leads: separate
+  form with a consent box, stored in Supabase `leads` (insert-only).
+  Grounding cost (Gemini 3+): 5,000 free searches a month, then $14 per 1,000.
 
 ## 8. Repository layout (target)
 
