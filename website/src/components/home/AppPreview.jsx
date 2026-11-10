@@ -42,15 +42,15 @@ export default function AppPreview() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="overflow-hidden p-4" style={card}>
               <p className="text-xs" style={{ color: D.text2 }}>{t("appPreview.kpi1")}</p>
-              <p className="mt-1 text-3xl font-bold tabular-nums" style={{ color: D.text }}>21,708 <span className="text-sm font-medium" style={{ color: D.text2 }}>tCO2e</span></p>
-              <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: "rgba(63,191,127,.14)", color: D.ok }}>−49.9% {t("appPreview.vsDefault")}</span>
+              <p className="mt-1 text-3xl font-bold tabular-nums" style={{ color: D.text }}>21,667 <span className="text-sm font-medium" style={{ color: D.text2 }}>tCO2e</span></p>
+              <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: "rgba(63,191,127,.14)", color: D.ok }}>−50.0% {t("appPreview.vsDefault")}</span>
               <div className="-mx-4 -mb-4 mt-2"><Spark /></div>
             </div>
             <div className="flex items-center justify-between gap-3 p-4" style={card}>
               <div>
                 <p className="text-xs" style={{ color: D.text2 }}>{t("appPreview.kpi2")}</p>
                 <p className="mt-2 text-xs" style={{ color: D.text2 }}>{t("appPreview.kpi3")}</p>
-                <p className="text-2xl font-bold tabular-nums" style={{ color: D.text }}>8</p>
+                <p className="text-2xl font-bold tabular-nums" style={{ color: D.text }}>7</p>
                 <p className="mt-2 text-xs" style={{ color: D.text2 }}>{t("appPreview.kpi4")}</p>
                 <p className="text-2xl font-bold tabular-nums" style={{ color: D.gold }}>€2.08M</p>
               </div>
@@ -65,7 +65,7 @@ export default function AppPreview() {
                     <td className="py-2.5" style={{ borderBottom: `1px solid ${D.line}` }}><span className="font-mono text-xs" style={{ color: D.nile }}>2523 10 00 90</span><br /><span className="text-xs" style={{ color: D.text2 }}>Grey clinker</span></td>
                     <td className="tabular-nums" style={{ borderBottom: `1px solid ${D.line}` }}>8,000 t</td>
                     <td style={{ borderBottom: `1px solid ${D.line}` }}><span className="inline-block h-1.5 w-16 rounded-full align-middle" style={{ background: D.ok }} /> <span className="text-xs" style={{ color: D.text2 }}>100%</span></td>
-                    <td className="text-end font-semibold tabular-nums" style={{ borderBottom: `1px solid ${D.line}` }}>0.7004</td>
+                    <td className="text-end font-semibold tabular-nums" style={{ borderBottom: `1px solid ${D.line}` }}>0.6990</td>
                   </tr>
                   <tr>
                     <td className="py-2.5"><span className="font-mono text-xs" style={{ color: D.nile }}>2523 29 00</span><br /><span className="text-xs" style={{ color: D.text2 }}>Grey Portland cement</span></td>

@@ -68,7 +68,7 @@ export const en = {
       { date: "1 Jan 2027", title: "UK CBAM starts", body: "The UK applies its own CBAM to aluminium, cement, fertiliser, hydrogen, and iron and steel.", tag: "Legislated" }, // [F16]
       { date: "1 Feb 2027", title: "CBAM certificate sales open", body: "EU importers can start buying the certificates that cover embedded emissions.", tag: "Scheduled" }, // [F8]
       { date: "30 Sep 2027", title: "First annual CBAM declaration", body: "Importers declare 2026 imports and surrender certificates, then every 30 September.", tag: "Scheduled" }, // [F12]
-      { date: "1 Jan 2028", title: "Downstream products (proposed)", body: "A proposal would add about 180 steel and aluminium products such as screws, tubes and machinery. It is still being negotiated.", tag: "Proposed" }, // [F9]
+      { date: "1 Jan 2028", title: "Downstream products (proposed)", body: "A proposal would add about 180 downstream steel and aluminium products. It is still being negotiated.", tag: "Proposed" }, // [F9]
     ],
     markup: {
       title: "The cost of not having real data",
@@ -107,13 +107,13 @@ export const en = {
     kicker: "How it works",
     title: "From a photo to a verified record",
     steps: [
-      { title: "Photograph", body: "Site staff photograph the handwritten receipt or delivery note. The image is kept as evidence." },
-      { title: "Read", body: "A model trained for cursive Arabic transcribes the text, digits included." },
+      { title: "Photograph", body: "Site staff photograph the handwritten receipt or delivery note in the app, or send it on WhatsApp." },
+      { title: "Read", body: "Gemini reads the Arabic text from the photo, digits included. A digit it cannot read is marked, never guessed." },
       { title: "Structure and check", body: "Gemini maps it to English fields; plain code double-checks every number and tests it against your production." },
       { title: "Human approval", body: "Anything uncertain goes to a named reviewer. Nothing enters the ledger without a person's sign-off." },
       { title: "Verified ledger", body: "Approved entries become a clean English record, ready for your buyers and the registry." },
     ],
-    status: "Prototype: reading uses a stand-in model while the Arabic handwriting model is trained.",
+    status: "Prototype: photos are read with Gemini today; a dedicated Arabic handwriting model is planned.",
   },
 
   demo: {
@@ -154,7 +154,7 @@ export const en = {
     title: "AI reads. Code calculates. A person approves.",
     items: [
       { title: "No black box", body: "Every emission figure is plain arithmetic you can redo by hand, shown step by step." },
-      { title: "Every number has a source", body: "Each ledger line links back to the photo it came from and the person who approved it." },
+      { title: "Every number has a source", body: "Each ledger line keeps the text read from its receipt, the source file name and the person who approved it." },
       { title: "Uncertainty is flagged, never hidden", body: "Low confidence, unreadable digits and mass-balance gaps always go to a human." },
       { title: "Honest about our role", body: "Daman prepares data. It is not an accredited CBAM verifier, and we say so." },
     ],

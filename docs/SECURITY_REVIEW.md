@@ -55,5 +55,7 @@ code and the database as they are.
   redirect addresses only, short code expiry.
 - A Content-Security-Policy for the website and app, tested on the live
   address (fonts, Supabase and the API must be allowed).
-- Backups (Supabase free plan has none you can restore yourself) and a
-  re-run of this review on the live setup.
+- Backups: Supabase makes automatic daily backups only on paid plans (Pro and
+  up); on the free plan, export the data regularly with `supabase db dump`
+  (Supabase docs, "Database Backups", checked 2026-11-11). Then re-run this
+  review on the live setup.
