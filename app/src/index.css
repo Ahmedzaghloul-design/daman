@@ -1,15 +1,52 @@
 @import "tailwindcss";
 @import "@daman/brand/tokens.css";
 
+/*
+ * The app is a dark dashboard in Nile & gold. The brand token names are kept
+ * and redefined here with dark values, so every component switches together.
+ * Every text pair below was checked at >= 4.5:1 contrast.
+ */
+@theme {
+  --color-cream: #071a1f;        /* page background */
+  --color-card: #0d252c;         /* cards */
+  --color-sand: #133139;         /* raised: inputs, hover, bars */
+  --color-line: rgb(255 255 255 / 0.07);
+  --color-text: #e9f0f1;         /* 13.8:1 on card */
+  --color-text-2: #9fb6bb;       /* 7.5:1 */
+  --color-muted: #86a0a5;        /* 5.8:1 */
+  --color-nile: #2aa6b8;         /* accent: links, codes, charts; dark text on it 6.4:1 */
+  --color-nile-700: #3bb7c9;
+  --color-nile-deep: #04131a;    /* sidebar */
+  --color-nile-raised: #10303a;
+  --color-on-nile: #e9f0f1;
+  --color-on-nile-2: #9fb6bb;
+  --color-gold: #d4a24c;         /* 6.9:1 */
+  --color-gold-700: #d4a24c;
+  --color-verified: #3fbf7f;     /* 6.8:1 */
+  --color-verified-soft: rgb(63 191 127 / 0.14);
+  --color-review: #e0a43a;       /* 7.2:1 */
+  --color-review-soft: rgb(224 164 58 / 0.14);
+  --color-anomaly: #ef6b6b;      /* 5.3:1 */
+  --color-anomaly-soft: rgb(239 107 107 / 0.14);
+  --radius-card: 16px;
+  --shadow-float: 0 24px 48px rgb(0 0 0 / 0.45);
+}
+
+html { color-scheme: dark; }
 body {
   background-color: var(--color-cream);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
 }
 html[lang="ar"] body { font-family: var(--font-arabic); }
-html[lang="ar"] { --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, monospace; }
+html[lang="ar"] { --font-mono: "JetBrains Mono", "IBM Plex Sans Arabic", ui-monospace, monospace; }
 
-:focus-visible { outline: 2px solid var(--color-nile); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--color-nile); outline-offset: 2px; border-radius: 6px; }
+::selection { background: rgb(42 166 184 / 0.35); }
+
+/* Phones: respect the notch and home indicator when installed to the home screen. */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
 @keyframes drawer-in { from { transform: translateX(var(--drawer-from, 24px)); opacity: 0; } to { transform: none; opacity: 1; } }
 html[dir="rtl"] { --drawer-from: -24px; }
@@ -17,3 +54,4 @@ html[dir="rtl"] { --drawer-from: -24px; }
 .seal-press { animation: seal-press 520ms var(--ease-daman) both; }
 @keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .fade-up { animation: fade-up 360ms var(--ease-daman) both; }
+@media (prefers-reduced-motion: reduce) { .fade-up, .seal-press { animation: none; } }

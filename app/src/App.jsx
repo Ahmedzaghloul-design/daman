@@ -11,6 +11,7 @@ import Anomalies from "./pages/Anomalies.jsx";
 import Installations from "./pages/Installations.jsx";
 import Products from "./pages/Products.jsx";
 import Settings from "./pages/Settings.jsx";
+import Calculator from "./pages/Calculator.jsx";
 
 // The program only: the marketing website lives in website/.
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
                 <Route path="receipts" element={<Receipts />} />
                 <Route path="ledger" element={<Ledger />} />
                 <Route path="anomalies" element={<Anomalies />} />
+                <Route path="calculator" element={<Calculator />} />
                 <Route path="installations" element={<Installations />} />
                 <Route path="products" element={<Products />} />
                 <Route path="settings" element={<Settings />} />

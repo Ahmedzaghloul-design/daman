@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CBAM_DATA, findGood } from "@daman/core/cbamCost.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
-import { Button, DemoTag, Drawer, Field, fmt, inputClass, Num, PageHeader } from "../components/ui.jsx";
+import { Button, DemoTag, Drawer, Field, fmt, inputClass, Num, PageHeader, Code } from "../components/ui.jsx";
 
 export default function Products() {
   const { t } = useLanguage();
@@ -43,7 +43,7 @@ export default function Products() {
                 const g = findGood(p.cn);
                 return (
                   <tr key={p.id} className="hover:bg-cream">
-                    <td className="px-3 py-3"><Num className="text-nile">{g?.codeDisplay ?? p.cn}</Num></td>
+                    <td className="px-3 py-3"><Code>{g?.codeDisplay ?? p.cn}</Code></td>
                     <td className="max-w-72 px-3 py-3"><span dir="ltr" className="block truncate text-start">{g?.description}</span>{p.demo && <DemoTag />}</td>
                     <td className="px-3 py-3 text-text-2">{installations.find((i) => i.id === p.installationId)?.name ?? "—"}</td>
                     <td className="px-3 py-3 text-end"><Num>{fmt(p.tonnesProduced)}</Num></td>
@@ -90,7 +90,7 @@ export default function Products() {
                 {matches.map((g) => (
                   <li key={g.code}>
                     <button type="button" role="option" aria-selected={editing.cn === g.code} onClick={() => { setEditing({ ...editing, cn: g.code }); setQ(""); }} className="flex w-full gap-3 px-3 py-2 text-start text-sm hover:bg-sand">
-                      <Num className="shrink-0 text-nile">{g.codeDisplay}</Num>
+                      <Code className="shrink-0">{g.codeDisplay}</Code>
                       <span dir="ltr" className="truncate text-start text-text-2">{g.description}</span>
                     </button>
                   </li>
@@ -98,23 +98,23 @@ export default function Products() {
               </ul>
             )}
             {good && (
-              <p className="rounded-control bg-sand p-3 text-sm"><Num className="text-nile">{good.codeDisplay}</Num> <span dir="ltr">{good.description}</span></p>
+              <p className="rounded-control bg-sand p-3 text-sm"><Code>{good.codeDisplay}</Code> <span dir="ltr">{good.description}</span></p>
             )}
             <Field label={t("products.fields.installation")}>
               <select className={inputClass} value={editing.installationId} onChange={(e) => setEditing({ ...editing, installationId: e.target.value })}>
                 {installations.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
               </select>
             </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label={t("products.fields.produced", { year })}>
-                <input type="number" min="0" dir="ltr" className={`${inputClass} font-mono`} value={editing.tonnesProduced} onChange={(e) => setEditing({ ...editing, tonnesProduced: e.target.value })} />
+                <input type="number" min="0" dir="ltr" className={`${inputClass} tabular-nums`} value={editing.tonnesProduced} onChange={(e) => setEditing({ ...editing, tonnesProduced: e.target.value })} />
               </Field>
               <Field label={t("products.fields.exported", { year })}>
-                <input type="number" min="0" dir="ltr" className={`${inputClass} font-mono`} value={editing.tonnesExported} onChange={(e) => setEditing({ ...editing, tonnesExported: e.target.value })} />
+                <input type="number" min="0" dir="ltr" className={`${inputClass} tabular-nums`} value={editing.tonnesExported} onChange={(e) => setEditing({ ...editing, tonnesExported: e.target.value })} />
               </Field>
             </div>
             <Field label={t("products.fields.process", { year })} hint={t("products.fields.processHint")}>
-              <input type="number" min="0" dir="ltr" className={`${inputClass} font-mono`} value={editing.processEmissions ?? ""} onChange={(e) => setEditing({ ...editing, processEmissions: e.target.value })} />
+              <input type="number" min="0" dir="ltr" className={`${inputClass} tabular-nums`} value={editing.processEmissions ?? ""} onChange={(e) => setEditing({ ...editing, processEmissions: e.target.value })} />
             </Field>
           </div>
         )}

@@ -6,7 +6,7 @@ import { useAppState } from "../state/AppState.jsx";
 import { useReport } from "../lib/useReport.js";
 import { o3ciExport, reportCsv } from "../lib/exports.js";
 import ProductDrawer from "../components/ProductDrawer.jsx";
-import { ActualBar, Button, buttonClass, DemoTag, downloadFile, fmt, Num, PageHeader, StatusBadge } from "../components/ui.jsx";
+import { ActualBar, Button, buttonClass, DemoTag, downloadFile, fmt, Num, PageHeader, StatusBadge, Code } from "../components/ui.jsx";
 
 export default function Report() {
   const { t } = useLanguage();
@@ -34,14 +34,14 @@ export default function Report() {
         }
       />
 
-      <div className="grid gap-4 lg:grid-cols-[140px_1fr]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[140px_1fr]">
         {/* Periods */}
         <aside className="rounded-card border border-line bg-card p-2">
           <p className="px-2 py-2 text-xs font-medium text-text-2">{t("report.periods")}</p>
           <ul className="flex gap-1 lg:flex-col">
             {years.map((y) => (
               <li key={y}>
-                <button type="button" onClick={() => updateSettings({ year: y })} className={`h-9 w-full rounded-control px-3 text-start font-mono text-sm ${settings.year === y ? "bg-nile text-white" : "text-text hover:bg-sand"}`}>{y}</button>
+                <button type="button" onClick={() => updateSettings({ year: y })} className={`h-9 w-full rounded-control px-3 text-start tabular-nums text-sm ${settings.year === y ? "bg-nile text-white" : "text-text hover:bg-sand"}`}>{y}</button>
               </li>
             ))}
           </ul>
@@ -72,7 +72,7 @@ export default function Report() {
                     return (
                       <tr key={product.id} tabIndex={0} aria-label={`${t("common.view")} ${r.good?.codeDisplay ?? product.cn}`} className="cursor-pointer transition-colors hover:bg-cream focus:bg-cream focus:outline-none" onClick={() => setOpen(row)} onKeyDown={(e) => e.key === "Enter" && setOpen(row)}>
                         <td className={`${td} max-w-60`}>
-                          <span className="flex items-center gap-2"><Num className="text-nile">{r.good?.codeDisplay ?? product.cn}</Num>{product.demo && <DemoTag />}</span>
+                          <span className="flex items-center gap-2"><Code>{r.good?.codeDisplay ?? product.cn}</Code>{product.demo && <DemoTag />}</span>
                           <span dir="ltr" className="mt-0.5 block truncate text-start text-xs text-text-2" title={r.good?.description}>{r.good?.description ?? "—"}</span>
                         </td>
                         <td className={`${td} hidden max-w-40 truncate text-text-2 2xl:table-cell`}>{installation?.name ?? "—"}</td>

@@ -11,17 +11,17 @@ export default function Settings() {
   return (
     <>
       <PageHeader title={t("settings.title")} subtitle={t("settings.subtitle")} />
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Panel title={t("settings.title")}>
           <div className="grid gap-4">
             <Field label={t("settings.reviewer")}><input className={inputClass} value={settings.reviewerName} onChange={(e) => updateSettings({ reviewerName: e.target.value })} /></Field>
             <Field label={t("settings.year")}>
-              <select className={`${inputClass} font-mono`} value={settings.year} onChange={(e) => updateSettings({ year: Number(e.target.value) })}>
+              <select className={`${inputClass} tabular-nums`} value={settings.year} onChange={(e) => updateSettings({ year: Number(e.target.value) })}>
                 {[2026, 2027, 2028].map((y) => <option key={y}>{y}</option>)}
               </select>
             </Field>
             <Field label={t("settings.gridFactor")} hint={t("settings.gridHint")}>
-              <input type="number" min="0" step="0.01" dir="ltr" className={`${inputClass} font-mono`} value={settings.gridFactor} onChange={(e) => updateSettings({ gridFactor: Number(e.target.value) })} />
+              <input type="number" min="0" step="0.01" dir="ltr" className={`${inputClass} tabular-nums`} value={settings.gridFactor} onChange={(e) => updateSettings({ gridFactor: Number(e.target.value) })} />
             </Field>
             <div className="border-t border-line pt-4 text-sm">
               <p className="text-xs text-muted">{t("settings.model")}</p>
@@ -39,7 +39,7 @@ export default function Settings() {
                   <tr key={type} className="border-t border-line">
                     <td className="py-2">{energyLabel(type)} <Num className="text-xs text-muted">{b.unit}/t</Num></td>
                     {["min", "max"].map((k) => (
-                      <td key={k} className="py-2"><input type="number" min="0" step="any" dir="ltr" aria-label={`${type} ${k}`} className={`${inputClass} h-8 w-24 font-mono`} value={b[k]} onChange={(e) => setBench(type, k, e.target.value)} /></td>
+                      <td key={k} className="py-2"><input type="number" min="0" step="any" dir="ltr" aria-label={`${type} ${k}`} className={`${inputClass} h-8 w-24 tabular-nums`} value={b[k]} onChange={(e) => setBench(type, k, e.target.value)} /></td>
                     ))}
                   </tr>
                 ))}

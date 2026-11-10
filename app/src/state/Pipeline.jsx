@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
+import { PipelineContext } from "./contexts.js";
 import { extractArabicText } from "../services/ocrApi.js";
 import { auditReceipt } from "../services/geminiApi.js";
 import { useAppState } from "./AppState.jsx";
@@ -44,7 +45,6 @@ function reducer(s, a) {
   }
 }
 
-const PipelineContext = createContext(null);
 
 export function PipelineProvider({ children }) {
   const { settings, installations, products } = useAppState();

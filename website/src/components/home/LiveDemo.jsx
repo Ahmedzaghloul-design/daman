@@ -33,7 +33,7 @@ export default function LiveDemo() {
 
   const card = (i, title, children) =>
     shown > i && (
-      <div key={title} className="reveal in rounded-card border border-line bg-card p-5">
+      <div key={title} className="reveal in rounded-2xl border border-line bg-card p-5">
         <p className="font-mono text-xs text-gold-700">
           0{i + 1} · {title}
         </p>

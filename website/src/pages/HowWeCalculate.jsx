@@ -20,7 +20,7 @@ function Step({ n, title, body, children }) {
         <h2 className="text-xl font-semibold">{title}</h2>
         <p className="mt-2 leading-relaxed text-text-2">{body}</p>
       </div>
-      <div className="rounded-card border border-line bg-card p-5">{children}</div>
+      <div className="rounded-2xl border border-line bg-card p-5">{children}</div>
     </section>
   );
 }

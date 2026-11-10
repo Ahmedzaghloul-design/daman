@@ -51,7 +51,7 @@ export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, th
 
         <div>
           <p className="text-xs font-medium text-text-2">{t("review.assign")}</p>
-          <div className="mt-2 grid gap-3 sm:grid-cols-2">
+          <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <select aria-label={t("review.installation")} className={`${inputClass} ${!installationId ? "border-review" : ""}`} value={installationId} onChange={(e) => onAssign("installationId", e.target.value)}>
               <option value="">{t("review.installation")}: {t("review.choose")}</option>
               {installations.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
@@ -63,7 +63,7 @@ export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, th
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label={t("review.fields.factory_name")} className="sm:col-span-2">
             <input dir="ltr" className={field("factory_name")} value={receipt.factory_name ?? ""} onChange={(e) => onEdit("factory_name", e.target.value)} />
           </Field>
@@ -74,13 +74,13 @@ export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, th
             </select>
           </Field>
           <Field label={t("review.fields.date")}>
-            <input type="date" dir="ltr" className={`${field("date")} font-mono`} value={/^\d{4}-\d{2}-\d{2}$/.test(receipt.date ?? "") ? receipt.date : ""} onChange={(e) => onEdit("date", e.target.value)} />
+            <input type="date" dir="ltr" className={`${field("date")} tabular-nums`} value={/^\d{4}-\d{2}-\d{2}$/.test(receipt.date ?? "") ? receipt.date : ""} onChange={(e) => onEdit("date", e.target.value)} />
           </Field>
           <Field label={t("review.fields.volume")}>
-            <input type="number" min="0" step="any" dir="ltr" className={`${field("volume")} font-mono`} value={receipt.volume ?? ""} onChange={(e) => onEdit("volume", e.target.value === "" ? null : Number(e.target.value))} />
+            <input type="number" min="0" step="any" dir="ltr" className={`${field("volume")} tabular-nums`} value={receipt.volume ?? ""} onChange={(e) => onEdit("volume", e.target.value === "" ? null : Number(e.target.value))} />
           </Field>
           <Field label={t("review.fields.unit")}>
-            <select className={`${field("unit")} font-mono`} value={receipt.unit ?? ""} onChange={(e) => onEdit("unit", e.target.value)}>
+            <select className={`${field("unit")} tabular-nums`} value={receipt.unit ?? ""} onChange={(e) => onEdit("unit", e.target.value)}>
               {!UNITS.includes(receipt.unit) && <option value={receipt.unit}>{receipt.unit || "—"}</option>}
               {UNITS.map((o) => <option key={o}>{o}</option>)}
             </select>

@@ -1,46 +1,48 @@
 import { Link } from "react-router-dom";
-import { benchmarkOptions, CBAM_DATA, defaultFor, defaultValueCost, distinctBenchmarks } from "@daman/core/cbamCost.js";
+import { benchmarkOptions, CBAM_DATA, defaultFor, defaultValueCost, distinctBenchmarks, markup } from "@daman/core/cbamCost.js";
 import { computeCO2e } from "@daman/core/emissionFactors.js";
 import { reportTotals } from "@daman/core/report.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
 import { usePipeline } from "../state/Pipeline.jsx";
 import { useReport } from "../lib/useReport.js";
-import { WEBSITE_URL } from "../components/Layout.jsx";
-import { buttonClass, fmt, Num, PageHeader, Panel, StatusBadge } from "../components/ui.jsx";
+import { AreaChart, Donut, GroupedBars, Ring } from "../components/charts.jsx";
+import { buttonClass, Code, fmt, IconChip, Num, PageHeader, Panel, StatusBadge } from "../components/ui.jsx";
 
 const LATEST_PRICE = CBAM_DATA.prices2026.Q3.eur;
 const MONTHS = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-const ENERGY_COLOR = { Diesel: "bg-gold", "Natural Gas": "bg-nile", Electricity: "bg-on-nile-2", "Heavy Fuel Oil": "bg-gold-700" };
-
-function Kpi({ label, value, unit, tone = "text-text", to }) {
-  const body = (
-    <div className="h-full rounded-card border border-line bg-card p-4 transition-colors hover:bg-cream">
-      <p className="text-xs font-medium text-text-2">{label}</p>
-      <p className={`mt-2 font-mono text-3xl tabular-nums ${tone}`} dir="ltr">{value}</p>
-      {unit && <p className="mt-1 text-xs text-muted">{unit}</p>}
-    </div>
-  );
-  return to ? <Link to={to} className="block">{body}</Link> : body;
-}
+const ICON = {
+  receipt: "M5 2h10v16l-2.5-1.5L10 18l-2.5-1.5L5 18zM8 6h4M8 9h4M8 12h2",
+  box: "M3 6l7-3 7 3v8l-7 3-7-3zM3 6l7 3 7-3M10 9v8",
+  alert: "M10 3l8 14H2zM10 8v4M10 14.5v.5",
+  euro: "M14 5a6 6 0 1 0 0 10M4 9h8M4 12h8",
+};
+const ENERGY_COLOR = { "Natural Gas": "var(--color-nile)", Electricity: "#7c8cff", Diesel: "var(--color-gold)", "Heavy Fuel Oil": "#c77d4a", Coal: "#8a8f98", Petcoke: "#a07a5a" };
 
 export default function Overview() {
   const { t, energyLabel } = useLanguage();
-  const { ledger, settings } = useAppState();
+  const { ledger, settings, products } = useAppState();
   const { state: pipeline } = usePipeline();
   const rows = useReport();
   const year = settings.year;
   const totals = reportTotals(rows.map((x) => x.r));
   const approved = ledger.filter((e) => ["verified", "verified_anomaly"].includes(e.status) && String(e.date).startsWith(String(year)));
-  const anomalies = approved.filter((e) => e.status === "verified_anomaly").length;
-  const co2 = (e) => computeCO2e(e) ?? 0;
+  const anomalies = approved.filter((e) => e.status === "verified_anomaly");
+  const elecT = (e) => ((Number(e.volume) || 0) / 1000) * Number(settings.gridFactor);
+  const co2 = (e) => (e.energy_type === "Electricity" ? elecT(e) : computeCO2e(e) ?? 0);
 
-  const byMonth = MONTHS.map((m) => approved.filter((e) => String(e.date).slice(5, 7) === m).reduce((s, e) => s + co2(e), 0));
-  const maxMonth = Math.max(1, ...byMonth);
-  const byEnergy = Object.entries(approved.reduce((acc, e) => ({ ...acc, [e.energy_type]: (acc[e.energy_type] ?? 0) + co2(e) }), {})).sort((a, b) => b[1] - a[1]);
-  const energyTotal = byEnergy.reduce((s, [, v]) => s + v, 0) || 1;
+  const direct = MONTHS.map((m) => approved.filter((e) => String(e.date).slice(5, 7) === m && e.energy_type !== "Electricity").reduce((s, e) => s + co2(e), 0));
+  const indirect = MONTHS.map((m) => approved.filter((e) => String(e.date).slice(5, 7) === m && e.energy_type === "Electricity").reduce((s, e) => s + co2(e), 0));
+  const monthly = direct.map((v, i) => v + indirect[i]);
+  const lastMonth = monthly.reduce((last, v, i) => (v > 0 ? i : last), 0);
+  const shown = Math.max(6, lastMonth + 1);
 
-  // Buyer cost on default values for this year's exports (only products with one clear benchmark).
+  // Your data vs the marked-up EU default, over products with complete estimates only.
+  const est = rows.filter(({ r }) => r.ok && r.status === "estimated");
+  const actualT = est.reduce((s, { r }) => s + r.total, 0);
+  const defaultT = est.reduce((s, { product, r }) => s + (typeof r.dv.total === "number" ? r.dv.total * (1 + (markup(r.good.sector, year) ?? 0)) * Number(product.tonnesProduced) : 0), 0);
+  const vsDefault = defaultT > 0 ? actualT / defaultT - 1 : null;
+
   const costs = rows
     .filter(({ r }) => r.ok)
     .map(({ product, r }) => {
@@ -52,71 +54,118 @@ export default function Overview() {
     .filter(Boolean);
   const costTotal = costs.reduce((s, x) => s + x.c.cost, 0);
 
+  const energy = Object.entries(approved.reduce((acc, e) => ({ ...acc, [e.energy_type]: (acc[e.energy_type] ?? 0) + co2(e) }), {})).sort((a, b) => b[1] - a[1]);
+
+  // Stat column, as in the reference dashboard: icon chip, big number, label.
+  const stat = (iconD, tone, label, value, sub, to) => (
+    <Link to={to} className="flex flex-col items-center justify-center gap-2 rounded-xl px-3 py-5 text-center transition-colors hover:bg-sand/50">
+      <IconChip d={iconD} tone={tone} size={48} />
+      <span className="mt-1 block text-[26px] font-bold leading-none tabular-nums text-text" dir="ltr">{value}</span>
+      <span className="block text-sm text-text-2">{label}</span>
+      {sub && <span className="-mt-1 block text-[11px] text-muted">{sub}</span>}
+    </Link>
+  );
+
   return (
     <>
       <PageHeader title={t("overview.title")} subtitle={t("overview.subtitle", { year })} actions={<Link to="/receipts" className={buttonClass("primary")}>{t("overview.startReceipt")}</Link>} />
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label={t("overview.kpis.total")} value={fmt(totals.total, 0)} unit={t("overview.kpiUnits.t")} to="/report" />
-        <Kpi label={t("overview.kpis.actual")} value={`${Math.round(totals.actualShare * 100)}%`} tone={totals.actualShare >= 0.8 ? "text-verified" : "text-text"} to="/report" />
-        <Kpi label={t("overview.kpis.review")} value={pipeline.phase === "review" ? "1" : "0"} tone={pipeline.phase === "review" ? "text-review" : "text-text"} unit={t("overview.kpiUnits.items")} to="/receipts" />
-        <Kpi label={t("overview.kpis.anomalies")} value={String(anomalies)} tone={anomalies ? "text-anomaly" : "text-text"} unit={t("overview.kpiUnits.items")} to="/anomalies" />
-      </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[2fr_1fr]">
-        <Panel title={t("overview.byMonth")}>
-          <div className="flex h-56 items-end gap-2 border-b border-line" dir="ltr">
-            {byMonth.map((v, i) => (
-              // min-w-0 + absolute label keep every column the same width so bars line up with their month.
-              <div key={MONTHS[i]} className="group relative flex h-full min-w-0 flex-1 flex-col items-center justify-end" title={`${MONTHS[i]}: ${fmt(v, 0)} t`}>
-                <span className="w-full rounded-t-tag bg-nile transition-[height] duration-700 ease-daman group-hover:bg-gold" style={{ height: `${v ? Math.max(3, (v / maxMonth) * 100) : 1}%` }} />
-                <span className="pointer-events-none absolute -top-5 whitespace-nowrap font-mono text-[10px] text-text-2 opacity-0 transition-opacity group-hover:opacity-100">{fmt(v, 0)}</span>
-              </div>
-            ))}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        {/* Hero KPI with area chart */}
+        <Panel className="overflow-hidden">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm text-text-2">{t("overview.kpis.total")}</p>
+              <p className="mt-1 text-[34px] font-bold leading-none tracking-[-0.02em] tabular-nums text-text" dir="ltr">{fmt(totals.total, 0)}</p>
+              <p className="mt-1 text-xs text-muted">{t("overview.kpiUnits.t")} · {year}</p>
+            </div>
+            {vsDefault !== null && (
+              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold tabular-nums ${vsDefault < 0 ? "bg-verified-soft text-verified" : "bg-anomaly-soft text-anomaly"}`} dir="ltr" title={t("overview.vsDefault")}>
+                {vsDefault < 0 ? "" : "+"}{fmt(vsDefault * 100, 1)}%
+              </span>
+            )}
           </div>
-          <div className="mt-1 flex gap-2 font-mono text-[10px] text-muted" dir="ltr">{MONTHS.map((m) => <span key={m} className="flex-1 text-center">{m}</span>)}</div>
+          {vsDefault !== null && <p className="mt-2 text-[11px] text-muted">{t("overview.vsDefault")}</p>}
+          <div className="-mx-4 -mb-4 mt-3">
+            <AreaChart values={monthly.slice(0, shown)} labels={MONTHS.slice(0, shown)} unit="t" height={110} />
+          </div>
         </Panel>
-        <Panel title={t("overview.byEnergy")}>
-          {byEnergy.length === 0 ? <p className="text-sm text-muted">{t("overview.empty")}</p> : (
-            <ul className="space-y-3">
-              {byEnergy.map(([type, v]) => (
-                <li key={type}>
-                  <div className="flex justify-between text-sm"><span>{energyLabel(type)}</span><Num className="text-text-2">{fmt(v, 0)} t</Num></div>
-                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-sand"><div className={`h-full rounded-full ${ENERGY_COLOR[type] ?? "bg-muted"}`} style={{ width: `${(v / energyTotal) * 100}%` }} /></div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Panel>
-      </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_1fr]">
-        <Panel title={t("overview.cost")} actions={<a href={`${WEBSITE_URL}/tools`} className="text-xs text-nile underline underline-offset-2">{t("overview.costLink")}</a>}>
-          <p className="text-sm text-text-2">{t("overview.costBody")}</p>
-          <p className="mt-3 font-mono text-3xl tabular-nums text-anomaly" dir="ltr">€{fmt(costTotal, 0)}</p>
+        {/* Stat strip with icon chips */}
+        <Panel className="xl:col-span-2">
+          <div className="grid h-full grid-cols-2 items-center gap-1 md:grid-cols-4 md:divide-x md:divide-line rtl:md:divide-x-reverse">
+            {stat(ICON.receipt, "nile", t("overview.kpis.receipts"), String(approved.length), null, "/ledger")}
+            {stat(ICON.box, "gold", t("overview.kpis.products"), String(products.length), null, "/products")}
+            {stat(ICON.alert, "anomaly", t("overview.kpis.anomalies"), String(anomalies.length), null, "/anomalies")}
+            {stat(ICON.euro, "review", t("overview.kpis.buyerCost"), `€${fmt(costTotal / 1000, 0)}k`, t("overview.kpis.onDefaults"), "/calculator")}
+          </div>
+        </Panel>
+
+        {/* Actual-data ring */}
+        <Panel title={t("overview.kpis.actual")}>
+          <div className="flex items-center gap-5">
+            <Ring value={totals.actualShare} color="var(--color-verified)" size={104} />
+            <div className="text-sm">
+              <p className="text-text-2">{t("overview.actualBody")}</p>
+              <Link to="/report" className="mt-2 inline-block text-nile hover:underline">{t("nav.report")} →</Link>
+            </div>
+          </div>
+        </Panel>
+
+        {/* Direct vs indirect by month */}
+        <Panel title={t("overview.byMonth")} className="xl:col-span-2">
+          <GroupedBars
+            labels={MONTHS.slice(0, shown)}
+            unit="t"
+            height={190}
+            series={[
+              { label: t("overview.direct"), color: "var(--color-nile)", values: direct.slice(0, shown) },
+              { label: t("overview.indirect"), color: "#7c8cff", values: indirect.slice(0, shown) },
+            ]}
+          />
+        </Panel>
+
+        {/* Buyer cost on defaults */}
+        <Panel title={t("overview.cost")} actions={<Link to="/calculator" className="text-xs text-nile hover:underline">{t("overview.costLink")}</Link>}>
+          <p className="text-[30px] font-bold tabular-nums text-gold" dir="ltr">€{fmt(costTotal, 0)}</p>
+          <p className="mt-1 text-xs text-text-2">{t("overview.costBody")}</p>
           <ul className="mt-3 divide-y divide-line text-sm">
             {costs.map(({ product, r, c }) => (
               <li key={product.id} className="flex items-center justify-between gap-3 py-2">
-                <Num className="text-nile">{r.good.codeDisplay}</Num>
-                <Num className="text-text-2">{fmt(product.tonnesExported)} t · €{fmt(c.costPerTonne, 2)}/t</Num>
+                <Code>{r.good.codeDisplay}</Code>
+                <Num className="text-text-2">€{fmt(c.costPerTonne, 2)}/t</Num>
                 <Num>€{fmt(c.cost, 0)}</Num>
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-muted">Q3 2026 price €{LATEST_PRICE} · IR (EU) 2025/2621, 2025/2620 · {t("prototype")}</p>
+          <p className="mt-2 text-[11px] text-muted">Q3 2026 · €{LATEST_PRICE} · {t("prototype")}</p>
         </Panel>
-        <Panel title={t("overview.recent")}>
-          {approved.length === 0 ? <p className="text-sm text-muted">{t("overview.empty")}</p> : (
+
+        {/* Energy mix */}
+        <Panel title={t("overview.byEnergy")}>
+          {energy.length === 0 ? <p className="text-sm text-muted">{t("overview.empty")}</p> : (
+            <Donut
+              items={energy.map(([type, v]) => ({ label: energyLabel(type), value: v, color: ENERGY_COLOR[type] ?? "#86a0a5" }))}
+              center={<><span className="text-base font-bold tabular-nums" dir="ltr">{fmt(energy.reduce((s, [, v]) => s + v, 0), 0)}</span><span className="text-[10px] text-muted">tCO2e</span></>}
+            />
+          )}
+        </Panel>
+
+        {/* Recent approvals */}
+        <Panel title={t("overview.recent")} padded={false}>
+          {approved.length === 0 ? <p className="p-4 text-sm text-muted">{t("overview.empty")}</p> : (
             <ul className="divide-y divide-line text-sm">
-              {[...approved].sort((a, b) => String(b.reviewedAt).localeCompare(String(a.reviewedAt))).slice(0, 6).map((e) => (
-                <li key={e.id} className="flex items-center justify-between gap-3 py-2">
-                  <Num className="text-nile">{e.id}</Num>
-                  <span className="flex-1 truncate text-text-2">{energyLabel(e.energy_type)}</span>
+              {[...approved].sort((a, b) => String(b.reviewedAt).localeCompare(String(a.reviewedAt))).slice(0, 5).map((e) => (
+                <li key={e.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <Code className="shrink-0">{e.id.slice(-4)}</Code>
+                  <span className="min-w-0 flex-1 truncate text-text-2">{energyLabel(e.energy_type)}</span>
                   <Num>{fmt(co2(e), 1)} t</Num>
                   <StatusBadge status={e.status} />
                 </li>
               ))}
             </ul>
           )}
+          {pipeline.phase === "review" && <Link to="/receipts" className="block border-t border-line px-4 py-2.5 text-sm text-review">{t("overview.pending")}</Link>}
         </Panel>
       </div>
     </>

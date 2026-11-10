@@ -3,14 +3,15 @@
  *   @import "tailwindcss";
  *   @import "@daman/brand/tokens.css";
  * Every color/size/motion value used in website/ and app/ comes from here.
- * Palette: Nile & desert gold (chosen 2026-11-10). See DIRECTION.md.
+ * Palette: Nile & desert gold (chosen 2026-11-10). Fonts: Plus Jakarta Sans +
+ * IBM Plex Sans Arabic + JetBrains Mono (chosen 2026-11-10). See DIRECTION.md.
  * All text pairs checked against WCAG 4.5:1 (see DIRECTION.md for the rules).
  */
 @theme {
   /* Type */
-  --font-sans: "Inter", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
-  --font-arabic: "IBM Plex Sans Arabic", "Inter", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: "Plus Jakarta Sans", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; /* codes and IDs only */
   --font-receipt: "Aref Ruqaa", "IBM Plex Sans Arabic", serif;
 
   /* Cream (warm neutrals) */

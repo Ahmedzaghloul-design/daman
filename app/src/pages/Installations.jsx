@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
-import { Button, DemoTag, Drawer, Field, inputClass, Num, PageHeader } from "../components/ui.jsx";
+import { Button, DemoTag, Drawer, Field, inputClass, Num, PageHeader, Code } from "../components/ui.jsx";
 
 const EMPTY = { name: "", operator: "", activity: "", city: "", address: "", country: "EG", unlocode: "", lat: "", lon: "", contact: "", email: "", electricitySource: "grid" };
 const FIELDS = ["name", "operator", "activity", "city", "address", "country", "unlocode", "lat", "lon", "contact", "email"];
@@ -18,12 +18,12 @@ export default function Installations() {
       {installations.length === 0 ? (
         <p className="rounded-card border border-line bg-card p-8 text-sm text-text-2">{t("installations.empty")}</p>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {installations.map((i) => (
             <article key={i.id} className="rounded-card border border-line bg-card p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <Num className="text-xs text-muted">{i.id}</Num> {i.demo && <DemoTag />}
+                  <Code className="text-xs text-muted">{i.id}</Code> {i.demo && <DemoTag />}
                   <h2 className="mt-1 font-semibold text-text">{i.name}</h2>
                   <p className="text-sm text-text-2">{i.operator}</p>
                 </div>
@@ -54,10 +54,10 @@ export default function Installations() {
         }
       >
         {editing && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {FIELDS.map((f) => (
               <Field key={f} label={t(`installations.fields.${f}`)} className={["name", "operator", "address"].includes(f) ? "sm:col-span-2" : ""}>
-                <input dir={LTR.has(f) ? "ltr" : undefined} className={`${inputClass} ${LTR.has(f) ? "font-mono" : ""}`} value={editing[f] ?? ""} onChange={(e) => setEditing({ ...editing, [f]: e.target.value })} />
+                <input dir={LTR.has(f) ? "ltr" : undefined} className={`${inputClass} ${LTR.has(f) ? "tabular-nums" : ""}`} value={editing[f] ?? ""} onChange={(e) => setEditing({ ...editing, [f]: e.target.value })} />
               </Field>
             ))}
             <Field label={t("installations.fields.electricitySource")} className="sm:col-span-2">

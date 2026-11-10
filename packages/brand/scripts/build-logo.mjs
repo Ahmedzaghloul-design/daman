@@ -15,7 +15,7 @@ function lockup(theme) {
   // Measured in the browser: "Daman" at 44px ≈ 146 wide (108→254), "ضمان" at 32px ≈ 78 wide.
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 96" role="img" aria-label="Daman ضمان">
   <g>${paths}</g>
-  <text x="108" y="61" font-family="Inter, sans-serif" font-weight="600" font-size="44" letter-spacing="-0.6" fill="${word}">Daman</text>
+  <text x="108" y="61" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="44" letter-spacing="-0.6" fill="${word}">Daman</text>
   <rect x="268" y="30" width="1.5" height="36" fill="${wordAr}" opacity="0.6"/>
   <text x="283" y="61" font-family="'IBM Plex Sans Arabic', sans-serif" font-weight="600" font-size="32" fill="${wordAr}">ضمان</text>
 </svg>
@@ -35,12 +35,12 @@ for (const [name, svg] of Object.entries(files)) {
 }
 
 // Brand sheet: every final file inline, so it opens anywhere without a server.
-const fonts = `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono&family=IBM+Plex+Sans+Arabic:wght@600&display=swap">`;
+const fonts = `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono&family=IBM+Plex+Sans+Arabic:wght@600&display=swap">`;
 const cell = (label, inner, bg = "#f6f0e4") =>
-  `<figure style="margin:0;background:${bg};border:1px solid rgba(30,26,20,.1);border-radius:12px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:160px">${inner}<figcaption style="font:12px 'IBM Plex Mono',monospace;color:${bg === "#f6f0e4" ? "#6b6152" : "#a9bfc3"}">${label}</figcaption></figure>`;
+  `<figure style="margin:0;background:${bg};border:1px solid rgba(30,26,20,.1);border-radius:12px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:160px">${inner}<figcaption style="font:12px 'JetBrains Mono',monospace;color:${bg === "#f6f0e4" ? "#6b6152" : "#a9bfc3"}">${label}</figcaption></figure>`;
 const sheet = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Daman — Brand Sheet</title>${fonts}</head>
-<body style="margin:0;background:#fcf8f0;font:15px/1.5 Inter,sans-serif;color:#1e1a14"><main style="max-width:1100px;margin:0 auto;padding:48px 24px">
-<p style="font:12px 'IBM Plex Mono',monospace;color:#6b6152;margin:0">DAMAN BRAND SHEET · GENERATED FROM logo/mark.js</p>
+<body style="margin:0;background:#fcf8f0;font:15px/1.5 'Plus Jakarta Sans',sans-serif;color:#1e1a14"><main style="max-width:1100px;margin:0 auto;padding:48px 24px">
+<p style="font:12px 'JetBrains Mono',monospace;color:#6b6152;margin:0">DAMAN BRAND SHEET · GENERATED FROM logo/mark.js</p>
 <h1 style="font-weight:500;letter-spacing:-.02em;margin:8px 0 24px">The Stamped Receipt</h1>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
 ${cell("daman-lockup.svg", files["daman-lockup.svg"].replace("<svg ", '<svg width="240" '))}

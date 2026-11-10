@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
 import { usePipeline } from "../state/Pipeline.jsx";
@@ -7,20 +7,23 @@ import { Mark } from "./ui.jsx";
 
 export const WEBSITE_URL = import.meta.env.VITE_WEBSITE_URL || "http://localhost:5173";
 
-// 16px line icons, stroke 1.5, drawn in code.
+// 20px line icons, stroke 1.5, drawn in code.
 const ICONS = {
-  overview: "M3 13h4v5H3zM8 8h4v10H8zM13 4h4v14h-4z",
+  overview: "M3 3h6v6H3zM11 3h6v4h-6zM11 9h6v8h-6zM3 11h6v6H3z",
   report: "M4 3h12v14H4zM7 7h6M7 10h6M7 13h4",
   receipts: "M5 2h10v16l-2.5-1.5L10 18l-2.5-1.5L5 18zM8 6h4M8 9h4M8 12h2",
   ledger: "M3 4h14M3 8h14M3 12h14M3 16h9",
   anomalies: "M10 3l8 14H2zM10 8v4M10 14.5v.5",
+  calculator: "M5 2h10v16H5zM7 5h6v3H7zM7 11h1M10 11h1M13 11h0M7 14h1M10 14h1M13 14h0",
   installations: "M2 18V9l5-3v3l5-3v3l5-3v12zM6 13h1M10 13h1M14 13h1",
   products: "M3 6l7-3 7 3v8l-7 3-7-3zM3 6l7 3 7-3M10 9v8",
   settings: "M10 7a3 3 0 1 0 0 6a3 3 0 0 0 0-6M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4",
+  more: "M4 10h.01M10 10h.01M16 10h.01",
+  camera: "M3 6h3l2-2h4l2 2h3v10H3zM10 8a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7",
 };
-function Icon({ name }) {
+export function Icon({ name, size = 18 }) {
   return (
-    <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg viewBox="0 0 20 20" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={name === "more" ? 3 : 1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d={ICONS[name]} />
     </svg>
   );
@@ -28,13 +31,14 @@ function Icon({ name }) {
 
 const GROUPS = [
   { label: "nav.workspace", items: ["overview", "report", "receipts", "ledger", "anomalies"] },
+  { label: "nav.tools", items: ["calculator"] },
   { label: "nav.registry", items: ["installations", "products"] },
 ];
 
-// A faint line drawing of landmarks for the sidebar foot (Egypt -> Europe).
+// Faint landmark line drawing (Egypt -> Europe) for the sidebar foot.
 function SidebarSkyline() {
   return (
-    <svg viewBox="0 0 240 40" className="w-full text-on-nile-2/25" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden="true">
+    <svg viewBox="0 0 240 40" className="w-full text-on-nile-2/20" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden="true">
       <path d="M4 38 L22 18 L40 38 M30 38 L42 24 L54 38 M66 38 V12 M70 38 V12 M63 12 H73 L71 8 H65 Z M68 8 V2 M92 38 V24 H120 V38 M92 24 v-3 h4 v3 h4 v-3 h4 v3 h4 v-3 h4 v3 M140 38 Q147 26 148 14 L150 4 L152 14 Q153 26 160 38 M144 30 H156 M176 38 V22 M184 38 V22 M192 38 V22 M200 38 V22 M172 22 H204 V18 H172 Z M220 38 V12 H230 V38 M218 12 L225 2 L232 12 M0 38 H240" />
     </svg>
   );
@@ -43,7 +47,7 @@ function SidebarSkyline() {
 function ApiStatus() {
   const { t } = useLanguage();
   const { apiHealth } = useAppState();
-  let s = { dot: "bg-on-nile-2/50", label: "…" };
+  let s = { dot: "bg-muted", label: "…" };
   if (apiHealth.ok === false) s = { dot: "bg-anomaly", label: t("api.offline") };
   else if (apiHealth.ok && apiHealth.mock) s = { dot: "bg-gold", label: t("api.mock") };
   else if (apiHealth.ok && !apiHealth.keyConfigured) s = { dot: "bg-anomaly", label: t("api.nokey") };
@@ -56,94 +60,115 @@ function ApiStatus() {
   );
 }
 
-export default function Layout() {
+function NavItem({ to, label, icon, badge, onClick }) {
+  return (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive }) =>
+        `group flex h-10 items-center gap-3 rounded-xl px-2.5 text-sm font-medium transition-colors ${isActive ? "bg-nile/15 text-nile" : "text-on-nile-2 hover:bg-white/5 hover:text-on-nile"}`
+      }
+    >
+      <Icon name={icon} />
+      <span className="flex-1">{label}</span>
+      {badge && <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />}
+    </NavLink>
+  );
+}
+
+function Sidebar({ onNavigate }) {
   const { t, toggle } = useLanguage();
   const { installations, settings } = useAppState();
   const { state: pipeline } = usePipeline();
-  const [open, setOpen] = useState(false);
-  const { pathname } = useLocation();
-  const busy = pipeline.phase === "ocr" || pipeline.phase === "auditing" || pipeline.phase === "review";
-
-  const nav = (
-    <nav className="flex flex-col gap-6 px-3" aria-label="Main">
-      {GROUPS.map((g) => (
-        <div key={g.label}>
-          <p className="px-2 pb-2 text-[11px] font-medium uppercase tracking-wide text-on-nile-2/70">{t(g.label)}</p>
-          <ul className="flex flex-col gap-0.5">
-            {g.items.map((key) => (
-              <li key={key}>
-                <NavLink
-                  to={`/${key}`}
-                  onClick={() => setOpen(false)}
-                  className={({ isActive }) =>
-                    `flex h-9 items-center gap-3 rounded-control px-2 text-sm transition-colors ${isActive ? "bg-nile-raised text-on-nile shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" : "text-on-nile-2 hover:bg-white/5 hover:text-on-nile"}`
-                  }
-                >
-                  <Icon name={key} />
-                  <span className="flex-1">{t(`nav.${key}`)}</span>
-                  {key === "receipts" && busy && <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-      <div>
-        <NavLink
-          to="/settings"
-          onClick={() => setOpen(false)}
-          className={({ isActive }) => `flex h-9 items-center gap-3 rounded-control px-2 text-sm ${isActive ? "bg-nile-raised text-on-nile" : "text-on-nile-2 hover:bg-white/5 hover:text-on-nile"}`}
-        >
-          <Icon name="settings" />
-          {t("nav.settings")}
-        </NavLink>
+  const busy = ["ocr", "auditing", "review"].includes(pipeline.phase);
+  return (
+    <div className="flex h-full flex-col border-e border-line bg-nile-deep">
+      <a href={WEBSITE_URL} className="flex items-center gap-2.5 px-5 py-5" aria-label={t("common.backToSite")}>
+        <Mark size={32} />
+        <span className="text-lg font-bold text-on-nile">Daman</span>
+        <span className="font-arabic text-sm font-semibold text-gold">ضمان</span>
+      </a>
+      <div className="mx-3 mb-5 rounded-xl bg-white/[0.03] px-3 py-3">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-muted">{t("nav.installation")}</p>
+        <p className="mt-0.5 truncate text-sm font-semibold text-on-nile">{installations[0]?.name ?? "—"}{installations.length > 1 ? ` +${installations.length - 1}` : ""}</p>
+        <p className="mt-2 text-[11px] font-medium uppercase tracking-wide text-muted">{t("nav.period")}</p>
+        <p className="text-sm font-semibold tabular-nums text-on-nile">{settings.year}</p>
       </div>
-    </nav>
-  );
-
-  const sidebar = (
-    <div className="flex h-full flex-col bg-nile-deep">
-      <div className="flex items-center justify-between px-5 py-5">
-        <a href={WEBSITE_URL} className="flex items-center gap-2.5" aria-label={t("common.backToSite")}>
-          <Mark size={30} theme="dark" />
-          <span className="font-semibold text-on-nile">Daman</span>
-          <span className="font-arabic text-sm font-semibold text-gold">ضمان</span>
-        </a>
-      </div>
-      <div className="mx-3 mb-6 rounded-control border border-on-nile/10 px-3 py-2.5">
-        <p className="text-[11px] uppercase tracking-wide text-on-nile-2/70">{t("nav.installation")}</p>
-        <p className="truncate text-sm text-on-nile">{installations[0]?.name ?? "—"}{installations.length > 1 ? ` +${installations.length - 1}` : ""}</p>
-        <p className="mt-1.5 text-[11px] uppercase tracking-wide text-on-nile-2/70">{t("nav.period")}</p>
-        <p className="font-mono text-sm text-on-nile">{settings.year}</p>
-      </div>
-      <div className="flex-1 overflow-y-auto">{nav}</div>
-      <div className="space-y-4 px-5 pb-5 pt-6">
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3" aria-label="Main">
+        {GROUPS.map((g) => (
+          <div key={g.label}>
+            <p className="px-2.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted">{t(g.label)}</p>
+            {g.items.map((key) => <NavItem key={key} to={`/${key}`} icon={key} label={t(`nav.${key}`)} badge={key === "receipts" && busy} onClick={onNavigate} />)}
+          </div>
+        ))}
+        <NavItem to="/settings" icon="settings" label={t("nav.settings")} onClick={onNavigate} />
+      </nav>
+      <div className="space-y-4 px-5 pb-5 pt-5">
         <SidebarSkyline />
         <ApiStatus />
         <div className="flex items-center justify-between">
-          <button type="button" onClick={toggle} className="rounded-control px-2 py-1 text-xs text-on-nile-2 hover:bg-white/5 hover:text-on-nile">{t("langSwitch")}</button>
+          <button type="button" onClick={toggle} className="rounded-lg px-2 py-1 text-xs text-on-nile-2 hover:bg-white/5 hover:text-on-nile">{t("langSwitch")}</button>
           <a href={WEBSITE_URL} className="text-xs text-on-nile-2 hover:text-on-nile">{t("common.backToSite")}</a>
         </div>
       </div>
     </div>
   );
+}
 
+/** Phone tab bar, like a native app. The middle button opens the camera flow. */
+function TabBar({ onMore }) {
+  const { t } = useLanguage();
+  const tab = (to, icon, label) => (
+    <NavLink to={to} className={({ isActive }) => `flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium ${isActive ? "text-nile" : "text-muted"}`}>
+      <Icon name={icon} size={22} />
+      {label}
+    </NavLink>
+  );
   return (
-    <div className="min-h-screen bg-cream lg:grid lg:grid-cols-[256px_1fr]">
-      <aside className="sticky top-0 hidden h-screen lg:block">{sidebar}</aside>
-      {/* Mobile top bar */}
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-on-nile/10 bg-nile-deep px-4 py-3 lg:hidden">
-        <span className="flex items-center gap-2"><Mark size={26} theme="dark" /><span className="font-semibold text-on-nile">Daman</span></span>
-        <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="rounded-control px-3 py-1.5 text-sm text-on-nile hover:bg-white/5">
-          {open ? t("common.close") : t("nav.workspace")}
+    <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-line bg-nile-deep/95 backdrop-blur lg:hidden" aria-label="Tabs">
+      <div className="mx-auto flex max-w-lg items-end">
+        {tab("/overview", "overview", t("nav.overview"))}
+        {tab("/report", "report", t("nav.report").split(" ")[0])}
+        <Link to="/receipts" aria-label={t("nav.receipts")} className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 text-[11px] font-medium text-nile">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-nile text-[#04161b] shadow-float"><Icon name="camera" size={24} /></span>
+          {t("nav.receipts")}
+        </Link>
+        {tab("/calculator", "calculator", t("nav.tools"))}
+        <button type="button" onClick={onMore} className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium text-muted">
+          <Icon name="more" size={22} />
+          {t("nav.more")}
         </button>
       </div>
-      {open && <div className="fixed inset-0 top-[53px] z-30 lg:hidden">{sidebar}</div>}
-      <main key={pathname} className="min-w-0 px-4 py-6 sm:px-8 sm:py-8">
-        <div className="mx-auto max-w-[1400px]">
-          <Outlet />
+    </nav>
+  );
+}
+
+export default function Layout() {
+  const { t, toggle } = useLanguage();
+  const [more, setMore] = useState(false);
+  const { pathname } = useLocation();
+  return (
+    <div className="min-h-screen bg-cream lg:grid lg:grid-cols-[260px_1fr]">
+      <aside className="sticky top-0 hidden h-screen lg:block"><Sidebar /></aside>
+
+      {/* Phone top bar */}
+      <header className="safe-top sticky top-0 z-30 flex items-center justify-between border-b border-line bg-cream/90 px-4 py-3 backdrop-blur lg:hidden">
+        <span className="flex items-center gap-2"><Mark size={28} /><span className="font-bold text-text">Daman</span></span>
+        <button type="button" onClick={toggle} className="rounded-lg px-3 py-1.5 text-sm text-text-2 hover:bg-sand">{t("langSwitch")}</button>
+      </header>
+
+      {/* Phone "More" sheet: full navigation */}
+      {more && (
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+          <button type="button" className="absolute inset-0 bg-black/50" aria-label={t("common.close")} onClick={() => setMore(false)} />
+          <div className="absolute inset-y-0 start-0 w-[82%] max-w-xs fade-up"><Sidebar onNavigate={() => setMore(false)} /></div>
         </div>
+      )}
+
+      <main key={pathname} className="fade-up min-w-0 px-4 pb-28 pt-5 sm:px-8 sm:pt-8 lg:pb-10">
+        <div className="mx-auto max-w-[1400px]"><Outlet /></div>
       </main>
+      <TabBar onMore={() => setMore(true)} />
     </div>
   );
 }

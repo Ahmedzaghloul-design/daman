@@ -4,7 +4,7 @@ import { findGood } from "@daman/core/cbamCost.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
 import { toCsv } from "../lib/exports.js";
-import { ArabicWithNumbers, Button, DemoTag, downloadFile, Drawer, fmt, inputClass, Num, PageHeader, StatusBadge } from "../components/ui.jsx";
+import { ArabicWithNumbers, Button, DemoTag, downloadFile, Drawer, fmt, inputClass, Num, PageHeader, StatusBadge, Code } from "../components/ui.jsx";
 
 export default function Ledger() {
   const { t, energyLabel } = useLanguage();
@@ -74,7 +74,7 @@ export default function Ledger() {
             <tbody className="divide-y divide-line">
               {rows.map((e) => (
                 <tr key={e.id} className="cursor-pointer hover:bg-cream" onClick={() => setOpen(e)}>
-                  <td className="whitespace-nowrap px-3 py-2.5"><Num className="text-nile">{e.id}</Num> {e.demo && <DemoTag />}</td>
+                  <td className="whitespace-nowrap px-3 py-2.5"><Code>{e.id}</Code> {e.demo && <DemoTag />}</td>
                   <td className="px-3 py-2.5"><Num>{e.date}</Num></td>
                   <td className="px-3 py-2.5"><Num className="text-text-2">{productLabel(e.productId)}</Num></td>
                   <td className="px-3 py-2.5 text-text-2">{energyLabel(e.energy_type)}</td>
@@ -105,7 +105,7 @@ export default function Ledger() {
             {open.rawText && (
               <div>
                 <p className="text-xs font-medium text-text-2">{t("ledger.source")}</p>
-                <p dir="rtl" lang="ar" className="mt-1 rounded-control bg-cream p-3 font-mono"><ArabicWithNumbers text={open.rawText} /></p>
+                <p dir="rtl" lang="ar" className="mt-1 rounded-control bg-cream p-3 tabular-nums"><ArabicWithNumbers text={open.rawText} /></p>
               </div>
             )}
             {open.justification && (

@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { AppStateContext } from "./contexts.js";
 import { DEFAULT_BENCHMARKS } from "@daman/core/massBalance.js";
 import { computeCO2e } from "@daman/core/emissionFactors.js";
 import { getApiHealth } from "../services/geminiApi.js";
@@ -92,7 +93,6 @@ function load() {
   }
 }
 
-const AppStateContext = createContext(null);
 const nextId = (items, prefix) => `${prefix}-${String(items.reduce((m, x) => Math.max(m, Number(String(x.id).split("-").pop()) || 0), 0) + 1).padStart(3, "0")}`;
 
 export function AppStateProvider({ children }) {

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 96" role="img" aria-label="Daman ضمان">
   <g><path d="M26 14H76V82l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4Z" fill="#0e5e6f" fill-rule="evenodd"/><path d="M20 9H70V77l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4l-4.17 4l-4.17 -4Z" fill="#e6d7b8" fill-rule="evenodd"/><path d="M49.5 33h14v12h-14ZM53 36.5h7v5h-7ZM46 41.5h3.5v8.5h-3.5ZM32.5 50h17.5v3.5h-17.5ZM32.5 37h3.5v13h-3.5ZM54.75 26.5h3.5v3.5h-3.5ZM28 60h24v2.5h-24ZM28 66h16v2.5h-16Z" fill="#0e5e6f" fill-rule="evenodd"/><path d="M54 70a12 12 0 1 0 24 0a12 12 0 1 0 -24 0ZM59.5 70.2L62 67.7L64.6 70.3L70.6 64.3L73.1 66.8L64.6 75.3Z" fill="#c8963e" fill-rule="evenodd"/></g>
-  <text x="108" y="61" font-family="Inter, sans-serif" font-weight="600" font-size="44" letter-spacing="-0.6" fill="#073640">Daman</text>
+  <text x="108" y="61" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="44" letter-spacing="-0.6" fill="#073640">Daman</text>
   <rect x="268" y="30" width="1.5" height="36" fill="#875f1c" opacity="0.6"/>
   <text x="283" y="61" font-family="'IBM Plex Sans Arabic', sans-serif" font-weight="600" font-size="32" fill="#875f1c">ضمان</text>
 </svg>

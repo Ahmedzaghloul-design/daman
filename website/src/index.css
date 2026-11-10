@@ -9,7 +9,7 @@ body {
 }
 html[lang="ar"] body { font-family: var(--font-arabic); }
 /* IBM Plex Mono has no Arabic letters: fall back to Plex Sans Arabic, not a system font. */
-html[lang="ar"] { --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, monospace; }
+html[lang="ar"] { --font-mono: "JetBrains Mono", "IBM Plex Sans Arabic", ui-monospace, monospace; }
 
 :focus-visible { outline: 2px solid var(--color-nile); outline-offset: 3px; border-radius: 4px; }
 

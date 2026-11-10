@@ -70,7 +70,7 @@ export default function Receipts() {
         {(p.phase === "idle" || p.phase === "error") && <UploadZone onFile={processFile} onSample={runSample} settings={settings} updateSettings={updateSettings} />}
 
         {busy && (
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
             <ReceiptPreview file={p.file} previewUrl={p.previewUrl} rawText={p.rawText} />
             <section className="space-y-3 rounded-card border border-line bg-card p-4" aria-busy="true">
               {[...Array(6)].map((_, i) => <div key={i} className="h-9 animate-pulse rounded-control bg-sand" />)}
@@ -81,7 +81,7 @@ export default function Receipts() {
         {p.phase === "review" && review && (
           <>
             {review.anomaly && <AnomalyBanner deterministic={review.det} llm={review.llm} stale={p.edited} />}
-            <div className="grid gap-5 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <ReceiptPreview file={p.file} previewUrl={p.previewUrl} rawText={p.rawText} />
               <ReviewPanel
                 receipt={p.receipt}
@@ -112,12 +112,13 @@ function UploadZone({ onFile, onSample, settings, updateSettings }) {
   const { t } = useLanguage();
   const [drag, setDrag] = useState(false);
   const ref = useRef(null);
+  const camRef = useRef(null); // opens the phone's rear camera directly
   const ok = Number(settings.productionTonnes) > 0;
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_2fr]">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_2fr]">
       <section className="rounded-card border border-line bg-card p-4">
         <Field label={t("receipts.production")}>
-          <input type="number" min="1" dir="ltr" className={`${inputClass} font-mono ${ok ? "" : "border-anomaly"}`} value={settings.productionTonnes} onChange={(e) => updateSettings({ productionTonnes: e.target.value })} />
+          <input type="number" min="1" dir="ltr" className={`${inputClass} tabular-nums ${ok ? "" : "border-anomaly"}`} value={settings.productionTonnes} onChange={(e) => updateSettings({ productionTonnes: e.target.value })} />
         </Field>
       </section>
       <div
@@ -130,9 +131,12 @@ function UploadZone({ onFile, onSample, settings, updateSettings }) {
         <p className="mt-4 font-medium">{t("receipts.drop")}</p>
         <p className="mt-1 text-sm text-muted">{t("receipts.hint")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <Button disabled={!ok} onClick={() => ref.current?.click()}>{t("receipts.select")}</Button>
+          <Button disabled={!ok} onClick={() => camRef.current?.click()} className="sm:hidden">{t("receipts.camera")}</Button>
+          <Button disabled={!ok} variant="secondary" className="sm:hidden" onClick={() => ref.current?.click()}>{t("receipts.select")}</Button>
+          <Button disabled={!ok} className="hidden sm:inline-flex" onClick={() => ref.current?.click()}>{t("receipts.select")}</Button>
           <Button variant="secondary" disabled={!ok} onClick={onSample}>{t("receipts.sample")}</Button>
         </div>
+        <input ref={camRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
         <input ref={ref} type="file" className="hidden" accept="image/jpeg,image/png,image/webp,image/heic,application/pdf" onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
       </div>
     </div>

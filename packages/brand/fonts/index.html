@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daman — Font pairings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<style>
+  :root {
+    --bg: #071a1f; --card: #0d252c; --raised: #133139; --line: rgba(255,255,255,.07);
+    --text: #e9f0f1; --text-2: #9fb6bb; --muted: #7d969b;
+    --nile: #2aa6b8; --nile-deep: #0e5e6f; --gold: #d4a24c; --ok: #3fbf7f; --warn: #e0a43a; --bad: #ef6b6b;
+    --cream: #f6f0e4;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #041014; color: var(--text); font-family: system-ui, sans-serif; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 24px 80px; }
+  .top { color: var(--text-2); font: 12px "JetBrains Mono", monospace; }
+  h1 { font: 600 30px system-ui; margin: 8px 0 6px; color: var(--text); }
+  .lead { color: var(--text-2); margin: 0 0 32px; max-width: 46rem; }
+  .pair { border: 1px solid var(--line); border-radius: 20px; padding: 24px; margin-bottom: 28px; background: #06161a; }
+  .pair h2 { margin: 0; font-size: 22px; font-weight: 700; }
+  .pair .names { color: var(--text-2); font-size: 14px; margin: 6px 0 20px; }
+  .grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; }
+  .dash { background: var(--bg); border-radius: 16px; padding: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { background: var(--card); border-radius: 14px; padding: 16px; border: 1px solid var(--line); }
+  .kpi-label { color: var(--text-2); font-size: 13px; font-weight: 500; }
+  .kpi { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .chip.ok { background: rgba(63,191,127,.15); color: var(--ok); }
+  .chip.warn { background: rgba(224,164,58,.15); color: var(--warn); }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .ico { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; }
+  .table { grid-column: 1 / -1; }
+  .table table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: start; color: var(--text-2); font-weight: 500; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+  .table td { padding: 10px 6px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .mono { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--nile); }
+  .bar { height: 6px; width: 70px; border-radius: 99px; background: var(--raised); overflow: hidden; display: inline-block; vertical-align: middle; }
+  .bar i { display: block; height: 100%; background: var(--ok); }
+  .side { display: grid; gap: 14px; }
+  .site { background: var(--cream); color: #1e1a14; border-radius: 16px; padding: 24px; }
+  .site h3 { font-size: 30px; line-height: 1.08; letter-spacing: -0.03em; font-weight: 700; margin: 0 0 10px; }
+  .site p { color: #5a5045; margin: 0; font-size: 15px; line-height: 1.55; }
+  .ar { direction: rtl; text-align: right; }
+  .ar-card { background: var(--card); border-radius: 14px; padding: 16px; border: 1px solid var(--line); }
+  .ar-card .t { font-size: 20px; font-weight: 700; }
+  .ar-card p { color: var(--text-2); margin: 6px 0 0; font-size: 14px; line-height: 1.7; }
+  svg { display: block; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="top">DAMAN · FONT PAIRINGS · FOR REVIEW</p>
+  <h1>Three English + Arabic font pairings</h1>
+  <p class="lead">Each pairing is shown on the dark app dashboard (in Nile &amp; gold, like your reference image), the website, and an Arabic card. Customs codes and IDs use JetBrains Mono in all three.</p>
+  <div id="pairs"></div>
+</div>
+<script>
+const PAIRS = [
+  { id: "A", name: "Plus Jakarta Sans + IBM Plex Sans Arabic", latin: "'Plus Jakarta Sans'", arabic: "'IBM Plex Sans Arabic'", note: "Closest to your reference image: rounded, friendly, very legible numbers. Plex Arabic is calm and corporate." },
+  { id: "B", name: "Manrope + Cairo", latin: "'Manrope'", arabic: "'Cairo'", note: "Geometric and technical; Cairo was designed with Egyptian readers in mind and feels local." },
+  { id: "C", name: "Sora + Tajawal", latin: "'Sora'", arabic: "'Tajawal'", note: "The most distinctive and modern; wide shapes stand out in pitches. Tajawal is light and clean." },
+];
+const spark = (color) => `<svg viewBox="0 0 200 48" width="100%" height="48"><defs><linearGradient id="g${color.slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="M0 38 C20 30 30 34 45 26 S70 10 90 18 S120 36 140 22 S175 6 200 12 V48 H0Z" fill="url(#g${color.slice(1)})"/><path d="M0 38 C20 30 30 34 45 26 S70 10 90 18 S120 36 140 22 S175 6 200 12" fill="none" stroke="${color}" stroke-width="2"/></svg>`;
+const ring = (pct, color) => { const c = 2 * Math.PI * 30; return `<svg viewBox="0 0 80 80" width="84" height="84"><circle cx="40" cy="40" r="30" fill="none" stroke="#133139" stroke-width="8"/><circle cx="40" cy="40" r="30" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c * pct} ${c}" transform="rotate(-90 40 40)"/></svg>`; };
+const icon = (bg, color, d) => `<div class="ico" style="background:${bg}"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg></div>`;
+document.getElementById("pairs").innerHTML = PAIRS.map((p) => `
+  <section class="pair" style="font-family:${p.latin}, sans-serif">
+    <h2>${p.id}. ${p.name}</h2>
+    <p class="names">${p.note}</p>
+    <div class="grid">
+      <div class="dash">
+        <div class="card">
+          <div class="row"><span class="kpi-label">Embedded emissions · 2026</span><span class="chip ok">−50.0%</span></div>
+          <div class="kpi">21,708 <span style="font-size:14px;color:var(--text-2);font-weight:500">tCO2e</span></div>
+          ${spark("#2aa6b8")}
+        </div>
+        <div class="card row" style="align-items:center">
+          <div><div class="kpi-label">Backed by actual data</div><div class="kpi">97%</div><span class="chip warn">1 product incomplete</span></div>
+          ${ring(0.97, "#d4a24c")}
+        </div>
+        <div class="card row">
+          ${icon("rgba(42,166,184,.15)", "#2aa6b8", "M5 2h10v16l-2.5-1.5L10 18l-2.5-1.5L5 18zM8 6h4M8 9h4")}
+          <div style="flex:1"><div class="kpi-label">Receipts approved</div><div class="kpi" style="font-size:24px">8</div></div>
+          ${icon("rgba(239,107,107,.15)", "#ef6b6b", "M10 3l8 14H2zM10 8v4M10 14.5v.5")}
+          <div><div class="kpi-label">Anomalies</div><div class="kpi" style="font-size:24px;color:var(--bad)">2</div></div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">EU buyer cost on default values</div>
+          <div class="kpi" style="color:var(--gold)">€1,486,210</div>
+        </div>
+        <div class="card table">
+          <table>
+            <thead><tr><th>CN code · Product</th><th>Exported</th><th>Actual data</th><th style="text-align:end">tCO2e / t</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">2523 10 00 90</span><br><span style="color:var(--text-2);font-size:12px">Grey clinker</span></td><td>8,000 t</td><td><span class="bar"><i style="width:100%"></i></span> 100%</td><td style="text-align:end;font-weight:600">0.7004</td></tr>
+              <tr><td><span class="mono">2523 29 00</span><br><span style="color:var(--text-2);font-size:12px">Grey Portland cement</span></td><td>25,000 t</td><td style="color:var(--warn)">Incomplete</td><td style="text-align:end;font-weight:600">0.0188</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="side">
+        <div class="site">
+          <h3>The analog-to-digital bridge for EU CBAM compliance.</h3>
+          <p>Daman reads the handwritten Arabic fuel and energy records of Egyptian factories and turns them into verified emissions data for your EU buyers.</p>
+        </div>
+        <div class="ar-card ar" style="font-family:${p.arabic}, sans-serif">
+          <div class="t">الجسر من الورق إلى الرقمي</div>
+          <p>يقرأ ضمان إيصالات الوقود والطاقة المكتوبة بخط اليد بالعربية ويحوّلها إلى بيانات انبعاثات مُتحقَّق منها. الانبعاثات المضمّنة: <b>21,708</b> طن.</p>
+        </div>
+      </div>
+    </div>
+  </section>`).join("");
+</script>
+</body>
+</html>

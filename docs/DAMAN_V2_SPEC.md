@@ -28,7 +28,7 @@ internet and shows its sources.
 | Chatbot location | Both: website (sales questions) and program (workspace help) |
 | "All factories" claim | Accurate wording: Daman reads energy records from **any** factory; CBAM filing data only for CBAM sectors (wording in §5.4) |
 | Images | AI-generated now, built so real photos can replace them later by swapping files |
-| Design rules | "Serious but alive": institutional and trustworthy, with photos, subtle motion, interactive 3D and rich visuals; no glow, no cartoonish effects |
+| Design rules | "Serious but alive": institutional and trustworthy, with photos, subtle motion, interactive 3D and rich visuals; no glow, no cartoonish effects. Soft area-chart fills are allowed in the app (as in the reference image) |
 | Website tools | All four: CBAM cost calculator, live pipeline demo, "How we calculate" explorer, sector checker |
 | Logo | **Chosen: "The Stamped Receipt"** (round 2, concept 04), with an interactive 3D version for the website and a flat version for documents; see `packages/brand/DIRECTION.md` |
 | Palette | **Nile & desert gold**: Nile teal `#0E5E6F`, desert gold `#C8963E`, on cream (replaces the earlier navy palette) |
@@ -37,6 +37,11 @@ internet and shows its sources.
 | Program layout | **A: Report table** (inspired by Kuehne+Nagel's CBAM report, adapted for the exporting factory): period list, product table with CN code, tonnes, installation, % actual data bar, tCO2e, actions |
 | Landmarks | **3D globe + line art**: interactive 3D globe with landmarks and gold trade routes in the website hero; subtle gold line-art skylines elsewhere; very faint line art only in the program |
 | Landmark set | Egypt (Pyramids of Giza, Cairo Tower, Citadel of Qaitbay, Suez Canal), EU (Brandenburg Gate, Eiffel Tower, Colosseum, Rotterdam cranes), UK (Elizabeth Tower), wider world as "future" markers. No Atomium (image rights are enforced); no EU flag stars |
+| Products | **Website** = story, details, methodology, a calculator teaser. **App** = the program plus the full CBAM calculator and sector checker |
+| Phones | The app is an **installable web app (PWA)**: opens in any browser, installs to the home screen on iPhone and Android, uses the phone camera for receipts. App Store wrapping later if needed |
+| App look | **Dark dashboard in Nile & gold**, modelled on the team's reference image (dark cards, icon chips, area and bar charts, ring gauges); status colors keep their meaning |
+| Website look | Mixed dark Nile + cream, with the new fonts, dashboard-style cards and a preview of the dark app |
+| Fonts | **Plus Jakarta Sans** (Latin) + **IBM Plex Sans Arabic** (Arabic) + **JetBrains Mono** (codes and IDs only). Chosen from 3 pairings in `packages/brand/fonts/index.html` |
 | Receipt allocation | The reviewer assigns each receipt to an installation and product at approval |
 | Process emissions | Manual per-product field from production records; products without it (or cement without traced clinker precursors) are marked **Incomplete** and claim no actual-data share |
 | Demo data | One fictional Egyptian cement installation, every item tagged "Demo", removable in Settings |

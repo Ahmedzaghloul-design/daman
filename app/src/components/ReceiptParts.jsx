@@ -21,7 +21,7 @@ export function StatusStepper({ phase, startedAt }) {
           const done = current > i;
           return (
             <li key={p} aria-current={active ? "step" : undefined} className={`bg-card px-4 py-3 ${active ? "shadow-[inset_0_-2px_0_var(--color-nile)]" : ""}`}>
-              <p className="font-mono text-[11px] text-muted">0{i + 1}{done ? " ✓" : ""}</p>
+              <p className="tabular-nums text-[11px] text-muted">0{i + 1}{done ? " ✓" : ""}</p>
               <p className={`mt-0.5 text-sm font-medium ${active ? (p === "review" ? "text-review" : "text-nile") : done ? "text-verified" : "text-muted"}`}>
                 {t(`receipts.states.${p}`)}
                 {active && (p === "ocr" || p === "auditing") && <span className="ms-1 animate-pulse">…</span>}
@@ -67,7 +67,7 @@ export function ReceiptPreview({ file, previewUrl, rawText }) {
       {rawText && (
         <div className="border-t border-line p-4">
           <p className="text-xs font-medium text-text-2">{t("review.raw")}</p>
-          <p dir="rtl" lang="ar" className="mt-2 rounded-control bg-cream p-3 font-mono text-sm leading-relaxed">
+          <p dir="rtl" lang="ar" className="mt-2 rounded-control bg-cream p-3 tabular-nums text-sm leading-relaxed">
             <ArabicWithNumbers text={rawText} unreadableLabel={t("review.unreadable")} />
           </p>
         </div>
@@ -83,12 +83,12 @@ export function AnomalyBanner({ deterministic, llm, stale }) {
     <div role="alert" className="overflow-hidden rounded-card border border-anomaly/40 bg-card">
       <div className="flex items-center gap-3 bg-anomaly px-4 py-2 text-white">
         <span className="text-sm font-semibold">{t("anomaly.title")}</span>
-        {llm?.severity && llm.severity !== "NONE" && <span className="ms-auto font-mono text-xs">{t("anomaly.severity")}: {llm.severity}</span>}
+        {llm?.severity && llm.severity !== "NONE" && <span className="ms-auto tabular-nums text-xs">{t("anomaly.severity")}: {llm.severity}</span>}
       </div>
       <div className="p-4">
         <p className="text-sm text-anomaly">{t("anomaly.body")}</p>
         {d.evaluated ? (
-          <dl className="mt-3 grid gap-px overflow-hidden rounded-control border border-line bg-line sm:grid-cols-3">
+          <dl className="mt-3 grid grid-cols-1 gap-px overflow-hidden rounded-control border border-line bg-line sm:grid-cols-3">
             {[
               [t("anomaly.intensity"), `${fmt(d.intensity, 2)} ${d.intensityUnit}`, "text-anomaly"],
               [t("anomaly.expected"), `${fmt(d.expectedMin)}–${fmt(d.expectedMax)} ${d.intensityUnit}`, "text-text"],

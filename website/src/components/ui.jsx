@@ -9,7 +9,7 @@ const VARIANTS = {
 };
 
 export const buttonClass = (variant = "primary", extra = "") =>
-  `inline-flex items-center justify-center gap-2 rounded-control px-5 h-11 text-sm font-medium transition-[background-color,filter,transform] duration-150 ease-daman active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed ${VARIANTS[variant]} ${extra}`;
+  `inline-flex items-center justify-center gap-2 rounded-xl px-5 h-11 text-sm font-semibold transition-[background-color,filter,transform] duration-150 ease-daman active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed ${VARIANTS[variant]} ${extra}`;
 
 export function Button({ variant, className = "", ...props }) {
   return <button type="button" className={buttonClass(variant, className)} {...props} />;
@@ -31,7 +31,7 @@ export function SectionHeading({ kicker, title, intro, dark, center }) {
   return (
     <div className={`reveal max-w-3xl ${center ? "mx-auto text-center" : ""}`}>
       {kicker && <Kicker dark={dark}>{kicker}</Kicker>}
-      <h2 className={`mt-3 text-3xl font-medium tracking-[-0.02em] sm:text-4xl ${dark ? "text-on-nile" : "text-text"}`}>{title}</h2>
+      <h2 className={`mt-3 text-3xl font-bold tracking-[-0.025em] sm:text-4xl ${dark ? "text-on-nile" : "text-text"}`}>{title}</h2>
       {intro && <p className={`mt-4 text-lg leading-relaxed ${dark ? "text-on-nile-2" : "text-text-2"}`}>{intro}</p>}
     </div>
   );

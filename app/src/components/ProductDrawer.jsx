@@ -1,7 +1,7 @@
 import { markup } from "@daman/core/cbamCost.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
-import { Drawer, fmt, Num, StatusBadge } from "./ui.jsx";
+import { Drawer, fmt, Num, StatusBadge, Code } from "./ui.jsx";
 
 export default function ProductDrawer({ row, onClose }) {
   const { t, energyLabel } = useLanguage();
@@ -28,7 +28,7 @@ export default function ProductDrawer({ row, onClose }) {
     <Drawer open title={t("drawer.title")} onClose={onClose}>
       <div className="space-y-6">
         <div>
-          <Num className="text-sm text-nile">{r.good?.codeDisplay ?? product.cn}</Num>
+          <Code className="text-sm">{r.good?.codeDisplay ?? product.cn}</Code>
           <p dir="ltr" className="mt-1 text-start text-sm text-text">{r.good?.description}</p>
           <p className="mt-1 text-xs text-text-2">{installation?.name}</p>
           <div className="mt-3"><StatusBadge status={r.status} /></div>
@@ -51,7 +51,7 @@ export default function ProductDrawer({ row, onClose }) {
 
             <div className="rounded-card bg-nile-deep p-5 text-on-nile">
               <p className="text-sm text-on-nile-2">{t("drawer.specific")}</p>
-              <p className="mt-1 font-mono text-3xl tabular-nums" dir="ltr">{fmt(r.specific, 4)} <span className="text-base text-on-nile-2">tCO2e/t</span></p>
+              <p className="mt-1 tabular-nums text-3xl tabular-nums" dir="ltr">{fmt(r.specific, 4)} <span className="text-base text-on-nile-2">tCO2e/t</span></p>
               <p className="mt-1 text-xs text-on-nile-2"><Num>{fmt(r.total, 1)} t</Num> ÷ <Num>{fmt(product.tonnesProduced)} t</Num></p>
             </div>
 
@@ -80,7 +80,7 @@ export default function ProductDrawer({ row, onClose }) {
                 <ul className="mt-2 divide-y divide-line">
                   {entries.map((e) => (
                     <li key={e.id} className="flex items-center justify-between gap-3 py-2 text-sm">
-                      <Num className="text-nile">{e.id}</Num>
+                      <Code>{e.id}</Code>
                       <span className="text-text-2">{energyLabel ? energyLabel(e.energy_type) : e.energy_type}</span>
                       <Num>{fmt(e.volume)} {e.unit}</Num>
                       <StatusBadge status={e.status} />

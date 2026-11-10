@@ -8,6 +8,7 @@ import LandmarkSkyline from "../components/LandmarkSkyline.jsx";
 import Timeline from "../components/home/Timeline.jsx";
 import Pipeline from "../components/home/Pipeline.jsx";
 import LiveDemo from "../components/home/LiveDemo.jsx";
+import AppPreview from "../components/home/AppPreview.jsx";
 import Photo from "../components/Photo.jsx";
 import { Button, buttonClass, Container, Mark, SectionHeading, useReveal } from "../components/ui.jsx";
 
@@ -18,7 +19,7 @@ function Hero() {
       <Container className="grid items-center gap-8 pb-10 pt-12 lg:grid-cols-[1.05fr_1fr] lg:pt-20">
         <div className="reveal in">
           <p className="inline-flex rounded-tag border border-on-nile/20 px-2.5 py-1 font-mono text-xs text-on-nile-2">{t("hero.eyebrow")}</p>
-          <h1 className="mt-6 text-4xl font-medium leading-[1.06] tracking-[-0.03em] sm:text-5xl lg:text-6xl">{t("hero.title")}</h1>
+          <h1 className="mt-6 text-4xl font-bold leading-[1.06] tracking-[-0.03em] sm:text-5xl lg:text-6xl">{t("hero.title")}</h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-on-nile-2">{t("hero.subtitle")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#demo" className={buttonClass("gold", "h-12 px-6")}>{t("hero.primary")}</a>
@@ -50,7 +51,7 @@ function Problem() {
         <Photo name="receiptBook" className="mt-12" aspect="aspect-[21/9]" />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {t("problem.items").map((it, i) => (
-            <article key={it.title} className="reveal rounded-card border border-line bg-cream p-6" style={{ transitionDelay: `${i * 60}ms` }}>
+            <article key={it.title} className="reveal rounded-2xl border border-line bg-cream p-6" style={{ transitionDelay: `${i * 60}ms` }}>
               <p className="font-mono text-xs text-anomaly">RISK 0{i + 1}</p>
               <h3 className="mt-3 text-lg font-semibold">{it.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-text-2">{it.body}</p>
@@ -95,11 +96,11 @@ function AnyFactory() {
       <Container>
         <SectionHeading kicker={t("anyFactory.kicker")} title={t("anyFactory.title")} intro={t("anyFactory.body")} />
         <div className="reveal mt-10 grid gap-6 md:grid-cols-2">
-          <div className="rounded-card border border-line bg-cream p-6">
+          <div className="rounded-2xl border border-line bg-cream p-6">
             <p className="text-sm font-semibold text-verified">{t("anyFactory.cbam")}</p>
             <div className="mt-4 flex flex-wrap gap-2">{t("anyFactory.cbamSectors").map((s) => <span key={s} className={`${chip} border-verified/30 bg-verified-soft text-verified`}>{s}</span>)}</div>
           </div>
-          <div className="rounded-card border border-line bg-cream p-6">
+          <div className="rounded-2xl border border-line bg-cream p-6">
             <p className="text-sm font-semibold text-nile">{t("anyFactory.other")}</p>
             <div className="mt-4 flex flex-wrap gap-2">{t("anyFactory.otherSectors").map((s) => <span key={s} className={`${chip} border-line bg-card text-text-2`}>{s}</span>)}</div>
           </div>
@@ -233,6 +234,7 @@ export default function Home() {
         <O3ci />
         <Pipeline />
         <LiveDemo />
+        <AppPreview />
         <AnyFactory />
         <Trust />
         <Pricing />

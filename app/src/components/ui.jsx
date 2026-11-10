@@ -4,10 +4,10 @@ import { LAYERS } from "@daman/brand/logo/mark.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 
 const VARIANTS = {
-  primary: "bg-nile text-white hover:bg-nile-700",
+  primary: "bg-nile text-[#04161b] hover:bg-nile-700",
   secondary: "border border-line bg-card text-text hover:bg-sand",
   ghost: "text-text-2 hover:bg-sand hover:text-text",
-  success: "bg-verified text-white hover:brightness-110",
+  success: "bg-verified text-[#04161b] hover:brightness-110",
   danger: "border border-anomaly/40 bg-card text-anomaly hover:bg-anomaly-soft",
 };
 export const buttonClass = (variant = "primary", extra = "") =>
@@ -19,16 +19,35 @@ export function Button({ variant, className = "", ...p }) {
 export const fmt = (n, d = 0) =>
   n === null || n === undefined || !Number.isFinite(Number(n)) ? "—" : Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-/** Numbers, IDs, dates: monospace, tabular, always left-to-right. */
+/** Numbers and dates: even-width digits, always left-to-right. */
 export function Num({ children, className = "" }) {
   return (
-    <span dir="ltr" className={`font-mono tabular-nums ${className}`}>
+    <span dir="ltr" className={`tabular-nums ${className}`}>
       {children}
     </span>
   );
 }
 
-export function Mark({ size = 28, theme = "light" }) {
+/** Customs codes and entry IDs: monospace, accent color, left-to-right. */
+export function Code({ children, className = "" }) {
+  return (
+    <span dir="ltr" className={`font-mono text-[0.92em] text-nile ${className}`}>
+      {children}
+    </span>
+  );
+}
+
+/** A colored icon chip, as in dashboard KPI cards. */
+export function IconChip({ d, tone = "nile", size = 40 }) {
+  const tones = { nile: "bg-nile/15 text-nile", gold: "bg-gold/15 text-gold", verified: "bg-verified-soft text-verified", review: "bg-review-soft text-review", anomaly: "bg-anomaly-soft text-anomaly" };
+  return (
+    <span className={`inline-flex shrink-0 items-center justify-center rounded-xl ${tones[tone]}`} style={{ width: size, height: size }} aria-hidden="true">
+      <svg viewBox="0 0 20 20" width={size * 0.45} height={size * 0.45} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
+    </span>
+  );
+}
+
+export function Mark({ size = 28, theme = "dark" }) {
   return (
     <svg viewBox="0 0 96 96" width={size} height={size} aria-hidden="true">
       {LAYERS.map((l) => (
@@ -58,14 +77,14 @@ export function DemoTag() {
 /** Share of actual data as a small bar (like the EU portals' "% actual data"). */
 export function ActualBar({ share }) {
   // null = incomplete product: no share is claimed.
-  if (share === null || share === undefined) return <span className="font-mono text-xs text-review">—</span>;
+  if (share === null || share === undefined) return <span className="text-xs text-review">—</span>;
   const pct = Math.round(share * 100);
   return (
     <span className="inline-flex items-center gap-2" dir="ltr">
       <span className="h-1.5 w-20 overflow-hidden rounded-full bg-sand">
         <span className={`block h-full rounded-full ${pct >= 80 ? "bg-verified" : pct > 0 ? "bg-gold" : "bg-line"}`} style={{ width: `${pct}%` }} />
       </span>
-      <span className="font-mono text-xs tabular-nums text-text-2">{pct}%</span>
+      <span className="text-xs font-medium tabular-nums text-text-2">{pct}%</span>
     </span>
   );
 }
@@ -74,7 +93,7 @@ export function PageHeader({ title, subtitle, actions }) {
   return (
     <header className="flex flex-wrap items-end justify-between gap-4 pb-6">
       <div className="max-w-3xl">
-        <h1 className="text-2xl font-semibold tracking-[-0.01em] text-text">{title}</h1>
+        <h1 className="text-2xl font-bold tracking-[-0.02em] text-text sm:text-[28px]">{title}</h1>
         {subtitle && <p className="mt-1.5 text-sm text-text-2">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -84,10 +103,10 @@ export function PageHeader({ title, subtitle, actions }) {
 
 export function Panel({ title, actions, children, className = "", padded = true }) {
   return (
-    <section className={`rounded-card border border-line bg-card ${className}`}>
+    <section className={`rounded-card border border-line bg-card shadow-[0_1px_0_rgba(255,255,255,0.03)_inset] ${className}`}>
       {title && (
         <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
-          <h2 className="text-sm font-semibold text-text">{title}</h2>
+          <h2 className="text-[15px] font-semibold text-text">{title}</h2>
           {actions}
         </header>
       )}
