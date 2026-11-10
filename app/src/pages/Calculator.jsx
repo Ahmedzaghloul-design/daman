@@ -337,9 +337,10 @@ function CostCalculator() {
                 type="button"
                 onClick={() => setYear(s.year)}
                 className="group flex h-full flex-1 flex-col items-center justify-end gap-1"
-                aria-label={`${s.year}: €${fmt(s.cost, 0)}`}
+                aria-pressed={s.year === year}
               >
                 <span className="font-mono text-[11px] text-text-2">{s.cost == null ? "—" : `€${fmt(s.cost / 1000, 0)}k`}</span>
+                <span className="sr-only">{`${s.year}: €${fmt(s.cost, 0)}`}</span>
                 <span
                   className={`w-full rounded-t-tag transition-[height,background-color] duration-500 ease-daman ${s.year === year ? "bg-gold" : "bg-nile/60 group-hover:bg-nile"}`}
                   style={{ height: `${s.cost == null ? 2 : Math.max(2, (s.cost / maxCost) * 100)}%` }}

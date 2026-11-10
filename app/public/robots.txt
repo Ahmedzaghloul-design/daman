@@ -1,0 +1,3 @@
+# The Daman app is a private workspace: keep it out of search engines.
+User-agent: *
+Disallow: /

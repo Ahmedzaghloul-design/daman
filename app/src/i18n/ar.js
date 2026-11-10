@@ -2,6 +2,7 @@
 export const ar = {
   langSwitch: "English",
   common: {
+    skip: "انتقل إلى المحتوى",
     demo: "تجريبي",
     save: "حفظ",
     cancel: "إلغاء",

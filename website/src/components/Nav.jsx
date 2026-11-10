@@ -33,10 +33,13 @@ export default function Nav({ dark = false }) {
   ];
 
   return (
+    <>
+    <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-nile-deep">{t("common.skip")}</a>
     <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${solid ? "border-b border-line bg-cream/95 backdrop-blur-sm" : "bg-transparent"}`}>
       <Container className="flex h-16 items-center justify-between gap-4">
-        <Link to="/" aria-label="Daman home">
+        <Link to="/">
           <Wordmark dark={!solid} />
+          <span className="sr-only"> {t("nav.homeHint")}</span>
         </Link>
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Main">
           {items.map((i) =>
@@ -93,5 +96,6 @@ export default function Nav({ dark = false }) {
         </nav>
       )}
     </header>
+    </>
   );
 }

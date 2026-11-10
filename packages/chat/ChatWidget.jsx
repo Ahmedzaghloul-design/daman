@@ -166,13 +166,20 @@ export default function ChatWidget({ mode, lang, apiBase = "", storageKey, getCo
   const [lead, setLead] = useState(false);
   const listRef = useRef(null);
   const inputRef = useRef(null);
+  const openerRef = useRef(null);
+  const wasOpen = useRef(false);
 
   useEffect(() => write(storageKey, messages), [storageKey, messages]);
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages, busy, lead, open]);
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      if (wasOpen.current) openerRef.current?.focus(); // back to "Ask Daman" after closing
+      wasOpen.current = false;
+      return;
+    }
+    wasOpen.current = true;
     inputRef.current?.focus();
     const onKey = (e) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
@@ -210,7 +217,9 @@ export default function ChatWidget({ mode, lang, apiBase = "", storageKey, getCo
     <>
       {!open && (
         <button
+          ref={openerRef}
           type="button"
+          aria-haspopup="dialog"
           onClick={() => setOpen(true)}
           className={`fixed end-5 ${offset} z-40 inline-flex h-12 items-center gap-2 rounded-full bg-nile px-5 text-sm font-semibold ${onAccent} shadow-float transition-transform hover:scale-[1.03] active:scale-[0.98]`}
         >

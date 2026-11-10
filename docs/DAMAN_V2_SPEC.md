@@ -57,6 +57,10 @@ internet and shows its sources.
 | Receipt photos | Gemini reads the photo directly (vision); the same validator and review rules apply as for typed text |
 | WhatsApp | Twilio WhatsApp sandbox for testing (only phones that joined); user creates the free Twilio account |
 | Pilot | No factory yet: outreach pack (one-page pitch, EN/AR consent + data-request letter, data checklist) |
+| Phase 6 browser tests | Playwright with Chromium only, run locally; never deployed or online |
+| Website address | Not chosen yet: one setting (VITE_SITE_URL) with a placeholder until a domain exists |
+| Link preview image | Drawn in code from the real logo and brand colours, EN and AR |
+| Fixes in Phase 6 | Fix clear errors and list every change; ask first for anything that changes meaning, claims or design |
 | Expansion story | Egypt first; then the rest of MENA, exporters selling to the UK under the UK CBAM (from 2027), and Africa & Asia. Shown as plans, not as existing customers |
 
 ## 3. Rules for the builder (to prevent hallucination)

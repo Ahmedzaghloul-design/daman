@@ -7,3 +7,7 @@ dist
 
 # Local Claude Code preview config (machine-specific)
 .claude/
+
+# Playwright output
+test-results/
+playwright-report/

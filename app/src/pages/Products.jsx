@@ -25,7 +25,7 @@ export default function Products() {
       {products.length === 0 ? (
         <p className="rounded-card border border-line bg-card p-8 text-sm text-text-2">{t("products.empty")}</p>
       ) : (
-        <div className="overflow-x-auto rounded-card border border-line bg-card">
+        <div className="overflow-x-auto rounded-card border border-line bg-card" tabIndex={0} role="region" aria-label={t("products.title")}>
           <table className="min-w-full text-sm">
             <thead className="border-b border-line bg-cream text-xs text-text-2">
               <tr>

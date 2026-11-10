@@ -30,12 +30,13 @@
   --color-nile-deep: #073640;   /* dark sections, program sidebar */
   --color-nile-raised: #0c4450; /* raised surface on dark */
   --color-on-nile: #f2eee6;     /* text on deep nile  11.3:1 */
-  --color-on-nile-2: #a9bfc3;   /* secondary on deep   6.8:1 */
+  --color-on-nile-2: #c8d8db;   /* secondary on deep 9.3:1, on nile 5.0:1 */
 
   /* Desert gold (accent). Bright gold = logo and decoration only (2.35:1 on
      cream, too light for text). Use gold-700 for gold text. */
   --color-gold: #c8963e;
   --color-gold-700: #875f1c;    /* gold text on cream 5.0:1 */
+  --color-gold-300: #f0d091;    /* small gold text on nile 5.0:1, on raised 7.2:1 */
 
   /* Semantic (meaning only, never decoration) */
   --color-verified: #146c37;    /* 5.7:1 on cream */

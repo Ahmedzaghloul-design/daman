@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { benchmarkOptions, CBAM_DATA, defaultFor, defaultValueCost, distinctBenchmarks, findGood } from "@daman/core/cbamCost.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
+import { usePageMeta } from "../lib/usePageMeta.js";
 import Nav, { APP_URL } from "../components/Nav.jsx";
 import Footer from "../components/Footer.jsx";
 import { buttonClass, Container, Kicker, useReveal } from "../components/ui.jsx";
@@ -13,6 +14,7 @@ const YEARS = [2026, 2027, 2028];
 const fmt = (n, d = 0) => (Number.isFinite(n) ? n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—");
 
 export default function Tools() {
+  usePageMeta("tools");
   const { t } = useLanguage();
   useReveal([]);
   const [code, setCode] = useState(GOODS[0]);
@@ -27,7 +29,7 @@ export default function Tools() {
   return (
     <>
       <Nav />
-      <main className="pt-16">
+      <main id="main" tabIndex={-1} className="pt-16">
         <section className="bg-nile-deep text-on-nile">
           <Container className="grid gap-10 py-16 lg:grid-cols-[1fr_1fr] lg:items-center lg:py-24">
             <div>

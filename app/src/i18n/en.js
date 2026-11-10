@@ -2,6 +2,7 @@
 export const en = {
   langSwitch: "العربية",
   common: {
+    skip: "Skip to content",
     demo: "Demo",
     save: "Save",
     cancel: "Cancel",

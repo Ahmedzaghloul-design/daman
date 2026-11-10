@@ -1,5 +1,5 @@
 // Shared UI for the program: brand tokens only, quiet chrome, numbers in mono.
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { LAYERS } from "@daman/brand/logo/mark.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 
@@ -130,17 +130,32 @@ export function Field({ label, hint, children, className = "" }) {
 /** Side drawer for details and forms. Escape closes it. */
 export function Drawer({ open, title, onClose, children, footer }) {
   const { t } = useLanguage();
+  const panel = useRef(null);
   useEffect(() => {
     if (!open) return;
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const before = document.activeElement;
+    panel.current?.focus();
+    const onKey = (e) => {
+      if (e.key === "Escape") return onClose();
+      if (e.key !== "Tab" || !panel.current) return;
+      // Keep Tab inside the drawer while it is open.
+      const items = [...panel.current.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+      if (!items.length) return;
+      const first = items[0], last = items.at(-1);
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === panel.current)) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      if (before instanceof HTMLElement) before.focus();
+    };
   }, [open, onClose]);
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label={title}>
-      <button type="button" className="absolute inset-0 bg-nile-deep/30" aria-label={t("common.close")} onClick={onClose} />
-      <div className="relative flex h-full w-full max-w-xl flex-col bg-card shadow-float" style={{ animation: "drawer-in 300ms cubic-bezier(0.22,1,0.36,1)" }}>
+      <button type="button" tabIndex={-1} className="absolute inset-0 bg-nile-deep/30" aria-label={t("common.close")} onClick={onClose} />
+      <div ref={panel} tabIndex={-1} className="relative flex h-full w-full max-w-xl flex-col bg-card shadow-float outline-none" style={{ animation: "drawer-in 300ms cubic-bezier(0.22,1,0.36,1)" }}>
         <header className="flex items-center justify-between border-b border-line px-5 py-4">
           <h2 className="font-semibold">{title}</h2>
           <Button variant="ghost" onClick={onClose}>{t("common.close")}</Button>

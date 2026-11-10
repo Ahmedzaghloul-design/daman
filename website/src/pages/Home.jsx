@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
+import { usePageMeta } from "../lib/usePageMeta.js";
 import Nav from "../components/Nav.jsx";
 import Footer from "../components/Footer.jsx";
 import Globe from "../components/Globe.jsx";
@@ -223,11 +224,12 @@ function DemoForm() {
 }
 
 export default function Home() {
+  usePageMeta("home");
   useReveal([]);
   return (
     <>
       <Nav dark />
-      <main>
+      <main id="main" tabIndex={-1}>
         <Hero />
         <Timeline />
         <Problem />

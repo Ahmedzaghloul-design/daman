@@ -1,4 +1,5 @@
 import { useLanguage } from "../i18n/LanguageContext.jsx";
+import { usePageMeta } from "../lib/usePageMeta.js";
 import Nav from "../components/Nav.jsx";
 import Footer from "../components/Footer.jsx";
 import Globe from "../components/Globe.jsx";
@@ -7,6 +8,7 @@ import Photo from "../components/Photo.jsx";
 import { buttonClass, Container, Kicker, Mark, SectionHeading, useReveal } from "../components/ui.jsx";
 
 export default function Story() {
+  usePageMeta("story");
   const { t } = useLanguage();
   useReveal([]);
   const roadmap = t("story.roadmap");
@@ -14,7 +16,7 @@ export default function Story() {
   return (
     <>
       <Nav />
-      <main className="pt-16">
+      <main id="main" tabIndex={-1} className="pt-16">
         {/* Opening */}
         <section className="border-b border-line bg-card">
           <Container className="py-20 sm:py-28">
@@ -31,7 +33,7 @@ export default function Story() {
             <Photo name="cementPlant" aspect="aspect-[21/9]" />
             {t("story.chapters").map((c, i) => (
               <article key={c.title} className="reveal grid gap-6 md:grid-cols-[120px_1fr] md:gap-12">
-                <span className="font-mono text-6xl font-medium text-gold" dir="ltr">0{i + 1}</span>
+                <span className="font-mono text-6xl font-medium text-gold-700" dir="ltr">0{i + 1}</span>
                 <div className="max-w-2xl">
                   <h2 className="text-2xl font-semibold tracking-[-0.01em] sm:text-3xl">{c.title}</h2>
                   <p className="mt-4 text-lg leading-relaxed text-text-2">{c.body}</p>
@@ -64,7 +66,7 @@ export default function Story() {
               <ol className="mt-10 grid gap-3">
                 {roadmap.map((r, i) => (
                   <li key={r.title} className="reveal grid grid-cols-[96px_1fr] gap-4 rounded-card border border-on-nile/10 bg-nile p-5" style={{ transitionDelay: `${i * 60}ms` }}>
-                    <span className={`font-mono text-sm ${i === 0 ? "text-gold" : "text-on-nile-2"}`}>{r.stage}</span>
+                    <span className={`font-mono text-sm ${i === 0 ? "text-gold-300" : "text-on-nile-2"}`}>{r.stage}</span>
                     <div>
                       <p className="font-semibold">{r.title}</p>
                       <p className="mt-1 text-sm text-on-nile-2">{r.body}</p>

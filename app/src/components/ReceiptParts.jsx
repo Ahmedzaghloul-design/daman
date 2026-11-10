@@ -81,7 +81,7 @@ export function AnomalyBanner({ deterministic, llm, stale }) {
   const d = deterministic ?? {};
   return (
     <div role="alert" className="overflow-hidden rounded-card border border-anomaly/40 bg-card">
-      <div className="flex items-center gap-3 bg-anomaly px-4 py-2 text-white">
+      <div className="flex items-center gap-3 bg-anomaly px-4 py-2 text-[#04161b]">
         <span className="text-sm font-semibold">{t("anomaly.title")}</span>
         {llm?.severity && llm.severity !== "NONE" && <span className="ms-auto tabular-nums text-xs">{t("anomaly.severity")}: {llm.severity}</span>}
       </div>

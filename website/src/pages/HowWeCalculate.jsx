@@ -3,6 +3,7 @@ import { normalizeDigits } from "@daman/core/normalize.js";
 import { computeCO2e, EMISSION_FACTORS } from "@daman/core/emissionFactors.js";
 import { checkMassBalance } from "@daman/core/massBalance.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
+import { usePageMeta } from "../lib/usePageMeta.js";
 import Nav from "../components/Nav.jsx";
 import Footer from "../components/Footer.jsx";
 import { ArabicWithNumbers, Container, Kicker, Num, useReveal } from "../components/ui.jsx";
@@ -15,7 +16,7 @@ const fmt = (n, d = 2) => (Number.isFinite(n) ? n.toLocaleString("en-US", { mini
 function Step({ n, title, body, children }) {
   return (
     <section className="reveal grid gap-6 border-t border-line py-12 md:grid-cols-[80px_1fr_1.2fr] md:gap-10">
-      <span className="font-mono text-4xl text-gold" dir="ltr">0{n}</span>
+      <span className="font-mono text-4xl text-gold-700" dir="ltr">0{n}</span>
       <div>
         <h2 className="text-xl font-semibold">{title}</h2>
         <p className="mt-2 leading-relaxed text-text-2">{body}</p>
@@ -36,6 +37,7 @@ function Field({ label, children }) {
 const input = "h-11 w-full rounded-control border border-line bg-cream px-3 font-mono text-sm text-text tabular-nums focus:border-nile focus:outline-none";
 
 export default function HowWeCalculate() {
+  usePageMeta("how");
   const { t } = useLanguage();
   useReveal([]);
   const [text, setText] = useState(DEFAULT_TEXT);
@@ -67,7 +69,7 @@ export default function HowWeCalculate() {
   return (
     <>
       <Nav />
-      <main className="pt-16">
+      <main id="main" tabIndex={-1} className="pt-16">
         <section className="border-b border-line bg-card">
           <Container className="py-20">
             <Kicker>{t("calc.kicker")}</Kicker>

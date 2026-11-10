@@ -87,7 +87,7 @@ export default function Pipeline() {
                   className={`relative w-full overflow-hidden rounded-card p-5 text-start transition-colors duration-300 ${active === i ? "bg-nile-raised" : "hover:bg-white/5"}`}
                 >
                   <div className="flex items-baseline gap-4">
-                    <span className={`font-mono text-sm ${active === i ? "text-gold" : "text-on-nile-2"}`}>0{i + 1}</span>
+                    <span className={`font-mono text-sm ${active === i ? "text-gold-300" : "text-on-nile-2"}`}>0{i + 1}</span>
                     <div>
                       <p className="font-semibold">{s.title}</p>
                       {active === i && <p className="mt-1 text-sm leading-relaxed text-on-nile-2">{s.body}</p>}

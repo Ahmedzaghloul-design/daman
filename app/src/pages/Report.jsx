@@ -41,7 +41,7 @@ export default function Report() {
           <ul className="flex gap-1 lg:flex-col">
             {years.map((y) => (
               <li key={y}>
-                <button type="button" onClick={() => updateSettings({ year: y })} className={`h-9 w-full rounded-control px-3 text-start tabular-nums text-sm ${settings.year === y ? "bg-nile text-white" : "text-text hover:bg-sand"}`}>{y}</button>
+                <button type="button" onClick={() => updateSettings({ year: y })} className={`h-9 w-full rounded-control px-3 text-start tabular-nums text-sm ${settings.year === y ? "bg-nile text-[#04161b]" : "text-text hover:bg-sand"}`}>{y}</button>
               </li>
             ))}
           </ul>
@@ -52,7 +52,7 @@ export default function Report() {
           {rows.length === 0 ? (
             <p className="p-8 text-sm text-text-2">{t("report.empty")}</p>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t("report.title")}>
               <table className="min-w-full">
                 <thead className="border-b border-line bg-cream">
                   <tr>

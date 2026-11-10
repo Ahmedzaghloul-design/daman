@@ -24,12 +24,13 @@
   --color-on-nile-2: #9fb6bb;
   --color-gold: #d4a24c;         /* 6.9:1 */
   --color-gold-700: #d4a24c;
+  --color-gold-300: #d4a24c;
   --color-verified: #3fbf7f;     /* 6.8:1 */
   --color-verified-soft: rgb(63 191 127 / 0.14);
   --color-review: #e0a43a;       /* 7.2:1 */
   --color-review-soft: rgb(224 164 58 / 0.14);
-  --color-anomaly: #ef6b6b;      /* 5.3:1 */
-  --color-anomaly-soft: rgb(239 107 107 / 0.14);
+  --color-anomaly: #f27f7f;      /* 6.2:1 on card, 5.2:1 on its soft badge */
+  --color-anomaly-soft: rgb(242 127 127 / 0.14);
   --radius-card: 16px;
   --shadow-float: 0 24px 48px rgb(0 0 0 / 0.45);
 }

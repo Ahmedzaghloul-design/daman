@@ -58,7 +58,7 @@ export default function Ledger() {
         </select>
         <span className="ms-auto text-xs text-muted">{t("ledger.count", { n: rows.length })}</span>
       </div>
-      <div className="overflow-x-auto rounded-card border border-line bg-card">
+      <div className="overflow-x-auto rounded-card border border-line bg-card" tabIndex={0} role="region" aria-label={t("ledger.title")}>
         {rows.length === 0 ? <p className="p-8 text-sm text-text-2">{t("ledger.empty")}</p> : (
           <table className="min-w-full text-sm">
             <thead className="border-b border-line bg-cream">
@@ -74,7 +74,7 @@ export default function Ledger() {
             <tbody className="divide-y divide-line">
               {rows.map((e) => (
                 <tr key={e.id} className="cursor-pointer hover:bg-cream" onClick={() => setOpen(e)}>
-                  <td className="whitespace-nowrap px-3 py-2.5"><Code>{e.id}</Code> {e.demo && <DemoTag />}</td>
+                  <td className="whitespace-nowrap px-3 py-2.5"><button type="button" onClick={(ev) => { ev.stopPropagation(); setOpen(e); }} className="rounded-tag hover:underline focus-visible:underline" aria-haspopup="dialog"><Code>{e.id}</Code></button> {e.demo && <DemoTag />}</td>
                   <td className="px-3 py-2.5"><Num>{e.date}</Num></td>
                   <td className="px-3 py-2.5"><Num className="text-text-2">{productLabel(e.productId)}</Num></td>
                   <td className="px-3 py-2.5 text-text-2">{energyLabel(e.energy_type)}</td>

@@ -90,10 +90,11 @@ function Sidebar({ onNavigate }) {
   const busy = ["ocr", "auditing", "review"].includes(pipeline.phase);
   return (
     <div className="flex h-full flex-col border-e border-line bg-nile-deep">
-      <a href={WEBSITE_URL} className="flex items-center gap-2.5 px-5 py-5" aria-label={t("common.backToSite")}>
+      <a href={WEBSITE_URL} className="flex items-center gap-2.5 px-5 py-5" title={t("common.backToSite")}>
         <Mark size={32} />
         <span className="text-lg font-bold text-on-nile">Daman</span>
         <span className="font-arabic text-sm font-semibold text-gold">ضمان</span>
+        <span className="sr-only">{t("common.backToSite")}</span>
       </a>
       <div className="mx-3 mb-5 rounded-xl bg-white/[0.03] px-3 py-3">
         <Link to="/account" onClick={onNavigate} className="mb-2 flex items-center justify-between gap-2 border-b border-white/5 pb-2">
@@ -192,6 +193,7 @@ export default function Layout() {
   if (role === "uploader" && page === "settings") return <Navigate to="/receipts" replace />;
   return (
     <div className="min-h-screen bg-cream lg:grid lg:grid-cols-[260px_1fr]">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-nile-deep">{t("common.skip")}</a>
       <aside className="sticky top-0 hidden h-screen lg:block"><Sidebar /></aside>
 
       {/* Phone top bar */}
@@ -208,7 +210,7 @@ export default function Layout() {
         </div>
       )}
 
-      <main key={pathname} className="fade-up min-w-0 px-4 pb-28 pt-5 sm:px-8 sm:pt-8 lg:pb-10">
+      <main id="main" tabIndex={-1} key={pathname} className="fade-up outline-none min-w-0 px-4 pb-28 pt-5 sm:px-8 sm:pt-8 lg:pb-10">
         <div className="mx-auto max-w-[1400px]">
           {cloudError && (
             <p role="alert" className="mb-5 flex items-start justify-between gap-3 rounded-card border border-anomaly/40 bg-anomaly-soft px-4 py-3 text-sm text-anomaly">

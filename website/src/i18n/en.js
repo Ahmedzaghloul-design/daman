@@ -4,7 +4,18 @@
 
 export const en = {
   langSwitch: "العربية",
+  common: {
+    skip: "Skip to content",
+  },
+  meta: {
+    home: { title: "Daman — Verified carbon data for Egyptian exporters", description: "Daman turns handwritten Arabic fuel and energy receipts from Egyptian factories into verified emissions data for EU CBAM, so exports are priced on real emissions, not default values." },
+    story: { title: "Our story — Daman", description: "Why Daman exists: Egyptian factories keep handwritten Arabic energy records, and EU CBAM needs verified emissions data. Built by students at The American University in Cairo." },
+    how: { title: "How we calculate — Daman", description: "Step by step: how Daman reads a receipt, calculates emissions, checks them against production and keeps a human sign-off on every entry." },
+    tools: { title: "CBAM cost estimate — Daman", description: "Estimate what EU buyers pay on CBAM default values for common Egyptian exports, using the official EU default values and certificate price." },
+    notFound: { title: "Page not found — Daman", description: "This page does not exist. Go back to the Daman home page." },
+  },
   nav: {
+    homeHint: "(home page)",
     product: "How it works",
     calculate: "How we calculate",
     story: "Our story",

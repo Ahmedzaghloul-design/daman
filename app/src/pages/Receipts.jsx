@@ -124,7 +124,7 @@ export default function Receipts() {
           </section>
         )}
 
-        {(p.phase === "idle" || p.phase === "error") && <UploadZone onFile={processFile} onSample={runSample} settings={settings} updateSettings={updateSettings} paid={Boolean(health?.realDataAllowed)} />}
+        {(p.phase === "idle" || p.phase === "error") && <UploadZone onFile={processFile} onSample={runSample} settings={settings} updateSettings={updateSettings} paid={health ? Boolean(health.realDataAllowed) : null} />}
 
         {busy && (
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -178,7 +178,7 @@ function UploadZone({ onFile: send, onSample, settings, updateSettings, paid }) 
         <Field label={t("receipts.production")}>
           <input type="number" min="1" dir="ltr" className={`${inputClass} tabular-nums ${ok ? "" : "border-anomaly"}`} value={settings.productionTonnes} onChange={(e) => updateSettings({ productionTonnes: e.target.value })} />
         </Field>
-        {paid ? (
+        {paid === null ? null : paid ? (
           <p className="mt-4 rounded-control bg-verified-soft px-3 py-2 text-xs leading-relaxed text-verified">{t("receipts.paidOn")}</p>
         ) : (
           <div className="mt-4 rounded-control border border-review/30 bg-review-soft p-3">
