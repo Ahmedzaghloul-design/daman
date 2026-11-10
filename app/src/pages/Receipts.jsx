@@ -6,12 +6,13 @@ import { useAppState } from "../state/AppState.jsx";
 import { REAL_DATA_BLOCKED, usePipeline } from "../state/Pipeline.jsx";
 import { AnomalyBanner, ReceiptPreview, StatusStepper } from "../components/ReceiptParts.jsx";
 import ReviewPanel from "../components/ReviewPanel.jsx";
-import { Button, Field, inputClass, Mark, PageHeader } from "../components/ui.jsx";
+import { Button, Field, inputClass, Mark, Num, PageHeader } from "../components/ui.jsx";
 
 export default function Receipts() {
   const { t } = useLanguage();
-  const { settings, updateSettings, addEntry } = useAppState();
-  const { state: p, health, dispatch, notice, setNotice, processFile, runSample, reset } = usePipeline();
+  const { settings, updateSettings, addEntry, can, inCloud, pending, sendForReview, removePending } = useAppState();
+  const { state: p, health, dispatch, notice, setNotice, processFile, runSample, reset, openPending } = usePipeline();
+  const [saving, setSaving] = useState(false);
   const busy = p.phase === "ocr" || p.phase === "auditing";
 
   // Live re-check while the reviewer edits (same rules as the server).
@@ -28,25 +29,64 @@ export default function Receipts() {
     return { det, llm, anomaly, reasons: [...reasons], co2e: computeCO2e(p.receipt) };
   }, [p, settings.benchmarks]);
 
-  function approve({ justification }) {
-    const id = addEntry({
-      ...p.receipt,
-      volume: Number(p.receipt.volume),
-      co2e_t: review.co2e,
-      status: review.anomaly ? "verified_anomaly" : "verified",
-      installationId: p.installationId,
-      productId: p.productId,
-      reviewer: settings.reviewerName.trim(),
-      reviewedAt: new Date().toISOString(),
-      justification,
-      sourceFile: p.file?.name ?? "",
-      rawText: p.rawText,
-      model: p.audit.model,
-      editedByReviewer: p.edited,
-      massBalance: { anomaly: review.anomaly, deterministic: review.det, llm: review.llm },
-    });
+  async function approve({ justification }) {
+    setSaving(true);
+    try {
+      // Uploader: send the checked receipt to the team's review queue.
+      if (can.send) {
+        await sendForReview({
+          receipt: p.receipt, audit: p.audit, rawText: p.rawText, edited: p.edited,
+          sourceFile: p.file?.name ?? p.sourceName ?? "", productionTonnes: p.productionTonnes,
+          installationId: p.installationId, productId: p.productId,
+        });
+        reset();
+        setNotice({ kind: "ok", text: t("receipts.sent") });
+        return;
+      }
+      const id = await addEntry({
+        ...p.receipt,
+        volume: Number(p.receipt.volume),
+        co2e_t: review.co2e,
+        status: review.anomaly ? "verified_anomaly" : "verified",
+        installationId: p.installationId,
+        productId: p.productId,
+        reviewer: settings.reviewerName.trim(),
+        reviewedAt: new Date().toISOString(),
+        justification,
+        sourceFile: p.file?.name ?? p.sourceName ?? "",
+        rawText: p.rawText,
+        model: p.audit.model,
+        editedByReviewer: p.edited,
+        massBalance: { anomaly: review.anomaly, deterministic: review.det, llm: review.llm },
+      });
+      if (p.pendingId) await removePending(p.pendingId);
+      reset();
+      setNotice({ kind: "ok", text: t("receipts.committed", { id }) });
+    } catch (err) {
+      setNotice({ kind: "error", text: err.message });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function reject() {
+    try {
+      if (p.pendingId && !can.send) await removePending(p.pendingId);
+    } catch (err) {
+      return setNotice({ kind: "error", text: err.message });
+    }
     reset();
-    setNotice({ kind: "ok", text: t("receipts.committed", { id }) });
+    setNotice({ kind: "info", text: t("receipts.rejected") });
+  }
+
+  // Verifiers check the work; they do not process receipts.
+  if (!can.approve && !can.send) {
+    return (
+      <>
+        <PageHeader title={t("receipts.title")} subtitle={t("receipts.subtitle")} />
+        <p className="rounded-card border border-line bg-card px-4 py-3 text-sm text-text-2">{t("receipts.readOnly")}</p>
+      </>
+    );
   }
 
   return (
@@ -60,12 +100,29 @@ export default function Receipts() {
         <StatusStepper phase={p.phase} startedAt={p.startedAt} />
 
         {notice && (
-          <p role="status" className={`fade-up flex items-center gap-3 rounded-card border px-4 py-3 text-sm ${notice.kind === "ok" ? "border-verified/30 bg-verified-soft text-verified" : "border-line bg-card text-text"}`}>
+          <p role="status" className={`fade-up flex items-center gap-3 rounded-card border px-4 py-3 text-sm ${notice.kind === "ok" ? "border-verified/30 bg-verified-soft text-verified" : notice.kind === "error" ? "border-anomaly/40 bg-anomaly-soft text-anomaly" : "border-line bg-card text-text"}`}>
             {notice.kind === "ok" && <span className="seal-press"><Mark size={26} /></span>}
             {notice.text}
           </p>
         )}
         {p.phase === "error" && <p role="alert" className="rounded-card border border-anomaly/40 bg-anomaly-soft px-4 py-3 text-sm text-anomaly">{t("receipts.states.error")}: {p.error === REAL_DATA_BLOCKED ? t("receipts.blocked") : p.error}</p>}
+
+        {inCloud && can.approve && pending.length > 0 && (p.phase === "idle" || p.phase === "error") && (
+          <section className="rounded-card border border-line bg-card">
+            <h2 className="border-b border-line px-4 py-3 text-sm font-semibold">{t("receipts.queue", { n: pending.length })}</h2>
+            <ul className="divide-y divide-line">
+              {pending.map((row) => (
+                <li key={row.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm">
+                  <span className="min-w-0">
+                    <span className="font-medium">{row.data.receipt?.energy_type || "—"} · <Num>{row.data.receipt?.volume ?? "?"} {row.data.receipt?.unit}</Num></span>
+                    <span className="block truncate text-xs text-muted" dir="ltr">{row.uploader_email} · {new Date(row.created_at).toLocaleString()}</span>
+                  </span>
+                  <Button variant="secondary" onClick={() => openPending(row)}>{t("receipts.open")}</Button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {(p.phase === "idle" || p.phase === "error") && <UploadZone onFile={processFile} onSample={runSample} settings={settings} updateSettings={updateSettings} paid={Boolean(health?.realDataAllowed)} />}
 
@@ -82,8 +139,10 @@ export default function Receipts() {
           <>
             {review.anomaly && <AnomalyBanner deterministic={review.det} llm={review.llm} stale={p.edited} />}
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-              <ReceiptPreview file={p.file} previewUrl={p.previewUrl} rawText={p.rawText} />
+              <ReceiptPreview file={p.file ?? (p.sourceName ? { name: p.sourceName } : null)} previewUrl={p.previewUrl} rawText={p.rawText} />
               <ReviewPanel
+                sendMode={can.send}
+                busy={saving}
                 receipt={p.receipt}
                 reasons={review.reasons}
                 anomaly={review.anomaly}
@@ -95,10 +154,7 @@ export default function Receipts() {
                 onAssign={(field, value) => dispatch({ type: "ASSIGN", field, value })}
                 onEdit={(field, value) => dispatch({ type: "EDIT", field, value })}
                 onApprove={approve}
-                onReject={() => {
-                  reset();
-                  setNotice({ kind: "info", text: t("receipts.rejected") });
-                }}
+                onReject={reject}
               />
             </div>
           </>

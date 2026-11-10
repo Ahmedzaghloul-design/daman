@@ -5,16 +5,17 @@ import { Button, Field, inputClass, Num, PageHeader, Panel } from "../components
 
 export default function Settings() {
   const { t, energyLabel } = useLanguage();
-  const { settings, updateSettings, apiHealth, clearDemo, resetDemo } = useAppState();
+  const { settings, updateSettings, apiHealth, clearDemo, resetDemo, inCloud, can } = useAppState();
   const setBench = (type, k, v) => updateSettings({ benchmarks: { ...settings.benchmarks, [type]: { ...settings.benchmarks[type], [k]: Number(v) } } });
 
   return (
     <>
       <PageHeader title={t("settings.title")} subtitle={t("settings.subtitle")} />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      {!can.edit && <p className="mb-4 rounded-card border border-line bg-card px-4 py-3 text-sm text-text-2">{t("settings.readOnly")}</p>}
+      <fieldset disabled={!can.edit} className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
         <Panel title={t("settings.title")}>
           <div className="grid gap-4">
-            <Field label={t("settings.reviewer")}><input className={inputClass} value={settings.reviewerName} onChange={(e) => updateSettings({ reviewerName: e.target.value })} /></Field>
+            <Field label={t("settings.reviewer")} hint={inCloud ? t("settings.reviewerCloud") : undefined}><input className={inputClass} value={settings.reviewerName} readOnly={inCloud} dir={inCloud ? "ltr" : undefined} onChange={(e) => updateSettings({ reviewerName: e.target.value })} /></Field>
             <Field label={t("settings.year")}>
               <select className={`${inputClass} tabular-nums`} value={settings.year} onChange={(e) => updateSettings({ year: Number(e.target.value) })}>
                 {[2026, 2027, 2028].map((y) => <option key={y}>{y}</option>)}
@@ -58,14 +59,14 @@ export default function Settings() {
             </ul>
             <p className="mt-2 text-xs text-review">{t("settings.factorsHint")}</p>
           </Panel>
-          <Panel title={t("settings.demo")}>
+          {!inCloud && <Panel title={t("settings.demo")}>
             <div className="flex flex-wrap gap-2">
               <Button variant="danger" onClick={() => window.confirm(t("settings.clearConfirm")) && clearDemo()}>{t("settings.clearDemo")}</Button>
               <Button variant="secondary" onClick={() => window.confirm(t("settings.resetConfirm")) && resetDemo()}>{t("settings.resetDemo")}</Button>
             </div>
-          </Panel>
+          </Panel>}
         </div>
-      </div>
+      </fieldset>
     </>
   );
 }

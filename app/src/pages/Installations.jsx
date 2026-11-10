@@ -9,12 +9,12 @@ const LTR = new Set(["country", "unlocode", "lat", "lon", "email"]);
 
 export default function Installations() {
   const { t } = useLanguage();
-  const { installations, products, saveInstallation, deleteInstallation } = useAppState();
+  const { installations, products, saveInstallation, deleteInstallation, can } = useAppState();
   const [editing, setEditing] = useState(null);
 
   return (
     <>
-      <PageHeader title={t("installations.title")} subtitle={t("installations.subtitle")} actions={<Button onClick={() => setEditing({ ...EMPTY })}>{t("installations.add")}</Button>} />
+      <PageHeader title={t("installations.title")} subtitle={t("installations.subtitle")} actions={can.edit && <Button onClick={() => setEditing({ ...EMPTY })}>{t("installations.add")}</Button>} />
       {installations.length === 0 ? (
         <p className="rounded-card border border-line bg-card p-8 text-sm text-text-2">{t("installations.empty")}</p>
       ) : (
@@ -27,7 +27,7 @@ export default function Installations() {
                   <h2 className="mt-1 font-semibold text-text">{i.name}</h2>
                   <p className="text-sm text-text-2">{i.operator}</p>
                 </div>
-                <Button variant="secondary" onClick={() => setEditing({ ...i })}>{t("common.edit")}</Button>
+                {can.edit && <Button variant="secondary" onClick={() => setEditing({ ...i })}>{t("common.edit")}</Button>}
               </div>
               <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                 <dt className="text-muted">{t("installations.fields.activity")}</dt><dd className="text-text">{i.activity || "—"}</dd>

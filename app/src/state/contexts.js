@@ -4,3 +4,4 @@ import { createContext } from "react";
 // Pipeline.jsx during development doesn't create a second context.
 export const AppStateContext = createContext(null);
 export const PipelineContext = createContext(null);
+export const AuthContext = createContext(null);

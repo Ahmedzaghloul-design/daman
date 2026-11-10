@@ -7,9 +7,9 @@ const ENERGY = ["Diesel", "Electricity", "Natural Gas", "Heavy Fuel Oil", "Coal"
 const UNITS = ["L", "kWh", "m3", "t"];
 
 /** The extracted record, editable, plus assignment and sign-off. */
-export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, threshold, installationId, productId, onAssign, onEdit, onApprove, onReject }) {
+export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, threshold, installationId, productId, onAssign, onEdit, onApprove, onReject, sendMode = false, busy = false }) {
   const { t, energyLabel } = useLanguage();
-  const { installations, products, settings, updateSettings } = useAppState();
+  const { installations, products, settings, updateSettings, inCloud } = useAppState();
   const [attested, setAttested] = useState(false);
   const [justification, setJustification] = useState("");
   const conf = receipt.confidence_score ?? 0;
@@ -17,7 +17,8 @@ export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, th
   const volumeOk = Number(receipt.volume) > 0;
   const assigned = installationId && productId;
   const justOk = !anomaly || justification.trim().length >= 10;
-  const canApprove = attested && settings.reviewerName.trim() && volumeOk && assigned && justOk;
+  // An uploader only sends it on: the reviewer does the attestation and assignment.
+  const canApprove = sendMode ? volumeOk : !busy && attested && settings.reviewerName.trim() && volumeOk && assigned && justOk;
   const allReasons = assigned ? reasons : [...reasons, "unassigned"];
   const flag = (f) => (f === "volume" ? !volumeOk : f === "date" ? reasons.includes("invalidDate") : !String(receipt[f] ?? "").trim());
   const field = (f) => `${inputClass} ${flag(f) ? "border-review" : ""}`;
@@ -94,19 +95,25 @@ export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, th
 
         <div className="space-y-3 border-t border-line pt-4">
           <Field label={t("review.reviewer")}>
-            <input className={`${inputClass} ${!settings.reviewerName.trim() ? "border-review" : ""}`} value={settings.reviewerName} onChange={(e) => updateSettings({ reviewerName: e.target.value })} />
+            {inCloud ? (
+              <input className={`${inputClass} text-text-2`} value={settings.reviewerName} readOnly dir="ltr" />
+            ) : (
+              <input className={`${inputClass} ${!settings.reviewerName.trim() ? "border-review" : ""}`} value={settings.reviewerName} onChange={(e) => updateSettings({ reviewerName: e.target.value })} />
+            )}
           </Field>
-          {anomaly && (
+          {anomaly && !sendMode && (
             <Field label={t("review.justification")}>
               <textarea rows={3} className={`${inputClass} h-auto py-2 ${!justOk ? "border-review" : ""}`} value={justification} onChange={(e) => setJustification(e.target.value)} />
             </Field>
           )}
-          <label className="flex items-start gap-2 text-sm text-text">
-            <input type="checkbox" className="mt-0.5 h-4 w-4 accent-nile" checked={attested} onChange={(e) => setAttested(e.target.checked)} />
-            {t("review.attest")}
-          </label>
+          {!sendMode && (
+            <label className="flex items-start gap-2 text-sm text-text">
+              <input type="checkbox" className="mt-0.5 h-4 w-4 accent-nile" checked={attested} onChange={(e) => setAttested(e.target.checked)} />
+              {t("review.attest")}
+            </label>
+          )}
           <div className="flex flex-wrap gap-2 pt-1">
-            <Button variant="success" disabled={!canApprove} onClick={() => onApprove({ justification: justification.trim() })}>{t("review.approve")}</Button>
+            <Button variant="success" disabled={!canApprove} onClick={() => onApprove({ justification: justification.trim() })}>{t(sendMode ? "review.send" : "review.approve")}</Button>
             <Button variant="danger" onClick={onReject}>{t("review.reject")}</Button>
           </div>
         </div>

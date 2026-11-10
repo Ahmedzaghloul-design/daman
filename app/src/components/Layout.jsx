@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, Navigate, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
 import { usePipeline } from "../state/Pipeline.jsx";
@@ -20,6 +20,8 @@ const ICONS = {
   settings: "M10 7a3 3 0 1 0 0 6a3 3 0 0 0 0-6M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4",
   more: "M4 10h.01M10 10h.01M16 10h.01",
   camera: "M3 6h3l2-2h4l2 2h3v10H3zM10 8a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7",
+  verify: "M10 2l7 3v5c0 4-3 7-7 8c-4-1-7-4-7-8V5zM7 10l2 2l4-4",
+  account: "M10 3a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7M3 18c1-3.5 3.8-5 7-5s6 1.5 7 5",
 };
 export function Icon({ name, size = 18 }) {
   return (
@@ -30,10 +32,13 @@ export function Icon({ name, size = 18 }) {
 }
 
 const GROUPS = [
-  { label: "nav.workspace", items: ["overview", "report", "receipts", "ledger", "anomalies"] },
+  { label: "nav.workspace", items: ["overview", "report", "receipts", "ledger", "anomalies", "verify"] },
   { label: "nav.tools", items: ["calculator"] },
   { label: "nav.registry", items: ["installations", "products"] },
 ];
+// Uploaders (floor staff) only send receipts; they never see the ledger or costs.
+const UPLOADER_PAGES = ["receipts", "calculator", "account"];
+const visible = (role, key) => (role === "uploader" ? UPLOADER_PAGES.includes(key) : role === "verifier" ? key !== "receipts" : true);
 
 // Faint landmark line drawing (Egypt -> Europe) for the sidebar foot.
 function SidebarSkyline() {
@@ -78,7 +83,7 @@ function NavItem({ to, label, icon, badge, onClick }) {
 
 function Sidebar({ onNavigate }) {
   const { t, toggle } = useLanguage();
-  const { installations, settings } = useAppState();
+  const { installations, settings, role, workspace } = useAppState();
   const { state: pipeline } = usePipeline();
   const busy = ["ocr", "auditing", "review"].includes(pipeline.phase);
   return (
@@ -89,19 +94,26 @@ function Sidebar({ onNavigate }) {
         <span className="font-arabic text-sm font-semibold text-gold">ضمان</span>
       </a>
       <div className="mx-3 mb-5 rounded-xl bg-white/[0.03] px-3 py-3">
+        <Link to="/account" onClick={onNavigate} className="mb-2 flex items-center justify-between gap-2 border-b border-white/5 pb-2">
+          <span className="min-w-0 truncate text-sm font-semibold text-on-nile">{workspace?.name ?? t("account.demoMode")}</span>
+          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${workspace ? "bg-nile/15 text-nile" : "bg-white/5 text-on-nile-2"}`}>{t(`roles.${role}`)}</span>
+        </Link>
         <p className="text-[11px] font-medium uppercase tracking-wide text-muted">{t("nav.installation")}</p>
         <p className="mt-0.5 truncate text-sm font-semibold text-on-nile">{installations[0]?.name ?? "—"}{installations.length > 1 ? ` +${installations.length - 1}` : ""}</p>
         <p className="mt-2 text-[11px] font-medium uppercase tracking-wide text-muted">{t("nav.period")}</p>
         <p className="text-sm font-semibold tabular-nums text-on-nile">{settings.year}</p>
       </div>
       <nav className="flex-1 space-y-5 overflow-y-auto px-3" aria-label="Main">
-        {GROUPS.map((g) => (
+        {GROUPS.map((g) => ({ ...g, items: g.items.filter((k) => visible(role, k)) })).filter((g) => g.items.length).map((g) => (
           <div key={g.label}>
             <p className="px-2.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted">{t(g.label)}</p>
             {g.items.map((key) => <NavItem key={key} to={`/${key}`} icon={key} label={t(`nav.${key}`)} badge={key === "receipts" && busy} onClick={onNavigate} />)}
           </div>
         ))}
-        <NavItem to="/settings" icon="settings" label={t("nav.settings")} onClick={onNavigate} />
+        <div>
+          {role !== "uploader" && <NavItem to="/settings" icon="settings" label={t("nav.settings")} onClick={onNavigate} />}
+          <NavItem to="/account" icon="account" label={t("nav.account")} onClick={onNavigate} />
+        </div>
       </nav>
       <div className="space-y-4 px-5 pb-5 pt-5">
         <SidebarSkyline />
@@ -118,6 +130,7 @@ function Sidebar({ onNavigate }) {
 /** Phone tab bar, like a native app. The middle button opens the camera flow. */
 function TabBar({ onMore }) {
   const { t } = useLanguage();
+  const { role } = useAppState();
   const tab = (to, icon, label) => (
     <NavLink to={to} className={({ isActive }) => `flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium ${isActive ? "text-nile" : "text-muted"}`}>
       <Icon name={icon} size={22} />
@@ -127,12 +140,12 @@ function TabBar({ onMore }) {
   return (
     <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-line bg-nile-deep/95 backdrop-blur lg:hidden" aria-label="Tabs">
       <div className="mx-auto flex max-w-lg items-end">
-        {tab("/overview", "overview", t("nav.overview"))}
-        {tab("/report", "report", t("nav.report").split(" ")[0])}
-        <Link to="/receipts" aria-label={t("nav.receipts")} className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 text-[11px] font-medium text-nile">
+        {role === "uploader" ? tab("/account", "account", t("nav.account")) : tab("/overview", "overview", t("nav.overview"))}
+        {role === "verifier" ? tab("/verify", "verify", t("nav.verify")) : role === "uploader" ? null : tab("/report", "report", t("nav.report").split(" ")[0])}
+        {role === "verifier" ? tab("/ledger", "ledger", t("nav.ledger")) : <Link to="/receipts" aria-label={t("nav.receipts")} className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 text-[11px] font-medium text-nile">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-nile text-[#04161b] shadow-float"><Icon name="camera" size={24} /></span>
           {t("nav.receipts")}
-        </Link>
+        </Link>}
         {tab("/calculator", "calculator", t("nav.tools"))}
         <button type="button" onClick={onMore} className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium text-muted">
           <Icon name="more" size={22} />
@@ -147,6 +160,10 @@ export default function Layout() {
   const { t, toggle } = useLanguage();
   const [more, setMore] = useState(false);
   const { pathname } = useLocation();
+  const { role, cloudError, dismissCloudError, loading } = useAppState();
+  const page = pathname.split("/")[1];
+  if (page && !visible(role, page) && page !== "settings") return <Navigate to={role === "uploader" ? "/receipts" : "/overview"} replace />;
+  if (role === "uploader" && page === "settings") return <Navigate to="/receipts" replace />;
   return (
     <div className="min-h-screen bg-cream lg:grid lg:grid-cols-[260px_1fr]">
       <aside className="sticky top-0 hidden h-screen lg:block"><Sidebar /></aside>
@@ -166,7 +183,16 @@ export default function Layout() {
       )}
 
       <main key={pathname} className="fade-up min-w-0 px-4 pb-28 pt-5 sm:px-8 sm:pt-8 lg:pb-10">
-        <div className="mx-auto max-w-[1400px]"><Outlet /></div>
+        <div className="mx-auto max-w-[1400px]">
+          {cloudError && (
+            <p role="alert" className="mb-5 flex items-start justify-between gap-3 rounded-card border border-anomaly/40 bg-anomaly-soft px-4 py-3 text-sm text-anomaly">
+              <span>{t("account.cloudError")}: {cloudError}</span>
+              <button type="button" onClick={dismissCloudError} className="shrink-0 underline">{t("common.close")}</button>
+            </p>
+          )}
+          {loading && <p className="mb-5 text-sm text-text-2">{t("account.loading")}</p>}
+          <Outlet />
+        </div>
       </main>
       <TabBar onMore={() => setMore(true)} />
     </div>

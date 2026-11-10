@@ -1,11 +1,15 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AppStateContext } from "./contexts.js";
 import { DEFAULT_BENCHMARKS } from "@daman/core/massBalance.js";
 import { computeCO2e } from "@daman/core/emissionFactors.js";
 import { getApiHealth } from "../services/geminiApi.js";
+import { must, supabase } from "../lib/supabase.js";
+import { permissions, useAuth } from "./Auth.jsx";
 
-// Prototype persistence: everything lives in this browser's localStorage.
-// A real deployment stores it server-side with accounts (spec §10, item 2).
+// Two modes with the same interface for every page:
+//  - Demo on this device: everything lives in this browser's localStorage.
+//  - Cloud workspace (signed in): data lives in Supabase; the database's
+//    row-level security decides what each role may read or write.
 const KEY = "daman.app.v2";
 
 const DEFAULT_SETTINGS = {
@@ -96,56 +100,173 @@ function load() {
 const nextId = (items, prefix) => `${prefix}-${String(items.reduce((m, x) => Math.max(m, Number(String(x.id).split("-").pop()) || 0), 0) + 1).padStart(3, "0")}`;
 
 export function AppStateProvider({ children }) {
-  const [state, setState] = useState(load);
+  const auth = useAuth();
+  const ws = auth.workspace;
+  const can = useMemo(() => permissions(auth.role), [auth.role]);
+  const [local, setLocal] = useState(load);
+  const [cloud, setCloud] = useState(null); // { wsId, installations, products, ledger, settings }
+  const [pending, setPending] = useState([]);
+  const [cloudError, setCloudError] = useState(null);
   const [apiHealth, setApiHealth] = useState({ ok: null });
+  const settingsTimer = useRef(null);
+  const cloudRef = useRef(null);
+  cloudRef.current = cloud;
 
   useEffect(() => {
     try {
-      localStorage.setItem(KEY, JSON.stringify(state));
+      localStorage.setItem(KEY, JSON.stringify(local));
     } catch {
       /* storage unavailable: keep working in memory */
     }
-  }, [state]);
+  }, [local]);
   useEffect(() => {
     getApiHealth().then(setApiHealth);
   }, []);
 
-  const update = useCallback((key, fn) => setState((s) => ({ ...s, [key]: fn(s[key]) })), []);
+  const fail = useCallback((err) => setCloudError(err?.message || String(err)), []);
+
+  const loadPending = useCallback(async () => {
+    if (!ws) return setPending([]);
+    const rows = must(await supabase.from("pending_receipts").select("id, uploader_email, data, created_at").eq("workspace_id", ws.id).order("created_at"));
+    setPending(rows);
+  }, [ws]);
+
+  const loadCloud = useCallback(async () => {
+    if (!ws) return setCloud(null);
+    setCloudError(null);
+    const seeLedger = permissions(ws.role).seeLedger;
+    const q = (table) => supabase.from(table).select("data").eq("workspace_id", ws.id);
+    const [w, inst, prod, led] = await Promise.all([
+      supabase.from("workspaces").select("settings").eq("id", ws.id).single(),
+      q("installations"),
+      q("products"),
+      seeLedger ? q("ledger_entries").order("created_at") : Promise.resolve({ data: [] }),
+    ]);
+    setCloud({
+      wsId: ws.id,
+      settings: { ...DEFAULT_SETTINGS, ...must(w).settings },
+      installations: must(inst).map((r) => r.data),
+      products: must(prod).map((r) => r.data),
+      ledger: must(led).map((r) => r.data),
+    });
+    await loadPending();
+  }, [ws, loadPending]);
+
+  useEffect(() => {
+    loadCloud().catch(fail);
+  }, [loadCloud, fail]);
+
+  const inCloud = Boolean(ws);
+  const state = inCloud
+    ? cloud && cloud.wsId === ws.id
+      ? { ...cloud, settings: { ...cloud.settings, reviewerName: auth.email } }
+      : { installations: [], products: [], ledger: [], settings: { ...DEFAULT_SETTINGS, reviewerName: auth.email }, loading: true }
+    : local;
+
+  const setCloudKey = useCallback((key, fn) => setCloud((c) => (c ? { ...c, [key]: fn(c[key]) } : c)), []);
+  const updateLocal = useCallback((key, fn) => setLocal((s) => ({ ...s, [key]: fn(s[key]) })), []);
+
+  // Write a registry item (installation/product) locally and, in cloud mode, to Supabase.
+  const saveItem = useCallback(
+    (key, table, prefix, item) => {
+      const apply = (list) => {
+        const saved = item.id ? { ...list.find((x) => x.id === item.id), ...item } : { ...item, id: nextId(list, prefix) };
+        return { saved, next: item.id ? list.map((x) => (x.id === item.id ? saved : x)) : [...list, saved] };
+      };
+      if (!inCloud) return updateLocal(key, (list) => apply(list).next);
+      const { saved, next } = apply(state[key]);
+      setCloudKey(key, () => next);
+      supabase
+        .from(table)
+        .upsert({ workspace_id: ws.id, id: saved.id, data: saved, updated_at: new Date().toISOString() })
+        .then((r) => (r.error ? (fail(r.error), loadCloud()) : null));
+    },
+    [inCloud, ws, state, updateLocal, setCloudKey, fail, loadCloud],
+  );
+  const deleteItem = useCallback(
+    (key, table, id) => {
+      if (!inCloud) return updateLocal(key, (list) => list.filter((x) => x.id !== id));
+      setCloudKey(key, (list) => list.filter((x) => x.id !== id));
+      supabase
+        .from(table)
+        .delete()
+        .eq("workspace_id", ws.id)
+        .eq("id", id)
+        .then((r) => (r.error ? (fail(r.error), loadCloud()) : null));
+    },
+    [inCloud, ws, updateLocal, setCloudKey, fail, loadCloud],
+  );
+
+  const updateSettings = useCallback(
+    (patch) => {
+      if (!inCloud) return updateLocal("settings", (s) => ({ ...s, ...patch }));
+      setCloudKey("settings", (s) => ({ ...s, ...patch }));
+      if (!can.edit) return; // e.g. an uploader's production figure stays on their device
+      clearTimeout(settingsTimer.current);
+      settingsTimer.current = setTimeout(() => {
+        const c = cloudRef.current;
+        if (!c) return;
+        // The reviewer's name is never stored: the database stamps the signed-in email.
+        const { reviewerName: _drop, ...settings } = c.settings;
+        supabase.from("workspaces").update({ settings }).eq("id", c.wsId).then((r) => r.error && fail(r.error));
+      }, 700);
+    },
+    [inCloud, can.edit, updateLocal, setCloudKey, fail],
+  );
+
+  // Sequential, never-reused entry IDs: DMN-<year>-<seq>. In cloud mode the
+  // database assigns the ID and stamps the signed-in reviewer. Returns a Promise.
+  const addEntry = useCallback(
+    async (entry) => {
+      if (inCloud) {
+        const id = must(await supabase.rpc("add_entry", { p_ws: ws.id, p_entry: entry }));
+        const row = must(await supabase.from("ledger_entries").select("data").eq("workspace_id", ws.id).eq("id", id).single());
+        setCloudKey("ledger", (list) => [...list, row.data]);
+        return id;
+      }
+      const year = (entry.date || "").slice(0, 4) || String(new Date().getFullYear());
+      const seq = local.ledger.reduce((m, e) => Math.max(m, Number(e.id.split("-").pop()) || 0), 0) + 1;
+      const id = `DMN-${year}-${String(seq).padStart(4, "0")}`;
+      setLocal((s) => ({ ...s, ledger: [...s.ledger, { ...entry, id }] }));
+      return id;
+    },
+    [inCloud, ws, local.ledger, setCloudKey],
+  );
 
   const actions = useMemo(
     () => ({
-      updateSettings: (patch) => update("settings", (s) => ({ ...s, ...patch })),
-      saveInstallation: (inst) =>
-        update("installations", (list) => (inst.id ? list.map((x) => (x.id === inst.id ? { ...x, ...inst } : x)) : [...list, { ...inst, id: nextId(list, "INS") }])),
-      deleteInstallation: (id) => update("installations", (list) => list.filter((x) => x.id !== id)),
-      saveProduct: (p) =>
-        update("products", (list) => (p.id ? list.map((x) => (x.id === p.id ? { ...x, ...p } : x)) : [...list, { ...p, id: nextId(list, "PRD") }])),
-      deleteProduct: (id) => update("products", (list) => list.filter((x) => x.id !== id)),
+      updateSettings,
+      saveInstallation: (inst) => saveItem("installations", "installations", "INS", inst),
+      deleteInstallation: (id) => deleteItem("installations", "installations", id),
+      saveProduct: (p) => saveItem("products", "products", "PRD", p),
+      deleteProduct: (id) => deleteItem("products", "products", id),
       clearDemo: () =>
-        setState((s) => ({
+        setLocal((s) => ({
           ...s,
           installations: s.installations.filter((x) => !x.demo),
           products: s.products.filter((x) => !x.demo),
           ledger: s.ledger.filter((x) => !x.demo),
         })),
-      resetDemo: () => setState((s) => ({ ...DEMO_STATE, settings: s.settings })),
+      resetDemo: () => setLocal((s) => ({ ...DEMO_STATE, settings: s.settings })),
+      // Uploaders: a checked receipt goes to the team's review queue.
+      sendForReview: async (data) => {
+        must(await supabase.from("pending_receipts").insert({ workspace_id: ws.id, uploader_email: auth.email, data }));
+        await loadPending();
+      },
+      removePending: async (id) => {
+        must(await supabase.from("pending_receipts").delete().eq("id", id));
+        await loadPending();
+      },
+      reloadCloud: () => loadCloud().catch(fail),
+      dismissCloudError: () => setCloudError(null),
     }),
-    [update],
+    [updateSettings, saveItem, deleteItem, ws, auth.email, loadPending, loadCloud, fail],
   );
 
-  // Sequential, never-reused entry IDs: DMN-<year>-<seq>.
-  const addEntry = useCallback(
-    (entry) => {
-      const year = (entry.date || "").slice(0, 4) || String(new Date().getFullYear());
-      const seq = state.ledger.reduce((m, e) => Math.max(m, Number(e.id.split("-").pop()) || 0), 0) + 1;
-      const id = `DMN-${year}-${String(seq).padStart(4, "0")}`;
-      setState((s) => ({ ...s, ledger: [...s.ledger, { ...entry, id }] }));
-      return id;
-    },
-    [state.ledger],
+  const value = useMemo(
+    () => ({ ...state, ...actions, addEntry, apiHealth, pending, cloudError, inCloud, can, role: auth.role, workspace: ws }),
+    [state, actions, addEntry, apiHealth, pending, cloudError, inCloud, can, auth.role, ws],
   );
-
-  const value = useMemo(() => ({ ...state, ...actions, addEntry, apiHealth }), [state, actions, addEntry, apiHealth]);
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }
 

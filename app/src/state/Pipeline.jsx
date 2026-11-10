@@ -24,6 +24,8 @@ const initial = {
   productId: "",
   startedAt: null,
   error: null,
+  pendingId: null, // set when a reviewer opens a receipt an uploader sent
+  sourceName: "",
 };
 
 function reducer(s, a) {
@@ -40,6 +42,8 @@ function reducer(s, a) {
       return { ...s, [a.field]: a.value, ...(a.field === "installationId" ? { productId: "" } : {}) };
     case "FAIL":
       return { ...s, phase: "error", error: a.error };
+    case "LOAD_PENDING":
+      return { ...initial, phase: "review", pendingId: a.id, sourceName: a.data.sourceFile || "", rawText: a.data.rawText, audit: a.data.audit, receipt: { ...a.data.receipt }, edited: Boolean(a.data.edited), productionTonnes: a.data.productionTonnes, installationId: a.data.installationId || "", productId: a.data.productId || "", startedAt: Date.now() };
     case "RESET":
       return initial;
     default:
@@ -116,6 +120,10 @@ export function PipelineProvider({ children }) {
     setNotice,
     processFile,
     runSample: () => processFile(new File([], "sample-receipt-0471.jpg", { type: "image/jpeg" })),
+    openPending: (row) => {
+      runId.current++;
+      dispatch({ type: "LOAD_PENDING", id: row.id, data: row.data });
+    },
     reset: () => {
       runId.current++;
       dispatch({ type: "RESET" });

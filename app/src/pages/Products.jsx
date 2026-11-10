@@ -6,7 +6,7 @@ import { Button, DemoTag, Drawer, Field, fmt, inputClass, Num, PageHeader, Code 
 
 export default function Products() {
   const { t } = useLanguage();
-  const { products, installations, settings, saveProduct, deleteProduct } = useAppState();
+  const { products, installations, settings, saveProduct, deleteProduct, can } = useAppState();
   const [editing, setEditing] = useState(null);
   const [q, setQ] = useState("");
   const year = settings.year;
@@ -20,7 +20,7 @@ export default function Products() {
       <PageHeader
         title={t("products.title")}
         subtitle={t("products.subtitle")}
-        actions={<Button disabled={!installations.length} onClick={() => setEditing({ cn: "", installationId: installations[0]?.id ?? "", tonnesProduced: "", tonnesExported: "", processEmissions: null })}>{t("products.add")}</Button>}
+        actions={can.edit && <Button disabled={!installations.length} onClick={() => setEditing({ cn: "", installationId: installations[0]?.id ?? "", tonnesProduced: "", tonnesExported: "", processEmissions: null })}>{t("products.add")}</Button>}
       />
       {products.length === 0 ? (
         <p className="rounded-card border border-line bg-card p-8 text-sm text-text-2">{t("products.empty")}</p>
@@ -49,7 +49,7 @@ export default function Products() {
                     <td className="px-3 py-3 text-end"><Num>{fmt(p.tonnesProduced)}</Num></td>
                     <td className="px-3 py-3 text-end"><Num>{fmt(p.tonnesExported)}</Num></td>
                     <td className="px-3 py-3 text-end"><Num className={p.processEmissions == null ? "text-review" : ""}>{p.processEmissions == null ? "—" : fmt(p.processEmissions)}</Num></td>
-                    <td className="px-3 py-3 text-end"><Button variant="secondary" onClick={() => setEditing({ ...p })}>{t("common.edit")}</Button></td>
+                    <td className="px-3 py-3 text-end">{can.edit && <Button variant="secondary" onClick={() => setEditing({ ...p })}>{t("common.edit")}</Button>}</td>
                   </tr>
                 );
               })}
