@@ -5,7 +5,7 @@ phase is built against it. If something is not written here, it is not built
 without asking first. If a fact is not in the "Verified facts" section with a
 source, it does not go on the website.
 
-Status: **Approved 2026-11-10.** Phases 0, 1 and 2 complete (Phase 2 awaiting review). Updated with the team's CBAM documents.
+Status: **Approved 2026-11-10.** Phases 0–3 complete (Phase 3 awaiting review). Updated with the team's CBAM documents and the official EU data files.
 
 ---
 
@@ -87,6 +87,15 @@ Checked 2026-11-10. Re-check before launch.
 | F15 | EU declarants remain responsible for the final accuracy of their reports, whatever the source of the data | D3 |
 | F16 | The UK CBAM applies from 1 January 2027 to aluminium, cement, fertiliser, hydrogen, and iron and steel (UK statutory instruments 2026/809, 2026/830, 2026/995) | https://www.paulhastings.com/thought-leadership/uk-cbam-classification-thresholds-and-divergence-from-the-eu ; https://thecommonwealth.org/publications/uk-carbon-border-adjustment-mechanism |
 
+| F17 | Official CBAM certificate prices for 2026 imports: Q1 €75.36 (published 7 Apr 2026), Q2 €75.28 (6 Jul 2026), Q3 €82.32 (5 Oct 2026); Q4 due 4 Jan 2027; weekly prices from 2027 | https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/price-cbam-certificates_en |
+| F18 | CBAM factor (share of free allocation kept): 97.5% 2026, 95% 2027, 90% 2028, 77.5% 2029, 51.5% 2030, 39% 2031, 26.5% 2032, 14% 2033, none from 2034. (Proposal COM(2026) 616 would change this; not law.) | Directive 2003/87/EC, Art. 10a(1a), consolidated text on EUR-Lex |
+| F19 | Cross-sectoral correction factor 2026–2030 = 100% | Commission Implementing Decision (EU) 2026/1862 — https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202601862 |
+| F20 | On default values: free allocation per tonne = CBAM factor × CSCF × benchmark (Column B, by production route); certificates = embedded emissions − free allocation | IR (EU) 2025/2620, Annex (Eq. 6); Reg. (EU) 2023/956, Art. 31 |
+| F21 | If a country is not listed, or its field shows "–", the "Other countries and territories" default value applies | IR (EU) 2025/2621, Annex I |
+| F22 | Current default values: Excel v2 based on IR (EU) 2026/1740 (adopted 20 Jul 2026, file published 10 Aug 2026). The Excel is informative; the regulation is binding | `docs/sources/eu/default-values-2026-08-06.xlsx` (SHA-256 recorded in `packages/core/data/cbam-data.json`) |
+| F23 | Egypt has country-specific default values for 61 CBAM goods (all fertilisers and aluminium listed, most cement, hydrogen, 3 ferro-alloys); most steel products have none, so the "Other countries" values apply (e.g. CN 7207 11 14: 3.996 tCO2e/t) | Derived from F22 + F21 |
+| F24 | Worked-example check: our formula reproduces published results to the cent (CN 7207 11 14, Türkiye: €99.70/t 2026, €160.19/t 2029, €189.38/t 2030; China slab 2028 €238.08/t) | `packages/core/test/cbamCost.test.js`; cbamguide.com (as of 26 Oct 2026) |
+
 Historical, never stated as current: transitional-period quarterly reports and
 "request delayed submission" (D4).
 
@@ -99,9 +108,9 @@ Historical, never stated as current: transitional-period quarterly reports and
 | 4. Program | D2 data model: installations, operators, products (CN codes), direct/indirect emissions, actual vs default share, electricity source; an **O3CI-ready export** (F13) |
 | 5. Chatbot | D1–D3 summaries in the knowledge base, with D4 marked historical |
 
-Still to fetch in Phase 3 (from official files only): Egypt default values per
-CN code, the current certificate price, and the CBAM free-allocation factor by
-year. Until fetched, the calculator does not ship.
+Fetched in Phase 3 (official files only): see F17–F24. Re-run
+`python3 -I scripts/extract_cbam_data.py` when the Commission publishes new
+default values, benchmarks or prices.
 
 ## 5. Product: the WEBSITE (`website/`)
 

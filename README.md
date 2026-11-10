@@ -61,7 +61,10 @@ balance fails.
 | `app/src/services/ocrApi.js` | OCR mock (swap for the real model service) |
 | `app/src/i18n/strings.js` | All English and Arabic copy for the program |
 | `api/` | Express server; `api/services/geminiApi.js` is the `@google/genai` integration |
-| `packages/core/` | Normalisation, emission factors, mass balance (shared by everything) |
+| `packages/core/` | Normalisation, emission factors, mass balance, CBAM cost formula (shared by everything) |
+| `packages/core/data/cbam-data.json` | Official EU default values (Egypt + other countries), benchmarks, prices, factors, with sources |
+| `scripts/extract_cbam_data.py` | Rebuilds that data file from the EU Excel files in `docs/sources/eu/` |
+| `website/src/pages/Tools.jsx` | Sector checker and CBAM cost calculator |
 | `docs/DAMAN_V2_SPEC.md` | The v2 build specification, phases and verified facts |
 
 ## Roadmap to a real product

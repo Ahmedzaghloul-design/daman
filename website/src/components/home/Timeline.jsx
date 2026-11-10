@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
-import { Container, CountUp, SectionHeading } from "../ui.jsx";
+import { buttonClass, Container, CountUp, SectionHeading } from "../ui.jsx";
 
 // Default-value mark-ups by year [F3][F4], Implementing Regulation (EU) 2025/2621.
 const MARKUPS = { metals: [10, 20, 30], fertilisers: [1, 1, 1], electricity: [0, 0, 0] };
@@ -57,6 +58,7 @@ export default function Timeline() {
               ))}
             </div>
             <p className="mt-6 text-xs text-on-nile-2">{t("timeline.markup.note")}</p>
+            <Link to="/tools" className={buttonClass("gold", "mt-6")}>{t("timeline.markup.cta")}</Link>
           </div>
           <div className="flex h-64 items-end justify-around gap-6 border-b border-on-nile/20 px-2" dir="ltr">
             {values.map((v, i) => (

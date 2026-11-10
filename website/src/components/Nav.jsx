@@ -26,6 +26,7 @@ export default function Nav({ dark = false }) {
   const link = `text-sm transition-colors ${solid ? "text-text-2 hover:text-text" : "text-on-nile-2 hover:text-on-nile"}`;
   const items = [
     { to: "/#how-it-works", label: t("nav.product") },
+    { to: "/tools", label: t("nav.tools") },
     { to: "/how-we-calculate", label: t("nav.calculate") },
     { to: "/story", label: t("nav.story") },
     { to: "/#pricing", label: t("nav.pricing") },

@@ -1,9 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { LanguageContext } from "./context.js";
 import { en } from "./en.js";
 import { ar } from "./ar.js";
 
 const STRINGS = { en, ar };
-const LanguageContext = createContext(null);
 const KEY = "daman.site.lang";
 
 function readStored() {
