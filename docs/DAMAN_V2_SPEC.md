@@ -305,7 +305,7 @@ Root scripts: `npm run dev:website`, `npm run dev:app`, `npm run dev:api`,
 | **3. Data tools** | Fetch the official data (Egypt default values, CN code lists, certificate price, free-allocation factors); write and test the calculator formula; build the sector checker and calculator | Each number shows a source and date; hand-checked against 3 worked examples; user reviews |
 | **4. Program redesign** | New brand; **report-table main screen** (period, CN code, product, tonnes, installation, % actual data, direct/indirect tCO2e); installations and products registries following D2; receipt workbench and ledger kept; O3CI-ready export; unslop pass; no logic regressions | All v1 flows still pass; the new screens are tested in the browser |
 | **5. Chatbot** | `/api/chat` with knowledge base, Google Search grounding and citations; rate limits; widget on the website and in the app | Answers 10 scripted test questions correctly, searches the web for unknowns with sources, refuses off-topic requests safely |
-| **6. Quality & launch prep** | Accessibility, SEO, mobile, Playwright tests, security review, full fact-check of copy against §4; README update | All checks pass; pushed to GitHub; deployment options presented (not deployed without approval) |
+| **6. Quality & launch prep** (done 2026-11-11) | Accessibility, SEO, mobile, Playwright tests, security review, full fact-check of copy against §4; README update | All checks pass; pushed to GitHub; deployment options presented (not deployed without approval) |
 
 ## 10. Suggestions to make Daman better (beyond this spec, not built unless approved)
 

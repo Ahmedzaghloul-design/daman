@@ -56,7 +56,7 @@ your laptop (`npm run dev`) and is saved on GitHub
 - **Docs:** `docs/DAMAN_V2_SPEC.md` (the spec and every verified CBAM fact
   with its source), `docs/SETUP.md` (setup steps), `docs/WHATSAPP.md`,
   `docs/pilot/` (pitch, EN/AR consent letter, data checklist).
-- **Tests:** 39 automated tests (calculations, receipt checks, chatbot rules,
+- **Tests:** 40 unit tests and 92 browser tests (calculations, receipt checks, chatbot rules,
   WhatsApp signatures, rate limits).
 
 ## 2. Not tested yet
@@ -75,7 +75,7 @@ your laptop (`npm run dev`) and is saved on GitHub
 | --- | --- |
 | 0 Restructure · 1 Brand · 2 Website · 3 Data tools · 4 Program redesign | Done |
 | 5 Chatbot | Built and tested in mock mode. Its finish line, "answers 10 scripted questions correctly" with real Gemini, is not met yet: run `scripts/chat_eval.mjs` after the daily limit resets |
-| 6 Quality & launch prep | **Not started:** accessibility check, SEO (no social-share preview, robots.txt or sitemap yet), Playwright browser tests, security review, full fact-check of all text against §4, README update (it still lists finished items as "roadmap"), deployment options (partly written in `docs/SETUP.md`) |
+| 6 Quality & launch prep | Done (2026-11-11): accessibility (axe scan clean on 15 pages × EN/AR × desktop/phone, keyboard tests), link previews and SEO, 92 Playwright browser tests, security review (`docs/SECURITY_REVIEW.md`), fact-check (`docs/FACT_CHECK.md`), README, deployment options (`docs/SETUP.md`). Open: decisions listed in those two documents |
 
 Ideas from spec §10 that are only partly built:
 - **Tamper-proof audit trail:** the ledger is append-only and the database

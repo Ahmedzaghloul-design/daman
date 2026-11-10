@@ -1,8 +1,12 @@
 # Daman (ضمان)
 
-Analog-to-digital bridge for EU CBAM compliance. Turns handwritten Arabic energy
-receipts into a verifier-ready English emissions ledger, with a human sign-off
-on every entry.
+Turns handwritten Arabic fuel and energy receipts from Egyptian factories into
+verified emissions data for EU CBAM, with a human sign-off on every entry.
+Built by students at The American University in Cairo.
+
+**Status:** demo, running locally. Not online yet. See
+[`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) for what is built and what
+is left.
 
 ## Run it
 
@@ -14,86 +18,87 @@ cp .env.example .env      # then paste your GEMINI_API_KEY
 npm run dev               # starts all three parts
 ```
 
-| Part | Address | Start it alone |
+| Part | Address | What it is |
 | --- | --- | --- |
-| Website (marketing) | http://localhost:5173 | `npm run dev:website` |
-| Program (workspace) | http://localhost:5174 | `npm run dev:app` |
-| API (holds the Gemini key) | http://localhost:8787 | `npm run dev:api` |
+| Website | http://localhost:5173 | Story, method, CBAM cost estimate, Ask Daman chatbot (EN/AR) |
+| App | http://localhost:5174 | The factory workspace (installable on phones) |
+| API | http://localhost:8787 | Holds the Gemini key; receipts, chatbot, WhatsApp, demo requests |
 
-The website and the program both need the API running for anything that uses
-Gemini. No API key yet? Set `GEMINI_MOCK=true` in `.env`.
+No API key, or saving the free daily Gemini limit (about 20 requests)? Set
+`GEMINI_MOCK=true` in `.env`.
 
-Get an API key at https://aistudio.google.com/apikey. A Gemini app
-subscription does not include API access.
+## Test it
 
-Run the tests with `npm test`.
-
-## How data flows
-
-```
-photo ──► app/src/services/ocrApi.js       (MOCK CNN-BiLSTM-CTC: File -> raw Arabic string)
-      ──► app/src/services/geminiApi.js    (browser: POST /api/audit)
-      ──► api/app.js                       (validates input, holds the API key)
-      ──► api/services/geminiApi.js        (ai.models.generateContent + strict responseSchema)
-      ──► packages/core/massBalance.js     (deterministic energy-per-tonne check)
-      ──► Dashboard HITL review            (reviewer edits / approves / rejects)
-      ──► ledger                           (only approved rows; CSV export)
+```bash
+npm test            # 40 unit tests: calculations, receipt checks, chatbot rules, WhatsApp, security headers
+npm run test:e2e    # 92 browser tests (Playwright): accessibility, keyboard, SEO, click-through flows
+node scripts/check_i18n_numbers.mjs   # English and Arabic texts carry the same numbers
 ```
 
-Design rule: **the LLM structures and explains, code calculates, a human
-approves.** Anomaly numbers and tCO2e are computed in plain JavaScript so a
-verifier can reproduce them. The server forces `requires_human_review` when
-confidence is below 0.85, a field is missing, a digit is illegible, or mass
-balance fails.
+Browser tests run Chromium locally and send every API call to a mock API, so
+they never use the Gemini quota or touch real data.
+
+## How a receipt becomes data
+
+```
+photo (app or WhatsApp)
+  ──► API /api/audit-image      Gemini copies the Arabic text as written (؟ for anything unreadable)
+  ──► validator                 fields checked; unreadable digit, low confidence or missing field → review
+  ──► packages/core             emissions and the mass-balance check, in plain code
+  ──► human review              a named reviewer approves, edits or rejects
+  ──► ledger                    append-only; ID and reviewer stamped by the database
+  ──► report                    per product: direct + indirect, share backed by real data, O3CI-ready export
+```
+
+Rule: **AI reads and explains, code calculates, a person approves.**
+
+Privacy: on Gemini's free tier Google may use what is sent to improve its
+products, so real receipts are blocked until `GEMINI_BILLING=paid` (test
+photos can be sent with a tick-box).
 
 ## Project layout
 
 | Path | Purpose |
 | --- | --- |
-| `website/` | Marketing website: home, story, how-we-calculate (built in Phase 2) |
-| `website/src/i18n/en.js`, `ar.js` | All website copy; every regulatory fact is tagged with its spec fact number |
-| `website/src/data/images.js` | The website's photos; swap in real photos here |
-| `website/src/data/recorded-audits.json` | Real Gemini responses replayed by the live demo |
-| `app/` | The program: overview, emissions report, receipts, ledger, anomalies, installations, products, settings |
-| `app/src/pages/Report.jsx` | Main screen: per-product report table (CN code, actual-data share, direct/indirect, tCO2e/t) |
-| `app/src/state/Pipeline.jsx` | Receipt state machine (OCR → Gemini → human review) |
-| `app/src/components/ReviewPanel.jsx` | Review form: assignment to installation/product and sign-off |
-| `app/src/lib/exports.js` | CSV and O3CI-fields JSON export |
-| `app/src/services/ocrApi.js` | OCR mock (swap for the real model service) |
-| `app/src/i18n/en.js`, `ar.js` | All English and Arabic copy for the program |
-| `packages/core/report.js` | Per-product emissions (direct, indirect, specific, actual-data share, completeness) |
-| `api/` | Express server; `api/services/geminiApi.js` is the `@google/genai` integration |
-| `packages/core/` | Normalisation, emission factors, mass balance, CBAM cost formula (shared by everything) |
-| `packages/core/data/cbam-data.json` | Official EU default values (Egypt + other countries), benchmarks, prices, factors, with sources |
-| `scripts/extract_cbam_data.py` | Rebuilds that data file from the EU Excel files in `docs/sources/eu/` |
-| `website/src/pages/Tools.jsx` | Sector checker and CBAM cost calculator |
-| `docs/DAMAN_V2_SPEC.md` | The v2 build specification, phases and verified facts |
+| `website/` | Marketing website (React + Vite + Tailwind) |
+| `app/` | The factory workspace: overview, report, receipts, ledger, anomalies, verifier view, calculator, registry, account |
+| `api/` | Express server: `services/geminiApi.js` (receipts), `chat.js` (chatbot), `whatsapp.js`, `leads.js` |
+| `api/knowledge/kb.json` | The chatbot's verified notes, generated from the spec by `scripts/build_kb.mjs` |
+| `packages/core/` | Shared logic: normalisation, emission factors, mass balance, CBAM cost formula, report |
+| `packages/core/data/cbam-data.json` | Official EU default values, benchmarks, prices and factors, with sources |
+| `packages/chat/` | The "Ask Daman" chat panel used by both the website and the app |
+| `packages/brand/` | Logo, colours, fonts |
+| `supabase/migrations/` | Database tables, roles and security rules (Supabase project "daman") |
+| `e2e/` | Playwright browser tests |
+| `scripts/` | Data extraction from the EU files, knowledge-base build, checks |
+| `docs/` | Spec, setup, security review, fact-check, WhatsApp, pilot pack, status |
+
+## Documents
+
+- [`docs/DAMAN_V2_SPEC.md`](docs/DAMAN_V2_SPEC.md) — decisions, rules and every verified CBAM fact with its source
+- [`docs/SETUP.md`](docs/SETUP.md) — setup steps only the owner can do, and deployment options
+- [`docs/SECURITY_REVIEW.md`](docs/SECURITY_REVIEW.md) — what was checked, fixed, and decided before going online
+- [`docs/FACT_CHECK.md`](docs/FACT_CHECK.md) — how the text was checked and what changed
+- [`docs/WHATSAPP.md`](docs/WHATSAPP.md) — receipts by WhatsApp (Twilio)
+- [`docs/pilot/`](docs/pilot/) — pitch, EN/AR consent letter, data checklist
 
 ## Roadmap to a real product
 
-Build these one at a time.
+Done: website, app, official CBAM data and calculator, photo reading with
+Gemini, accounts and team roles, verifier view, WhatsApp intake, chatbot,
+accessibility, browser tests, security review.
 
-1. **Real OCR service.** Train the CNN-BiLSTM-CTC model (PyTorch) on real
-   receipts, serve it with FastAPI, and point `extractArabicText` at it. Return
-   per-character confidence so the UI can highlight uncertain digits. Benchmark
-   it against Gemini vision reading the image directly, and keep whichever is
-   more accurate, or use both and flag disagreement.
-2. **Data collection.** Partner with 1–2 factories (AUC Venture Lab / industrial
-   contacts) to get a few hundred real, anonymised receipts. Label them. This
-   dataset is your moat.
-3. **Database and auth.** Move the ledger from localStorage to Postgres (e.g.
-   Supabase), with login, one workspace per installation, and reviewer roles.
-4. **Immutable audit trail.** Store the original image hash, raw OCR text, model
-   output, every reviewer edit, and who approved what and when. Never allow
-   silent edits after approval: corrections become new entries.
-5. **Correct CBAM scope.** Model installations, production processes and
-   reporting periods. Fuel per tonne of product is a simplification: CBAM
-   needs direct and (for some goods) indirect emissions per tonne of good.
-   Precursors count for steel and aluminium.
-6. **Export in the EU format.** Generate the EU communication template for
-   operators, which your EU buyers attach to their CBAM declarations.
-7. **Security.** Rate limiting, request logging without personal data, upload
-   scanning, HTTPS, secrets in a vault, and a data-processing agreement with
-   each factory.
-8. **Verifier partnership.** Work with an accredited verifier early. Their
-   sign-off on your method is what makes "audit-grade" true.
+Next, one at a time:
+
+1. **Go live** — Gemini billing, own email service, hosting (see `docs/SETUP.md`),
+   the decisions in `docs/SECURITY_REVIEW.md`.
+2. **Real factory data** — a pilot with 1–2 factories (`docs/pilot/`); real
+   photos replace the AI images.
+3. **Emission factors agreed with a verifier** — the built-in ones are
+   illustrative.
+4. **Tamper-proof audit trail** — a fingerprint of each photo and a history of
+   every edit (the ledger is already append-only).
+5. **The EU's official operator template** for buyers, next to the O3CI export.
+6. **A dedicated Arabic handwriting model** (CNN-BiLSTM-CTC), benchmarked
+   against Gemini on real receipts.
+7. **Verifier partnership** — an accredited verifier's sign-off on the method.

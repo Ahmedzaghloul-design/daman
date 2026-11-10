@@ -53,6 +53,21 @@ before the existing rewrite:
 
 Then add the app address to Supabase (step 1.1).
 
+### Deployment options (nothing is deployed; choose when you go live)
+
+All three parts are standard: the website and app are static files after
+`npm run build`; the API is a normal Node/Express server. So any of these work:
+
+| Option | What it means | Good for | Watch out for |
+|---|---|---|---|
+| **A. Vercel (prepared)** | Three projects from GitHub; `vercel.json` files are ready; the API runs as a function | Fastest; a push to GitHub redeploys; free HTTPS | Hobby plan is for personal, non-commercial use (Pro for a paid pilot); functions default to a US region, so set the region to Frankfurt (`fra1`) next to the database |
+| **B. Static host + separate API host** | Website/app on a static host (e.g. Netlify, Cloudflare Pages); API on a Node host (e.g. Render, Railway, Fly.io) | Mixing free tiers | Two dashboards; the `/api` rewrite must point at the API address |
+| **C. One small server** | A rented Linux server runs all three behind a web server with HTTPS | Full control, fixed monthly cost | You maintain updates, HTTPS certificates and backups yourself |
+
+Check current prices and limits on each provider's site before choosing; they
+change often. Whatever you choose: set `VITE_SITE_URL`, add the app address to
+Supabase (step 1.1), and run `docs/SECURITY_REVIEW.md` again on the live setup.
+
 ## 4. WhatsApp receipts (Twilio sandbox)
 
 See `docs/WHATSAPP.md`.
