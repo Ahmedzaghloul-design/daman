@@ -5,7 +5,8 @@
   "description": "Deterministic Daman logic shared by the API and both frontends: normalisation, emission factors, mass balance.",
   "type": "module",
   "exports": {
-    "./*.js": "./*.js"
+    "./*.js": "./*.js",
+    "./data/*.json": "./data/*.json"
   },
   "scripts": {
     "test": "node --test"

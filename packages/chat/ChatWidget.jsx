@@ -157,7 +157,7 @@ function LeadForm({ s, lang, apiBase, onAccent, onDone }) {
  * @param {{ mode: "site"|"workspace", lang: "en"|"ar", apiBase?: string, storageKey: string,
  *           getContext?: () => object|null, contextShared?: boolean, offset?: string }} props
  */
-export default function ChatWidget({ mode, lang, apiBase = "", storageKey, getContext, contextShared = false, offset = "bottom-5", onAccent = "text-white" }) {
+export default function ChatWidget({ mode, lang, apiBase = "", storageKey, getContext, contextShared = false, offset = "bottom-5", onAccent = "text-white", controlRef = null }) {
   const s = STRINGS[lang] ?? STRINGS.en;
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState(() => read(storageKey));
@@ -185,6 +185,25 @@ export default function ChatWidget({ mode, lang, apiBase = "", storageKey, getCo
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
+
+  // Remote controls for the app's presentation mode: open, clear, ask live,
+  // or show a prepared question and answer without calling the API.
+  useEffect(() => {
+    if (!controlRef) return;
+    controlRef.current = {
+      open: () => setOpen(true),
+      close: () => setOpen(false),
+      clear: () => setMessages([]),
+      ask: (q) => {
+        setOpen(true);
+        ask(q);
+      },
+      show: (q, a) => {
+        setOpen(true);
+        setMessages((m) => [...m, { role: "user", text: q }, { role: "assistant", ...a }]);
+      },
+    };
+  });
 
   const wantsDemo = useMemo(() => mode === "site" && messages.some((m) => m.wantsDemo), [mode, messages]);
 
@@ -265,6 +284,7 @@ export default function ChatWidget({ mode, lang, apiBase = "", storageKey, getCo
                 <div key={i} className={`me-6 rounded-2xl rounded-es-sm px-3 py-2 ${m.kind === "error" ? "bg-anomaly-soft text-anomaly" : "bg-sand"}`}>
                   <Formatted text={m.text} />
                   <Sources msg={m} s={s} />
+                  {m.presentationNote && <p className="mt-2 text-[11px] text-muted">{m.presentationNote}</p>}
                 </div>
               ),
             )}

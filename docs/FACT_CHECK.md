@@ -24,7 +24,7 @@ what the product really does today.
 | Where | Was | Now | Why |
 |---|---|---|---|
 | Home › How it works › Photograph | "The image is kept as evidence." | Photograph in the app or send on WhatsApp | Daman stores the text read from a receipt, not the photo |
-| Home › How it works › Read | "A model trained for cursive Arabic transcribes…" | "Gemini reads the Arabic text from the photo… a digit it cannot read is marked, never guessed." | The trained model doesn't exist yet; Gemini reads photos today |
+| Home › How it works › Read | "A model trained for cursive Arabic transcribes…" | "Gemini reads the Arabic text from the photo… a number with an unreadable digit is flagged and sent to a person." (corrected again 2026-11-11: a recorded run showed Gemini can still guess a digit; Daman flags it) | The trained model doesn't exist yet; Gemini reads photos today |
 | Home › How it works › status | "reading uses a stand-in model…" | "photos are read with Gemini today; a dedicated Arabic handwriting model is planned." | Same |
 | Home › Timeline › 2028 | "…such as screws, tubes and machinery" | "…about 180 downstream steel and aluminium products" | The examples are not in verified fact F9 |
 | Home › Trust | "links back to the photo it came from" | "keeps the text read from its receipt, the source file name and the approver" | Photos are not stored |

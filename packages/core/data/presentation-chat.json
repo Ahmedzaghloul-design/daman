@@ -1,0 +1,54 @@
+{
+  "source": "prepared",
+  "note": "Prepared from Daman verified notes F10 and F12 (not a live Gemini answer). Run node scripts/record_presentation.mjs to replace it with a recorded Gemini answer.",
+  "question": {
+    "en": "Who pays for CBAM, and when is the first declaration due?",
+    "ar": "من يدفع تكلفة CBAM، ومتى يحين موعد أول إقرار؟"
+  },
+  "answer": {
+    "en": {
+      "kind": "kb",
+      "checked": "2026-11-10",
+      "citations": [
+        {
+          "id": "F10",
+          "sources": [
+            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02023R0956-20251020"
+          ],
+          "note": "Regulation (EU) 2023/956, consolidated 20 Oct 2025, checked 2026-11-10"
+        },
+        {
+          "id": "F12",
+          "sources": [
+            "https://icapcarbonaction.com/en/news/eu-cbam-enters-compliance-phase-and-outlines-path-ahead",
+            "https://klimaat.be/cbam-en/what-is-cbam-2/what-is-the-carbon-border-adjustment-mechanism-cbam/definitive-phase"
+          ],
+          "note": ""
+        }
+      ],
+      "text": "The EU side: the authorised CBAM declarant (usually the importer) submits the CBAM declaration and surrenders the certificates. Your factory supplies the installation's emissions data.\n- First annual declaration: by **30 September 2027**, for goods imported in 2026.\n- Then every 30 September."
+    },
+    "ar": {
+      "kind": "kb",
+      "checked": "2026-11-10",
+      "citations": [
+        {
+          "id": "F10",
+          "sources": [
+            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02023R0956-20251020"
+          ],
+          "note": "Regulation (EU) 2023/956, consolidated 20 Oct 2025, checked 2026-11-10"
+        },
+        {
+          "id": "F12",
+          "sources": [
+            "https://icapcarbonaction.com/en/news/eu-cbam-enters-compliance-phase-and-outlines-path-ahead",
+            "https://klimaat.be/cbam-en/what-is-cbam-2/what-is-the-carbon-border-adjustment-mechanism-cbam/definitive-phase"
+          ],
+          "note": ""
+        }
+      ],
+      "text": "الجانب الأوروبي: المُصرِّح المعتمد لـ CBAM (عادةً المستورد) يقدّم إقرار CBAM ويسلّم الشهادات. ويقدّم مصنعك بيانات انبعاثات المنشأة.\n- أول إقرار سنوي: بحلول **30 سبتمبر 2027** عن البضائع المستوردة في 2026.\n- ثم في 30 سبتمبر من كل عام."
+    }
+  }
+}

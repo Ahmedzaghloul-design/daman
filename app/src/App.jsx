@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { PresentationProvider, usePresentation } from "./state/Presentation.jsx";
 import { LanguageProvider } from "./i18n/LanguageContext.jsx";
 import { AppStateProvider } from "./state/AppState.jsx";
 import { AuthProvider } from "./state/Auth.jsx";
@@ -16,6 +18,16 @@ import Calculator from "./pages/Calculator.jsx";
 import Account from "./pages/Account.jsx";
 import Verify from "./pages/Verify.jsx";
 
+// /present starts presentation mode (for judges) on the demo data.
+function StartPresentation() {
+  const { start } = usePresentation();
+  useEffect(() => {
+    start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
+}
+
 // The program only: the marketing website lives in website/.
 export default function App() {
   return (
@@ -24,6 +36,7 @@ export default function App() {
       <AppStateProvider>
         <PipelineProvider>
           <BrowserRouter>
+            <PresentationProvider>
             <Routes>
               <Route element={<Layout />}>
                 <Route index element={<Navigate to="/overview" replace />} />
@@ -38,9 +51,11 @@ export default function App() {
                 <Route path="settings" element={<Settings />} />
                 <Route path="account" element={<Account />} />
                 <Route path="verify" element={<Verify />} />
+                <Route path="present" element={<StartPresentation />} />
                 <Route path="*" element={<Navigate to="/overview" replace />} />
               </Route>
             </Routes>
+            </PresentationProvider>
           </BrowserRouter>
         </PipelineProvider>
       </AppStateProvider>

@@ -108,7 +108,7 @@ export const en = {
     title: "From a photo to a verified record",
     steps: [
       { title: "Photograph", body: "Site staff photograph the handwritten receipt or delivery note in the app, or send it on WhatsApp." },
-      { title: "Read", body: "Gemini reads the Arabic text from the photo, digits included. A digit it cannot read is marked, never guessed." },
+      { title: "Read", body: "Gemini reads the Arabic text from the photo, digits included. A number with an unreadable digit is flagged and sent to a person to check." },
       { title: "Structure and check", body: "Gemini maps it to English fields; plain code double-checks every number and tests it against your production." },
       { title: "Human approval", body: "Anything uncertain goes to a named reviewer. Nothing enters the ledger without a person's sign-off." },
       { title: "Verified ledger", body: "Approved entries become a clean English record, ready for your buyers and the registry." },

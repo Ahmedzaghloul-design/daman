@@ -39,6 +39,9 @@ your laptop (`npm run dev`) and is saved on GitHub
 - **Ask Daman chatbot** (workspace mode): can explain your own report.
 - "Demo on this device" mode with sample data, no account needed.
 
+### Presentation mode
+- http://localhost:5174/present: an 11-step guided tour for judges with recorded answers (or live Gemini). See `docs/PRESENTATION.md`.
+
 ### The server (API, http://localhost:8787)
 - Holds the Gemini key (never sent to the browser).
 - Receipt reading from text and from photos, with the same checks.
@@ -56,7 +59,7 @@ your laptop (`npm run dev`) and is saved on GitHub
 - **Docs:** `docs/DAMAN_V2_SPEC.md` (the spec and every verified CBAM fact
   with its source), `docs/SETUP.md` (setup steps), `docs/WHATSAPP.md`,
   `docs/pilot/` (pitch, EN/AR consent letter, data checklist).
-- **Tests:** 40 unit tests and 92 browser tests (calculations, receipt checks, chatbot rules,
+- **Tests:** 40 unit tests and 98 browser tests (calculations, receipt checks, chatbot rules,
   WhatsApp signatures, rate limits).
 
 ## 2. Not tested yet

@@ -24,6 +24,9 @@ npm run dev               # starts all three parts
 | App | http://localhost:5174 | The factory workspace (installable on phones) |
 | API | http://localhost:8787 | Holds the Gemini key; receipts, chatbot, WhatsApp, demo requests |
 
+**Presenting to judges?** Open http://localhost:5174/present — see
+[`docs/PRESENTATION.md`](docs/PRESENTATION.md).
+
 No API key, or saving the free daily Gemini limit (about 20 requests)? Set
 `GEMINI_MOCK=true` in `.env`.
 
@@ -31,7 +34,7 @@ No API key, or saving the free daily Gemini limit (about 20 requests)? Set
 
 ```bash
 npm test            # 40 unit tests: calculations, receipt checks, chatbot rules, WhatsApp, security headers
-npm run test:e2e    # 92 browser tests (Playwright): accessibility, keyboard, SEO, click-through flows
+npm run test:e2e    # 98 browser tests (Playwright): accessibility, keyboard, SEO, click-through flows, presentation
 node scripts/check_i18n_numbers.mjs   # English and Arabic texts carry the same numbers
 ```
 
@@ -80,6 +83,7 @@ photos can be sent with a tick-box).
 - [`docs/SECURITY_REVIEW.md`](docs/SECURITY_REVIEW.md) — what was checked, fixed, and decided before going online
 - [`docs/FACT_CHECK.md`](docs/FACT_CHECK.md) — how the text was checked and what changed
 - [`docs/WHATSAPP.md`](docs/WHATSAPP.md) — receipts by WhatsApp (Twilio)
+- [`docs/PRESENTATION.md`](docs/PRESENTATION.md) — presentation mode for judges
 - [`docs/pilot/`](docs/pilot/) — pitch, EN/AR consent letter, data checklist
 
 ## Roadmap to a real product

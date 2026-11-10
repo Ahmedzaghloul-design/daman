@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
 import { Button, Field, fmt, inputClass, Num } from "./ui.jsx";
@@ -7,11 +7,17 @@ const ENERGY = ["Diesel", "Electricity", "Natural Gas", "Heavy Fuel Oil", "Coal"
 const UNITS = ["L", "kWh", "m3", "t"];
 
 /** The extracted record, editable, plus assignment and sign-off. */
-export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, threshold, installationId, productId, onAssign, onEdit, onApprove, onReject, sendMode = false, busy = false }) {
+export default function ReviewPanel({ receipt, reasons, anomaly, co2e, model, threshold, installationId, productId, onAssign, onEdit, onApprove, onReject, sendMode = false, busy = false, prefill = null }) {
   const { t, energyLabel } = useLanguage();
   const { installations, products, settings, updateSettings, inCloud } = useAppState();
   const [attested, setAttested] = useState(false);
   const [justification, setJustification] = useState("");
+  // Presentation mode fills the reviewer's part; the presenter still clicks Approve.
+  useEffect(() => {
+    if (!prefill) return;
+    if (prefill.justification) setJustification(prefill.justification);
+    if (prefill.attest) setAttested(true);
+  }, [prefill]);
   const conf = receipt.confidence_score ?? 0;
   const low = conf < threshold;
   const volumeOk = Number(receipt.volume) > 0;

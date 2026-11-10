@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { normalizeDigits } from "@daman/core/normalize.js";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
-import recorded from "../../data/recorded-audits.json";
+import recorded from "@daman/core/data/recorded-audits.json";
 import { ArabicWithNumbers, Button, Container, Mark, Num, SectionHeading } from "../ui.jsx";
 
 const STAGES = ["raw", "digits", "fields", "check", "decision"];

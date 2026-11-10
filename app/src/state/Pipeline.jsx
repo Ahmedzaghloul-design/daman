@@ -1,6 +1,7 @@
 import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import { PipelineContext } from "./contexts.js";
-import { extractArabicText } from "../services/ocrApi.js";
+import { extractArabicText, SAMPLE_OCR_OUTPUTS } from "../services/ocrApi.js";
+import RECORDED from "@daman/core/data/recorded-audits.json";
 import { auditReceipt, auditReceiptImage, getApiHealth } from "../services/geminiApi.js";
 import { useAppState } from "./AppState.jsx";
 
@@ -26,6 +27,7 @@ const initial = {
   error: null,
   pendingId: null, // set when a reviewer opens a receipt an uploader sent
   sourceName: "",
+  prefill: null, // presentation mode: reviewer fields filled in for the presenter
 };
 
 function reducer(s, a) {
@@ -42,6 +44,8 @@ function reducer(s, a) {
       return { ...s, [a.field]: a.value, ...(a.field === "installationId" ? { productId: "" } : {}) };
     case "FAIL":
       return { ...s, phase: "error", error: a.error };
+    case "PREFILL":
+      return { ...s, prefill: a.prefill, installationId: a.installationId ?? s.installationId, productId: a.productId ?? s.productId };
     case "LOAD_PENDING":
       return { ...initial, phase: "review", pendingId: a.id, sourceName: a.data.sourceFile || "", rawText: a.data.rawText, audit: a.data.audit, receipt: { ...a.data.receipt }, edited: Boolean(a.data.edited), productionTonnes: a.data.productionTonnes, installationId: a.data.installationId || "", productId: a.data.productId || "", startedAt: Date.now() };
     case "RESET":
@@ -120,6 +124,36 @@ export function PipelineProvider({ children }) {
     setNotice,
     processFile,
     runSample: () => processFile(new File([], "sample-receipt-0471.jpg", { type: "image/jpeg" })),
+    // Presentation mode: replay a real recorded Gemini answer (no API call),
+    // through the same stages a live receipt goes through.
+    runRecorded: async (index) => {
+      const rec = RECORDED[index];
+      const id = ++runId.current;
+      setNotice(null);
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      dispatch({ type: "START", file: { name: `sample-receipt-${index + 1}.jpg`, type: "image/jpeg", size: 0 }, previewUrl: null, productionTonnes: rec.productionTonnes, installationId: installations[0]?.id ?? "", productId: "" });
+      await wait(1200);
+      if (id !== runId.current) return;
+      dispatch({ type: "OCR_DONE", rawText: rec.rawText });
+      await wait(1500);
+      if (id !== runId.current) return;
+      dispatch({ type: "AUDIT_DONE", audit: { ...rec.response, recordedAt: rec.recordedAt } });
+    },
+    // Presentation mode, live: send the same sample text to Gemini.
+    runSampleLive: async (index) => {
+      const id = ++runId.current;
+      setNotice(null);
+      const rawText = SAMPLE_OCR_OUTPUTS[index] ?? RECORDED[index].rawText;
+      dispatch({ type: "START", file: { name: `sample-receipt-${index + 1}.jpg`, type: "image/jpeg", size: 0 }, previewUrl: null, productionTonnes: Number(settings.productionTonnes), installationId: installations[0]?.id ?? "", productId: "" });
+      dispatch({ type: "OCR_DONE", rawText });
+      try {
+        const audit = await auditReceipt(rawText, { productionTonnes: Number(settings.productionTonnes), sector: "cement", benchmarks: settings.benchmarks });
+        if (id === runId.current) dispatch({ type: "AUDIT_DONE", audit });
+      } catch (err) {
+        if (id === runId.current) dispatch({ type: "FAIL", error: err.message });
+      }
+    },
+    prefillReview: (prefill, assign = {}) => dispatch({ type: "PREFILL", prefill, ...assign }),
     openPending: (row) => {
       runId.current++;
       dispatch({ type: "LOAD_PENDING", id: row.id, data: row.data });

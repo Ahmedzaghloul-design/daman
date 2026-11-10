@@ -1,6 +1,7 @@
 import { EMISSION_FACTORS } from "@daman/core/emissionFactors.js";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import { useAppState } from "../state/AppState.jsx";
+import { usePresentation } from "../state/Presentation.jsx";
 import { Button, Field, inputClass, Num, PageHeader, Panel } from "../components/ui.jsx";
 
 export default function Settings() {
@@ -11,6 +12,7 @@ export default function Settings() {
   return (
     <>
       <PageHeader title={t("settings.title")} subtitle={t("settings.subtitle")} />
+      <PresentationPanel />
       {!can.edit && <p className="mb-4 rounded-card border border-line bg-card px-4 py-3 text-sm text-text-2">{t("settings.readOnly")}</p>}
       <fieldset disabled={!can.edit} className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
         <Panel title={t("settings.title")}>
@@ -68,5 +70,20 @@ export default function Settings() {
         </div>
       </fieldset>
     </>
+  );
+}
+
+/** Start the guided tour for judges (demo data on this device only). */
+function PresentationPanel() {
+  const { t } = useLanguage();
+  const { start } = usePresentation();
+  return (
+    <section className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-card border border-gold/40 bg-card px-4 py-3">
+      <div className="min-w-0">
+        <h2 className="text-[15px] font-semibold">{t("present.panelTitle")}</h2>
+        <p className="text-sm text-text-2">{t("present.panelBody")}</p>
+      </div>
+      <Button onClick={start}>{t("present.start")}</Button>
+    </section>
   );
 }

@@ -142,6 +142,7 @@ export default function Receipts() {
               <ReceiptPreview file={p.file ?? (p.sourceName ? { name: p.sourceName } : null)} previewUrl={p.previewUrl} rawText={p.rawText} />
               <ReviewPanel
                 sendMode={can.send}
+                prefill={p.prefill}
                 busy={saving}
                 receipt={p.receipt}
                 reasons={review.reasons}

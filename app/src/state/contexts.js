@@ -5,3 +5,4 @@ import { createContext } from "react";
 export const AppStateContext = createContext(null);
 export const PipelineContext = createContext(null);
 export const AuthContext = createContext(null);
+export const PresentationContext = createContext(null);

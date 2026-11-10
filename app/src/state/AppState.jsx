@@ -248,6 +248,9 @@ export function AppStateProvider({ children }) {
           ledger: s.ledger.filter((x) => !x.demo),
         })),
       resetDemo: () => setLocal((s) => ({ ...DEMO_STATE, settings: s.settings })),
+      // Presentation mode: the untouched demo plant with default settings
+      // (only the on-device demo; a cloud workspace is never changed).
+      freshDemo: () => setLocal({ ...DEMO_STATE, settings: { ...DEFAULT_SETTINGS, reviewerName: "Demo Reviewer" } }),
       // Uploaders: a checked receipt goes to the team's review queue.
       sendForReview: async (data) => {
         must(await supabase.from("pending_receipts").insert({ workspace_id: ws.id, uploader_email: auth.email, data }));

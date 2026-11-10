@@ -6,6 +6,8 @@ import { usePipeline } from "../state/Pipeline.jsx";
 import { Mark } from "./ui.jsx";
 import ChatWidget from "@daman/chat/ChatWidget.jsx";
 import { useChatContext } from "../lib/chatContext.js";
+import PresentationCard from "./PresentationCard.jsx";
+import { usePresentation } from "../state/Presentation.jsx";
 
 export const WEBSITE_URL = import.meta.env.VITE_WEBSITE_URL || "http://localhost:5173";
 
@@ -139,6 +141,7 @@ function WorkspaceChat() {
   const { lang } = useLanguage();
   const { inCloud, apiHealth, workspace, role } = useAppState();
   const getContext = useChatContext();
+  const { chatRef } = usePresentation();
   const shared = role !== "uploader" && (!inCloud || Boolean(apiHealth.realDataAllowed));
   return (
     <ChatWidget
@@ -150,6 +153,7 @@ function WorkspaceChat() {
       contextShared={shared}
       offset="bottom-24 lg:bottom-5"
       onAccent="text-[#04161b]"
+      controlRef={chatRef}
     />
   );
 }
@@ -189,7 +193,7 @@ export default function Layout() {
   const { pathname } = useLocation();
   const { role, cloudError, dismissCloudError, loading } = useAppState();
   const page = pathname.split("/")[1];
-  if (page && !visible(role, page) && page !== "settings") return <Navigate to={role === "uploader" ? "/receipts" : "/overview"} replace />;
+  if (page && page !== "present" && !visible(role, page) && page !== "settings") return <Navigate to={role === "uploader" ? "/receipts" : "/overview"} replace />;
   if (role === "uploader" && page === "settings") return <Navigate to="/receipts" replace />;
   return (
     <div className="min-h-screen bg-cream lg:grid lg:grid-cols-[260px_1fr]">
@@ -224,6 +228,7 @@ export default function Layout() {
       </main>
       <TabBar onMore={() => setMore(true)} />
       <WorkspaceChat />
+      <PresentationCard />
     </div>
   );
 }
