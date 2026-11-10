@@ -69,6 +69,22 @@ your laptop (`npm run dev`) and is saved on GitHub
 | Installing the app on a phone | Needs a public https address | Going online (section 4) |
 | WhatsApp with a real phone | Needs a Twilio account and going online | `docs/WHATSAPP.md` |
 
+## 2b. Phases in the spec (`docs/DAMAN_V2_SPEC.md` §9)
+
+| Phase | Status |
+| --- | --- |
+| 0 Restructure · 1 Brand · 2 Website · 3 Data tools · 4 Program redesign | Done |
+| 5 Chatbot | Built and tested in mock mode. Its finish line, "answers 10 scripted questions correctly" with real Gemini, is not met yet: run `scripts/chat_eval.mjs` after the daily limit resets |
+| 6 Quality & launch prep | **Not started:** accessibility check, SEO (no social-share preview, robots.txt or sitemap yet), Playwright browser tests, security review, full fact-check of all text against §4, README update (it still lists finished items as "roadmap"), deployment options (partly written in `docs/SETUP.md`) |
+
+Ideas from spec §10 that are only partly built:
+- **Tamper-proof audit trail:** the ledger is append-only and the database
+  stamps the reviewer, but there is no photo fingerprint or edit history yet.
+- **Official EU template:** Daman exports an O3CI-ready file, not the EU's
+  official "communication template for operators".
+- **Demo-request inbox and analytics:** only the chatbot form saves requests;
+  no analytics.
+
 ## 3. Left to do for the demo (small)
 
 1. Supabase: set the sign-in address and add `{{ .Token }}` to the sign-in
